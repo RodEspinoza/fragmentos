@@ -24,4 +24,6 @@
     <string name="txtUser">Email</string>
     <string name="title_activity_product">ProductActivity</string>
     <string name="nav_products">Productos</string>
+    <string name="helloProducts">Productos</string>
+    <string name="btnAddProduct">Agregar producto</string>
 </resources>
