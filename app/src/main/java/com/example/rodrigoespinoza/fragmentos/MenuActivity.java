@@ -87,7 +87,7 @@ RojoFragment.OnFragmentInteractionListener{
 
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_products) {
             ourFragment = new AzulFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.contenedorFragment, ourFragment).commit();
             // Handle the camera action

@@ -22,4 +22,6 @@
     <string name="btnRegister">Registrar</string>
     <string name="txtRut">Rut</string>
     <string name="txtUser">Email</string>
+    <string name="title_activity_product">ProductActivity</string>
+    <string name="nav_products">Productos</string>
 </resources>
