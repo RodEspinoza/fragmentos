@@ -15,13 +15,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.rodrigoespinoza.fragmentos.fragments.AzulFragment;
+import com.example.rodrigoespinoza.fragmentos.fragments.AddProductFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.ProductFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.RojoFragment;
-import com.example.rodrigoespinoza.fragmentos.model.Product;
 
 public class MenuActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, AzulFragment.OnFragmentInteractionListener,
+        implements NavigationView.OnNavigationItemSelectedListener, AddProductFragment.OnFragmentInteractionListener,
         ProductFragment.OnFragmentInteractionListener,
 RojoFragment.OnFragmentInteractionListener{
 
@@ -94,8 +93,8 @@ RojoFragment.OnFragmentInteractionListener{
             ourFragment = new ProductFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.containerFragmentMenu, ourFragment).commit();
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-            ourFragment = new RojoFragment();
+        } else if (id == R.id.nav_add_products) {
+            ourFragment = new AddProductFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.containerFragmentMenu, ourFragment).commit();
 
         } else if (id == R.id.nav_slideshow) {

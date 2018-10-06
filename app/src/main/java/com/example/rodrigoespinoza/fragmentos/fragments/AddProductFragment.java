@@ -1,44 +1,51 @@
 package com.example.rodrigoespinoza.fragmentos.fragments;
 
+import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
+import android.widget.EditText;
+import android.widget.Toast;
 
+import com.example.rodrigoespinoza.fragmentos.MenuActivity;
 import com.example.rodrigoespinoza.fragmentos.R;
 import com.example.rodrigoespinoza.fragmentos.model.Product;
 import com.example.rodrigoespinoza.fragmentos.model.SqlConecttion;
 
-import java.util.ArrayList;
-
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ProductFragment.OnFragmentInteractionListener} interface
+ * {@link AddProductFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ProductFragment#newInstance} factory method to
+ * Use the {@link AddProductFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ProductFragment extends Fragment {
-    SqlConecttion conn;
-    Button btnOpenAddProduct;
-    ArrayList<Product> productArrayList;
-    ArrayList<String> detailList;
-    ListView listViewProducts;
+public class AddProductFragment extends Fragment {
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
+
+    // TODO: Rename and change types of parameters
+    Intent intent;
     View view;
-    AddProductFragment ourFragment;
+    EditText txProductName, txProductStock;
+    Product product;
+    Button btnSubmitNewProduct;
+
     private OnFragmentInteractionListener mListener;
 
-    public ProductFragment() {
+    public AddProductFragment() {
         // Required empty public constructor
     }
 
@@ -46,12 +53,14 @@ public class ProductFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment ProductFragment.
+
+     * @return A new instance of fragment AddProductFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ProductFragment newInstance() {
-        ProductFragment fragment = new ProductFragment();
+    public static AddProductFragment newInstance(String param1, String param2) {
+        AddProductFragment fragment = new AddProductFragment();
         Bundle args = new Bundle();
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -67,35 +76,55 @@ public class ProductFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        this.view = inflater.inflate(R.layout.fragment_product, container, false);
-        this.btnOpenAddProduct = this.view.findViewById(R.id.btnOpenProduct);
-        this.btnOpenAddProduct.setOnClickListener(new View.OnClickListener() {
+        // Inflate the layout for this fragment
+        this.view = inflater.inflate(R.layout.fragment_add_product_fracment, container, false);
+        this.txProductName = this.view.findViewById(R.id.txProductName);
+        this.txProductStock = this.view.findViewById(R.id.txProductStock);
+        this.product = new Product();
+        this.btnSubmitNewProduct = this.view.findViewById(R.id.btnSubmitNewProduct);
+        this.btnSubmitNewProduct.setOnClickListener(new AdapterView.OnClickListener() {
             @Override
             public void onClick(View v) {
+                submitProduct();
 
             }
         });
-        getProducts();
-        ArrayAdapter arrayAdapter = new ArrayAdapter(
-                getContext(), android.R.layout.simple_expandable_list_item_1, detailList);
-        this.listViewProducts.setAdapter(arrayAdapter);
-        this.listViewProducts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-            /*  TODO abrir editar productos :D
-                String info ="Stock " + productArrayList.get(position).getStock();
-                Product product = new Product();
-                Intent intent = new Intent(, Activity_edit_product.class);
-                intent.putExtra("product_id", productList.get(position).getId());
-                intent.putExtra("product_name", productList.get(position).getName());
-                intent.putExtra("product_stock", productList.get(position).getStock());
-                startActivity(intent);*/
-            }
-        });
-
         return this.view;
     }
+
+
+    private void submitProduct()
+    {
+        this.product.setName(this.txProductName.getText().toString());
+        this.product.setStock((Integer.parseInt(this.txProductStock.getText().toString())));
+        this.addNewProduct(product);
+
+    }
+
+    private void addNewProduct(Product product) {
+            if(TextUtils.isEmpty(this.product.getName())){
+
+            }
+            SqlConecttion conn = new SqlConecttion(
+                    getContext(), "bd_gestor_pedidos", null,1);
+            SQLiteDatabase db = conn.getWritableDatabase();
+            try{
+
+                ContentValues values = new ContentValues();
+                values.put("name", product.getName());
+                values.put("stock", product.getStock());
+                Long id = db.insert("product", "id", values);
+                Toast.makeText(getContext(), id.toString(), Toast.LENGTH_SHORT).show();
+                db.close();
+                intent = new Intent(getActivity(), MenuActivity.class);
+                startActivity(intent);
+
+            }catch (SQLiteException exc){
+                Toast.makeText(getContext(), "500", Toast.LENGTH_SHORT).show();
+                db.close();
+            }
+        }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -121,32 +150,6 @@ public class ProductFragment extends Fragment {
         mListener = null;
     }
 
-    private void getProducts(){
-        conn = new SqlConecttion(getContext(), "bd_gestor_pedidos", null,1);
-        SQLiteDatabase db = conn.getReadableDatabase();
-        Product product;
-        this.productArrayList = new ArrayList<Product>();
-        Cursor cursor = db.rawQuery("SELECT * FROM product", null);
-        while(cursor.moveToNext()){
-            product = new Product();
-            product.setId(cursor.getInt(0));
-            product.setName(cursor.getString(1));
-            product.setStock(cursor.getInt(2));
-
-            this.productArrayList.add(product);
-        }
-        setDataToList();
-    }
-
-    private void setDataToList()
-    {
-        this.detailList =  new ArrayList<String>();
-        for(int i=0; i < this.productArrayList.size(); i++){
-            this.detailList.add(
-                    this.productArrayList.get(i).getId().toString() +
-                            " :" + this.productArrayList.get(i).getName());
-        }
-    }
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
