@@ -116,8 +116,11 @@ public class AddProductFragment extends Fragment {
                 Long id = db.insert("product", "id", values);
                 Toast.makeText(getContext(), id.toString(), Toast.LENGTH_SHORT).show();
                 db.close();
-                intent = new Intent(getActivity(), MenuActivity.class);
-                startActivity(intent);
+                ProductFragment nextFrag = new ProductFragment();
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.containerFragmentMenu, nextFrag,"findThisFragment")
+                        .addToBackStack(null)
+                        .commit();
 
             }catch (SQLiteException exc){
                 Toast.makeText(getContext(), "500", Toast.LENGTH_SHORT).show();

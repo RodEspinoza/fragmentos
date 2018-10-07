@@ -1,6 +1,7 @@
 package com.example.rodrigoespinoza.fragmentos.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -14,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.example.rodrigoespinoza.fragmentos.MenuActivity;
 import com.example.rodrigoespinoza.fragmentos.R;
 import com.example.rodrigoespinoza.fragmentos.model.Product;
 import com.example.rodrigoespinoza.fragmentos.model.SqlConecttion;
@@ -72,9 +74,14 @@ public class ProductFragment extends Fragment {
         this.btnOpenAddProduct.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                AddProductFragment nextFrag = new AddProductFragment();
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.containerFragmentMenu, nextFrag,"findThisFragment")
+                        .addToBackStack(null)
+                        .commit();
             }
         });
+        this.listViewProducts = this.view.findViewById(R.id.listProduct);
         getProducts();
         ArrayAdapter arrayAdapter = new ArrayAdapter(
                 getContext(), android.R.layout.simple_expandable_list_item_1, detailList);
@@ -82,15 +89,13 @@ public class ProductFragment extends Fragment {
         this.listViewProducts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-            /*  TODO abrir editar productos :D
                 String info ="Stock " + productArrayList.get(position).getStock();
                 Product product = new Product();
-                Intent intent = new Intent(, Activity_edit_product.class);
+                /**Intent intent = new Intent(, Activity_edit_product.class);
                 intent.putExtra("product_id", productList.get(position).getId());
                 intent.putExtra("product_name", productList.get(position).getName());
                 intent.putExtra("product_stock", productList.get(position).getStock());
-                startActivity(intent);*/
+                startActivity(intent);**/
             }
         });
 
