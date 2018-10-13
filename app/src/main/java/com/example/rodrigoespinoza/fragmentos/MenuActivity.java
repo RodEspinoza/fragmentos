@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.rodrigoespinoza.fragmentos.fragments.AddProductFragment;
+import com.example.rodrigoespinoza.fragmentos.fragments.EditPersonFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.EditProductFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.ProductFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.RojoFragment;
@@ -98,6 +99,10 @@ RojoFragment.OnFragmentInteractionListener{
             // Handle the camera action
         } else if (id == R.id.nav_add_products) {
             ourFragment = new AddProductFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.containerFragmentMenu, ourFragment).commit();
+
+        } else if (id == R.id.nav_edit_person) {
+            ourFragment = new EditPersonFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.containerFragmentMenu, ourFragment).commit();
 
         } else if (id == R.id.nav_slideshow) {
