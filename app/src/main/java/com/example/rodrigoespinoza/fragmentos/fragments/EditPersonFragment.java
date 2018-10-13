@@ -1,14 +1,26 @@
 package com.example.rodrigoespinoza.fragmentos.fragments;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
 
 import com.example.rodrigoespinoza.fragmentos.R;
+import com.example.rodrigoespinoza.fragmentos.Utils;
+import com.example.rodrigoespinoza.fragmentos.model.Person;
+import com.example.rodrigoespinoza.fragmentos.model.SqlConecttion;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,14 +31,12 @@ import com.example.rodrigoespinoza.fragmentos.R;
  * create an instance of this fragment.
  */
 public class EditPersonFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    SqlConecttion conn;
+    Button btnFragEditPersonEdit;
+    ListView listViewLocations;
+    ArrayList<Location> locationArrayList;
+    View view;
 
     private OnFragmentInteractionListener mListener;
 
@@ -46,8 +56,6 @@ public class EditPersonFragment extends Fragment {
     public static EditPersonFragment newInstance(String param1, String param2) {
         EditPersonFragment fragment = new EditPersonFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -55,17 +63,29 @@ public class EditPersonFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_edit_person, container, false);
+        this.view = inflater.inflate(R.layout.fragment_edit_person, container, false);
+
+        this.btnFragEditPersonEdit = this.view.findViewById(R.id.btnFragEditPersonEdit);
+
+        this.listViewLocations = this.view.findViewById(R.id.spFragEditPersonLocalidad);
+        getLocalidades();
+        return this.view;
+    }
+
+    private void getLocalidades() {
+        ArrayAdapter arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_expandable_list_item_1, Utils.getLocations());
+        this.listViewLocations.setAdapter(arrayAdapter);
+        this.listViewLocations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event
