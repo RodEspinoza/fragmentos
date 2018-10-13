@@ -13,7 +13,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.rodrigoespinoza.fragmentos.R;
 import com.example.rodrigoespinoza.fragmentos.Utils;
@@ -33,10 +38,17 @@ import java.util.ArrayList;
 public class EditPersonFragment extends Fragment {
 
     SqlConecttion conn;
+
+    EditText txtFragEditPersonName, txtFragEditPersonLastName;
+    RadioGroup rgFragEditPerson;
+    RadioButton rbFragEditPersonMasculino, rbFragEditPersonFemenino;
+    Spinner spFragEditPersonLocalidad;
     Button btnFragEditPersonEdit;
+
     ListView listViewLocations;
-    ArrayList<Location> locationArrayList;
     View view;
+
+    String selectLocation;
 
     private OnFragmentInteractionListener mListener;
 
@@ -78,12 +90,14 @@ public class EditPersonFragment extends Fragment {
     }
 
     private void getLocalidades() {
-        ArrayAdapter arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_expandable_list_item_1, Utils.getLocations());
+        ArrayAdapter arrayAdapter = new ArrayAdapter<>(getContext(),
+                android.R.layout.simple_expandable_list_item_1, Utils.getLocations());
         this.listViewLocations.setAdapter(arrayAdapter);
         this.listViewLocations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                selectLocation = listViewLocations.getOnItemSelectedListener().toString();
+                Toast.makeText(getContext(),selectLocation, Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -133,7 +133,7 @@ public class RegistroFragment extends Fragment {
 
                         if (registrarPersona(person) != 0) {
                             Toast.makeText(getContext(), "Registrado", Toast.LENGTH_SHORT).show();
-                            setRegistroFragment();
+                            setLoginFragment();
                         } else {
                             Toast.makeText(getContext(), "Ha ocurrido un problema, intentelo mas tarde", Toast.LENGTH_SHORT).show();
                         }
@@ -149,7 +149,7 @@ public class RegistroFragment extends Fragment {
         return this.view;
     }
 
-    private void setRegistroFragment() {
+    private void setLoginFragment() {
         LoginFragment nextFrag = new LoginFragment();
         getActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerFragment, nextFrag, "findThisFragment")
@@ -208,14 +208,14 @@ public class RegistroFragment extends Fragment {
             nuevaPersona.put("location", persona.getLocation());
             nuevaPersona.put("id_user", persona.getId_user());
             Long id = dataBase.insert("person", "id", nuevaPersona);
-            Toast.makeText(getContext(), id.toString(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(), id.toString(), Toast.LENGTH_SHORT).show();
             dataBase.close();
             conexion.close();
             return Integer.parseInt(id.toString());
         } catch (Exception ex) {
             dataBase.close();
             conexion.close();
-            Toast.makeText(getContext(),"No pude registrar, " + ex.getMessage().toString(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(),"No pude registrar, " + ex.getMessage().toString(), Toast.LENGTH_SHORT).show();
             return 0;
         } finally {
             dataBase.close();
@@ -239,7 +239,7 @@ public class RegistroFragment extends Fragment {
         } catch (Exception ex) {
             dataBase.close();
             conexion.close();
-            Toast.makeText(getContext(),"No pude registrar, " + ex.getMessage().toString(), Toast.LENGTH_SHORT).show();
+           // Toast.makeText(getContext(),"No pude registrar, " + ex.getMessage().toString(), Toast.LENGTH_SHORT).show();
             return 0;
         } finally {
             dataBase.close();
