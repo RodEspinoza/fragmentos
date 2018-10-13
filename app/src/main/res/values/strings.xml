@@ -29,4 +29,8 @@
     <string name="nav_add_products">Crear productos</string>
     <string name="txProductName">Nombre del producto</string>
     <string name="txProductStock">Stock product</string>
+    <string name="btnUpdateProduct">Actualizar producto</string>
+    <string name="txUpdateProductName">Nuevo nombre</string>
+    <string name="txUpdateProductStock">Editar stock</string>
+    <string name="btnDeleteProduct">Eliminar producto</string>
 </resources>

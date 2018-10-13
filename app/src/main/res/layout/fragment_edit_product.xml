@@ -1,14 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.EditProductFragment">
-
-    <!-- TODO: Update blank fragment layout -->
+    tools:context=".fragments.EditProductFragment"
+    android:orientation="vertical">
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content" />
+    <EditText
+        android:id="@+id/txFragEditProductName"
+        android:hint="@string/txUpdateProductName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+    <EditText
+        android:id="@+id/txtFragEditProductStock"
+        android:hint="@string/txUpdateProductStock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:orientation="vertical">
+        <Button
+            android:id="@+id/btnFragEditProduct"
+            android:text="@string/btnUpdateProduct"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="1"
+            />
+        <Button
+            android:id="@+id/btnFragDeleteProduct"
+            android:text="@string/btnDeleteProduct"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="1"/>
+    </LinearLayout>
 
-</FrameLayout>
+
+
+
+</LinearLayout>
