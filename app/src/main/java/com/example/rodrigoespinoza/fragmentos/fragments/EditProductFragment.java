@@ -112,6 +112,7 @@ public class EditProductFragment extends Fragment {
             values.put("stock", product.getStock());
             values.put("name", product.getName());
             db.update("product", values,"id=?", params);
+            setProductFragment();
         }
         catch (Exception exp){
             db.close();
@@ -129,7 +130,7 @@ public class EditProductFragment extends Fragment {
             db.delete("product", "id=?", params);
             db.close();
             conn.close();
-            // Back to product list
+            setProductFragment();
         }catch (Exception exp){
             db.close();
             conn.close();
