@@ -138,6 +138,14 @@ public class EditProductFragment extends Fragment {
 
     }
 
+    private void setProductFragment(){
+        ProductFragment nextFrag = new ProductFragment();
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerFragmentMenu, nextFrag, "findThisFragment")
+                .addToBackStack(null)
+                .commit();
+    }
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
