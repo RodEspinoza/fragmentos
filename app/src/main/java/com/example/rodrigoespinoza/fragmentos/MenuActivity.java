@@ -16,11 +16,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.rodrigoespinoza.fragmentos.fragments.AddProductFragment;
+import com.example.rodrigoespinoza.fragmentos.fragments.EditProductFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.ProductFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.RojoFragment;
 
 public class MenuActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, AddProductFragment.OnFragmentInteractionListener,
+        implements NavigationView.OnNavigationItemSelectedListener,
+        EditProductFragment.OnFragmentInteractionListener,
+        AddProductFragment.OnFragmentInteractionListener,
         ProductFragment.OnFragmentInteractionListener,
 RojoFragment.OnFragmentInteractionListener{
 
