@@ -1,17 +1,22 @@
 package com.example.rodrigoespinoza.fragmentos.fragments;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.rodrigoespinoza.fragmentos.R;
 import com.example.rodrigoespinoza.fragmentos.model.Product;
+import com.example.rodrigoespinoza.fragmentos.model.SqlConecttion;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,6 +29,7 @@ import com.example.rodrigoespinoza.fragmentos.model.Product;
 public class EditProductFragment extends Fragment {
     Button btnUpdateProduct, btnDeleteProduct;
     EditText txtFragEditProductStock, txFragEditProductName;
+    SqlConecttion sqlConecttion;
     Product product;
     View view;
 
@@ -65,8 +71,71 @@ public class EditProductFragment extends Fragment {
         this.btnDeleteProduct = this.view.findViewById(R.id.btnFragDeleteProduct);
         this.txFragEditProductName = this.view.findViewById(R.id.txFragEditProductName);
         this.txtFragEditProductStock = this.view.findViewById(R.id.txtFragEditProductStock);
-        //this.btnDeleteProduct.setOnClickListener();
+        Bundle productBundle = this.getArguments();
+        if (productBundle != null)
+        {
+            this.product = new Product(
+                    Integer.parseInt(productBundle.get("product_id").toString()),
+                    productBundle.get("product_name").toString(),
+                    Integer.parseInt(productBundle.get("product_stock").toString())
+            );
+            this.txFragEditProductName.setText(this.product.getName());
+            this.txtFragEditProductStock.setText(this.product.getStock());
+        }
+        this.btnDeleteProduct.setOnClickListener(new AdapterView.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                deleteProduct(product.getId());
+            }
+        });
+        this.btnUpdateProduct.setOnClickListener(new AdapterView.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                product.setStock(Integer.parseInt(txtFragEditProductStock.getText().toString()));
+                product.setName(txFragEditProductName.getText().toString());
+                updateProduct(product);
+
+            }
+        });
+
         return this.view;
+    }
+
+    private void updateProduct(Product product) {
+        SqlConecttion conn = new SqlConecttion(
+                getContext(), "bd_gestor_pedidos", null, 1);
+        SQLiteDatabase db = conn.getWritableDatabase();
+        try{
+
+            String params[] = {product.getId().toString()};
+            ContentValues values = new ContentValues();
+            values.put("stock", product.getStock());
+            values.put("name", product.getName());
+            db.update("product", values,"id=?", params);
+        }
+        catch (Exception exp){
+            db.close();
+            conn.close();
+            Toast.makeText(getContext(),"Wrong update.",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void deleteProduct(Integer id) {
+        SqlConecttion conn = new SqlConecttion(
+                getContext(), "bd_gestor_pedidos", null, 1);
+        SQLiteDatabase db = conn.getWritableDatabase();
+        String params[] = {id.toString()};
+        try{
+            db.delete("product", "id=?", params);
+            db.close();
+            conn.close();
+            // Back to product list
+        }catch (Exception exp){
+            db.close();
+            conn.close();
+            Toast.makeText(getContext(),"Wrong update.",Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
