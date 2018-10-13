@@ -80,7 +80,7 @@ public class EditProductFragment extends Fragment {
                     Integer.parseInt(productBundle.get("product_stock").toString())
             );
             this.txFragEditProductName.setText(this.product.getName());
-            this.txtFragEditProductStock.setText(this.product.getStock());
+            this.txtFragEditProductStock.setText(this.product.getStock().toString());
         }
         this.btnDeleteProduct.setOnClickListener(new AdapterView.OnClickListener(){
             @Override

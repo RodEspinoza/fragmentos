@@ -134,6 +134,7 @@ public class ProductFragment extends Fragment {
         SQLiteDatabase db = conn.getReadableDatabase();
         Product product;
         Cursor cursor = db.rawQuery("SELECT * FROM product", null);
+        this.productArrayList = new ArrayList<Product>();
         while(cursor.moveToNext()){
             product = new Product();
             product.setId(cursor.getInt(0));
@@ -143,6 +144,8 @@ public class ProductFragment extends Fragment {
             this.productArrayList.add(product);
         }
         setDataToList();
+        db.close();
+        conn.close();
     }
 
     private void setDataToList()
