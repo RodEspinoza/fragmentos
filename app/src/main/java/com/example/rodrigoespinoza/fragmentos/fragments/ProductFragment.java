@@ -133,7 +133,6 @@ public class ProductFragment extends Fragment {
         conn = new SqlConecttion(getContext(), "bd_gestor_pedidos", null,1);
         SQLiteDatabase db = conn.getReadableDatabase();
         Product product;
-        this.productArrayList = new ArrayList<Product>();
         Cursor cursor = db.rawQuery("SELECT * FROM product", null);
         while(cursor.moveToNext()){
             product = new Product();
