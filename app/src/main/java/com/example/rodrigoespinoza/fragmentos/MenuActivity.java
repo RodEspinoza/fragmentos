@@ -1,5 +1,6 @@
 package com.example.rodrigoespinoza.fragmentos;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -93,22 +94,29 @@ public class MenuActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         Fragment ourFragment = null;
-        Bundle bundleMenu = getIntent().getExtras();
+        Intent intentLogin = getIntent();
+        Bundle bundleMenu = intentLogin.getExtras();
+        Integer idUser = null;
+
         Bundle bundle = new Bundle();
-        Integer idUser = Integer.parseInt(bundleMenu.get("id").toString());
+
+        if (bundleMenu != null) {
+            idUser = Integer.parseInt(bundleMenu.get("id").toString());
+        }
 
         int id = item.getItemId();
 
         if (id == R.id.nav_products) {
             ourFragment = new ProductFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.containerFragmentMenu, ourFragment).commit();
-        } else if (id == R.id.nav_order) {
+        }/* else if (id == R.id.nav_order) {
             ourFragment = new ProductOrders();
             getSupportFragmentManager().beginTransaction().replace(R.id.containerFragmentMenu, ourFragment).commit();
 
-        } else if (id == R.id.nav_edit_person) {
+        }*/ else if (id == R.id.nav_edit_person) {
             ourFragment = new EditPersonFragment();
             bundle.putInt("idUser", idUser);
+            ourFragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction().replace(R.id.containerFragmentMenu, ourFragment).commit();
 
         } else if (id == R.id.nav_slideshow) {

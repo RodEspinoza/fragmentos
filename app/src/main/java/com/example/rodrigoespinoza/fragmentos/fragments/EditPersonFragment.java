@@ -45,7 +45,7 @@ public class EditPersonFragment extends Fragment {
     Spinner spFragEditPersonLocalidad;
     Button btnFragEditPersonEdit;
 
-    Integer idPerson;
+    Integer idUser;
     String localidad;
 
     private OnFragmentInteractionListener mListener;
@@ -87,8 +87,12 @@ public class EditPersonFragment extends Fragment {
         this.rbFragEditPersonFemenino = (RadioButton) this.view.findViewById(R.id.rbFragEditPersonFemenino);
         this.spFragEditPersonLocalidad = (Spinner) this.view.findViewById(R.id.spFragEditPersonLocalidad);
 
+        Bundle menuBundle = this.getArguments();
+        if (menuBundle != null) {
+            idUser = Integer.parseInt(menuBundle.get("idUser").toString());
+        }
         //obtenemos los valores guardados
-        getCampos(idPerson);
+        getCampos(idUser);
 
         ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), R.layout.support_simple_spinner_dropdown_item,
                 Utils.getLocations());
