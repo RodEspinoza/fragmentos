@@ -133,9 +133,7 @@ public class RegistroFragment extends Fragment {
 
                         if (registrarPersona(person) != 0) {
                             Toast.makeText(getContext(), "Registrado", Toast.LENGTH_SHORT).show();
-                            LoginFragment nextFrag = new LoginFragment();
-                            getActivity().getSupportFragmentManager().beginTransaction().replace(
-                                    R.id.containerFragment, nextFrag, "findThisFragment").addToBackStack(null).commit();
+                            setLoginFragment();
                         } else {
                             Toast.makeText(getContext(), "Ha ocurrido un problema, intentelo mas tarde", Toast.LENGTH_SHORT).show();
                         }
@@ -149,6 +147,14 @@ public class RegistroFragment extends Fragment {
         });
 
         return this.view;
+    }
+
+    private void setLoginFragment() {
+        LoginFragment nextFrag = new LoginFragment();
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerFragment, nextFrag, "findThisFragment")
+                .addToBackStack(null)
+                .commit();
     }
 
     // TODO: Rename method, update argument and hook method into UI event

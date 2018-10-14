@@ -80,7 +80,7 @@ public class EditProductFragment extends Fragment {
                     Integer.parseInt(productBundle.get("product_stock").toString())
             );
             this.txFragEditProductName.setText(this.product.getName());
-            this.txtFragEditProductStock.setText(this.product.getStock());
+            this.txtFragEditProductStock.setText(this.product.getStock().toString());
         }
         this.btnDeleteProduct.setOnClickListener(new AdapterView.OnClickListener(){
             @Override
@@ -112,6 +112,7 @@ public class EditProductFragment extends Fragment {
             values.put("stock", product.getStock());
             values.put("name", product.getName());
             db.update("product", values,"id=?", params);
+            setProductFragment();
         }
         catch (Exception exp){
             db.close();
@@ -129,13 +130,21 @@ public class EditProductFragment extends Fragment {
             db.delete("product", "id=?", params);
             db.close();
             conn.close();
-            // Back to product list
+            setProductFragment();
         }catch (Exception exp){
             db.close();
             conn.close();
             Toast.makeText(getContext(),"Wrong update.",Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    private void setProductFragment(){
+        ProductFragment nextFrag = new ProductFragment();
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerFragmentMenu, nextFrag, "findThisFragment")
+                .addToBackStack(null)
+                .commit();
     }
 
     // TODO: Rename method, update argument and hook method into UI event

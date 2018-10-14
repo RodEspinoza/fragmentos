@@ -69,7 +69,8 @@ public class ProductFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        this.view = inflater.inflate(R.layout.fragment_product, container, false);
+        this.view = inflater.inflate(
+                R.layout.fragment_product, container, false);
         this.btnOpenAddProduct = this.view.findViewById(R.id.btnOpenProduct);
         this.btnOpenAddProduct.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,6 +135,7 @@ public class ProductFragment extends Fragment {
         SQLiteDatabase db = conn.getReadableDatabase();
         Product product;
         Cursor cursor = db.rawQuery("SELECT * FROM product", null);
+        this.productArrayList = new ArrayList<Product>();
         while(cursor.moveToNext()){
             product = new Product();
             product.setId(cursor.getInt(0));
@@ -143,6 +145,8 @@ public class ProductFragment extends Fragment {
             this.productArrayList.add(product);
         }
         setDataToList();
+        db.close();
+        conn.close();
     }
 
     private void setDataToList()

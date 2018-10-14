@@ -33,5 +33,6 @@
     <string name="txUpdateProductName">Nuevo nombre</string>
     <string name="txUpdateProductStock">Editar stock</string>
     <string name="btnDeleteProduct">Eliminar producto</string>
-    <string name="nav_edit_person" >Editar Perfil</string>
+    <string name="nav_edit_person">Editar Perfil</string>
+    <string name="nav_order_fragment">Ordenes</string>
 </resources>

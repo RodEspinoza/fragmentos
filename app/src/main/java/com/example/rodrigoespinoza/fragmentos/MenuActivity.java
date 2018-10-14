@@ -19,14 +19,17 @@ import com.example.rodrigoespinoza.fragmentos.fragments.AddProductFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.EditPersonFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.EditProductFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.ProductFragment;
-import com.example.rodrigoespinoza.fragmentos.fragments.RojoFragment;
+import com.example.rodrigoespinoza.fragmentos.fragments.ProductOrders;
+
 
 public class MenuActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         EditProductFragment.OnFragmentInteractionListener,
         AddProductFragment.OnFragmentInteractionListener,
         ProductFragment.OnFragmentInteractionListener,
-RojoFragment.OnFragmentInteractionListener{
+        ProductOrders.OnFragmentInteractionListener,
+        EditPersonFragment.OnFragmentInteractionListener
+        {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,9 +102,8 @@ RojoFragment.OnFragmentInteractionListener{
         if (id == R.id.nav_products) {
             ourFragment = new ProductFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.containerFragmentMenu, ourFragment).commit();
-            // Handle the camera action
-        } else if (id == R.id.nav_add_products) {
-            ourFragment = new AddProductFragment();
+        } else if (id == R.id.nav_order) {
+            ourFragment = new ProductOrders();
             getSupportFragmentManager().beginTransaction().replace(R.id.containerFragmentMenu, ourFragment).commit();
 
         } else if (id == R.id.nav_edit_person) {
