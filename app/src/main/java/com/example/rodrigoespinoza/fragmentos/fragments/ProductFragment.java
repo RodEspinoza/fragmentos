@@ -69,7 +69,8 @@ public class ProductFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        this.view = inflater.inflate(R.layout.fragment_product, container, false);
+        this.view = inflater.inflate(
+                R.layout.fragment_product, container, false);
         this.btnOpenAddProduct = this.view.findViewById(R.id.btnOpenProduct);
         this.btnOpenAddProduct.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -1,16 +1,30 @@
  package com.example.rodrigoespinoza.fragmentos.fragments;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ListView;
 
 import com.example.rodrigoespinoza.fragmentos.R;
+import com.example.rodrigoespinoza.fragmentos.model.Order;
+import com.example.rodrigoespinoza.fragmentos.model.SqlConecttion;
 
-/**
+import java.lang.reflect.Array;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
+ /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
  * {@link ProductOrders.OnFragmentInteractionListener} interface
@@ -19,9 +33,14 @@ import com.example.rodrigoespinoza.fragmentos.R;
  * create an instance of this fragment.
  */
 public class ProductOrders extends Fragment {
-
     private OnFragmentInteractionListener mListener;
-
+    SqlConecttion conn;
+    Button btnOpenAddOrder;
+    ArrayList<Order> ProductOrderList;
+    ArrayList<String> detailList;
+    ListView listViewProductOrder;
+    View view;
+    // añadir fragmento agregar nuevar orden
     public ProductOrders() {
         // Required empty public constructor
     }
@@ -36,7 +55,6 @@ public class ProductOrders extends Fragment {
     public static ProductOrders newInstance(String param1, String param2) {
         ProductOrders fragment = new ProductOrders();
         Bundle args = new Bundle();
-
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,11 +70,50 @@ public class ProductOrders extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_product_orders, container, false);
+        this.view = inflater.inflate(
+                R.layout.fragment_product_orders, container, false);
+        this.listViewProductOrder = this.view.findViewById(R.id.listProductOrder);
+        getProductOrder();
+        return this.view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
+     private void getProductOrder() {
+        conn = new SqlConecttion(getContext(), "bd_gestor_pedidos", null, 1);
+         SQLiteDatabase db = conn.getReadableDatabase();
+         Order order;
+         Cursor cursor = db.rawQuery("SELECT * FROM pedido", null);
+         this.ProductOrderList = new ArrayList<>();
+         while (cursor.moveToNext()){
+             order = new Order();
+             order.setId_order(cursor.getInt(0));
+             String dateTime = cursor.getString(1);
+             DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+             Date date = null;
+             try {
+                 date = iso8601Format.parse(dateTime);
+             } catch (ParseException e) {
+                 Log.e(String.valueOf(Log.WARN), "Parsing ISO8601 datetime failed", e);
+             }
+             order.setFecha(date);
+             this.ProductOrderList.add(order);
+             setDataToList();
+             db.close();
+             conn.close();
+
+         }
+     }
+
+     private void setDataToList() {
+        this.detailList = new ArrayList<>();
+        for(int i=0; i < this.ProductOrderList.size(); i++){
+            this.detailList.add(
+                    "Ordern : "
+                    + this.ProductOrderList.get(i).getId_order().toString()
+                            + " Fecha:" + this.ProductOrderList.get(i).getFecha());
+        }
+     }
+
+     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
