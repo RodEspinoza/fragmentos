@@ -35,4 +35,5 @@
     <string name="btnDeleteProduct">Eliminar producto</string>
     <string name="nav_edit_person">Editar Perfil</string>
     <string name="nav_order_fragment">Ordenes</string>
+    <string name="btnEditarPerson">Editar Perfil</string>
 </resources>

@@ -94,8 +94,8 @@ public class MenuActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         Fragment ourFragment = null;
-        Intent intentLogin = getIntent();
-        Bundle bundleMenu = intentLogin.getExtras();
+        Intent intent = getIntent();
+        Bundle bundleMenu = intent.getExtras();
         Integer idUser = null;
 
         Bundle bundle = new Bundle();

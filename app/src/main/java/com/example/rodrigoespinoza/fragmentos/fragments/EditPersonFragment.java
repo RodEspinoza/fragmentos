@@ -2,6 +2,7 @@ package com.example.rodrigoespinoza.fragmentos.fragments;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
@@ -21,6 +22,7 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.rodrigoespinoza.fragmentos.MenuActivity;
 import com.example.rodrigoespinoza.fragmentos.R;
 import com.example.rodrigoespinoza.fragmentos.Utils;
 import com.example.rodrigoespinoza.fragmentos.model.Person;
@@ -48,6 +50,7 @@ public class EditPersonFragment extends Fragment {
 
     Integer idUser;
     String localidad, sexo;
+    Intent intent;
 
     private OnFragmentInteractionListener mListener;
 
@@ -87,7 +90,7 @@ public class EditPersonFragment extends Fragment {
         this.rgFragEditPerson.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if(checkedId == R.id.rbFragRegistroHombre){
+                if(checkedId == R.id.rbFragEditPersonMasculino){
                     sexo = "Masculino";
                 } else{
                     sexo = "Femenino";
@@ -125,14 +128,21 @@ public class EditPersonFragment extends Fragment {
         this.btnFragEditPersonEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                actualizarPerson(txtFragEditPersonName.getText().toString(), txtFragEditPersonLastName.getText().toString(),
-                        sexo, localidad, idUser);
+                if (actualizarPerson(txtFragEditPersonName.getText().toString(), txtFragEditPersonLastName.getText().toString(),
+                        sexo, localidad, idUser)){
+                    Toast.makeText(getContext(), "Actualizado", Toast.LENGTH_SHORT).show();
+                    intent = new Intent(getActivity(), MenuActivity.class);
+                    intent.putExtra("id",idUser);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(getContext(),"Error a actualizar", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         return this.view;
     }
 
-    private void actualizarPerson(String name, String last_name, String sexo, String localidad, Integer idUser) {
+    private boolean actualizarPerson(String name, String last_name, String sexo, String localidad, Integer idUser) {
         conn = new SqlConecttion(getContext(), "bd_gestor_pedidos", null, 1);
         SQLiteDatabase db = conn.getWritableDatabase();
 
@@ -146,13 +156,15 @@ public class EditPersonFragment extends Fragment {
 
             db.update("person", values, "id = ?", buscar);
 
-            Toast.makeText(getContext(), "Actualizado", Toast.LENGTH_SHORT).show();
+
             conn.close();
             db.close();
+            return true;
         } catch (Exception ex){
-            Toast.makeText(getContext(),"Error a actualizar", Toast.LENGTH_SHORT).show();
+
             conn.close();
             db.close();
+            return false;
         }
     }
 
