@@ -36,7 +36,7 @@ import java.util.ArrayList;
  * create an instance of this fragment.
  */
 public class EditPersonFragment extends Fragment {
-
+    View view;
     SqlConecttion conn;
 
     EditText txtFragEditPersonName, txtFragEditPersonLastName;
@@ -45,10 +45,8 @@ public class EditPersonFragment extends Fragment {
     Spinner spFragEditPersonLocalidad;
     Button btnFragEditPersonEdit;
 
-    ListView listViewLocations;
-    View view;
-
-    String selectLocation;
+    Integer idPerson;
+    String localidad;
 
     private OnFragmentInteractionListener mListener;
 
@@ -82,24 +80,53 @@ public class EditPersonFragment extends Fragment {
         // Inflate the layout for this fragment
         this.view = inflater.inflate(R.layout.fragment_edit_person, container, false);
 
-        this.btnFragEditPersonEdit = this.view.findViewById(R.id.btnFragEditPersonEdit);
+        this.txtFragEditPersonName = (EditText) this.view.findViewById(R.id.txtFragEditPersonName);
+        this.txtFragEditPersonLastName = (EditText) this.view.findViewById(R.id.txtFragEditPersonLastName);
+        this.rgFragEditPerson = (RadioGroup) this.view.findViewById(R.id.rgFragEditPerson);
+        this.rbFragEditPersonMasculino = (RadioButton) this.view.findViewById(R.id.rbFragEditPersonMasculino);
+        this.rbFragEditPersonFemenino = (RadioButton) this.view.findViewById(R.id.rbFragEditPersonFemenino);
+        this.spFragEditPersonLocalidad = (Spinner) this.view.findViewById(R.id.spFragEditPersonLocalidad);
 
-        this.listViewLocations = this.view.findViewById(R.id.spFragEditPersonLocalidad);
-        getLocalidades();
+        //obtenemos los valores guardados
+        getCampos(idPerson);
+
+        ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), R.layout.support_simple_spinner_dropdown_item,
+                Utils.getLocations());
+        arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        this.spFragEditPersonLocalidad.setAdapter(arrayAdapter);
+        this.spFragEditPersonLocalidad.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                localidad = spFragEditPersonLocalidad.getSelectedItem().toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        this.btnFragEditPersonEdit = (Button) this.view.findViewById(R.id.btnFragEditPersonEdit);
         return this.view;
     }
 
-    private void getLocalidades() {
-        ArrayAdapter arrayAdapter = new ArrayAdapter<>(getContext(),
-                android.R.layout.simple_expandable_list_item_1, Utils.getLocations());
-        this.listViewLocations.setAdapter(arrayAdapter);
-        this.listViewLocations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectLocation = listViewLocations.getOnItemSelectedListener().toString();
-                Toast.makeText(getContext(),selectLocation, Toast.LENGTH_SHORT).show();
+    private void getCampos(Integer idPerson) {
+        conn = new SqlConecttion(getContext(), "bd_gestor_pedidos", null, 1);
+        SQLiteDatabase db = conn.getReadableDatabase();
+
+        String[] buscar = {idPerson.toString()};
+        //String[] obtener = {"name", "last_name", "sexo"};
+
+        Cursor cursor = db.rawQuery("SELECT * FROM person WHERE id = ?", buscar);
+        while (cursor.moveToNext()){
+            this.txtFragEditPersonName.setText(cursor.getString(2));
+            this.txtFragEditPersonLastName.setText(cursor.getString(3));
+            if (cursor.getString(4).equals("Masculino")){
+                rbFragEditPersonMasculino.setChecked(true);
+            } else {
+                rbFragEditPersonFemenino.setChecked(true);
             }
-        });
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event

@@ -90,6 +90,9 @@ RojoFragment.OnFragmentInteractionListener{
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         Fragment ourFragment = null;
+        Bundle bundleMenu = getIntent().getExtras();
+        Bundle bundle = new Bundle();
+        Integer idUser = Integer.parseInt(bundleMenu.get("id").toString());
 
         int id = item.getItemId();
 
@@ -103,6 +106,7 @@ RojoFragment.OnFragmentInteractionListener{
 
         } else if (id == R.id.nav_edit_person) {
             ourFragment = new EditPersonFragment();
+            bundle.putInt("idUser", idUser);
             getSupportFragmentManager().beginTransaction().replace(R.id.containerFragmentMenu, ourFragment).commit();
 
         } else if (id == R.id.nav_slideshow) {
