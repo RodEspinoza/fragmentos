@@ -73,6 +73,13 @@ public class ProductOrders extends Fragment {
         this.view = inflater.inflate(
                 R.layout.fragment_product_orders, container, false);
         this.listViewProductOrder = this.view.findViewById(R.id.listProductOrder);
+        this.btnOpenAddOrder = this.view.findViewById(R.id.btnOpenAddNewOrder);
+        this.btnOpenAddOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         getProductOrder();
         return this.view;
     }
