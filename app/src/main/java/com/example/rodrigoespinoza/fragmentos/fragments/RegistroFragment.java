@@ -155,7 +155,8 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
                         person.setLast_name(txtFragRegistroApellido.getText().toString());
                         person.setSexo(sexoSeleccionado);
                         person.setLocation(localidad);
-                        person.setId_user(registrarUsuario(user));
+                        registrarUsuario(user);
+                        //person.setId_user(registrarUsuario(user));
 
                         /*if (registrarPersona(person) != 0) {
                             Toast.makeText(getContext(), "Registrado", Toast.LENGTH_SHORT).show();
@@ -259,8 +260,7 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
             dataBase.close();
         }
     }
-    private Integer registrarUsuario(User usuario) {
-    final Integer id ;
+    private void registrarUsuario(User usuario) {
     try {
         this.progressDialog = new ProgressDialog(getContext());
         this.progressDialog.setMessage("Cargando... ");
@@ -279,9 +279,7 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
                     JSONObject jo = null;
                     jo = json.getJSONObject(0);
 
-
-
-                    Toast.makeText(getContext(), jo.toString(), Toast.LENGTH_LONG).show();
+                    Integer id =  jo.optInt("id");
 
                 } catch (Exception ex) {
                     Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_SHORT).show();
@@ -307,10 +305,10 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
         };
         //Toast.makeText(getContext(), stringRequest.toString(), Toast.LENGTH_LONG).show();
         requestQueue.add(stringRequest);
-        return  1;
+
     } catch (Exception ex) {
         Toast.makeText(getContext(), "Error" + ex.getMessage(), Toast.LENGTH_SHORT).show();
-        return 0;
+
     }
         /*SqlConecttion conexion = new SqlConecttion(getContext(), "bd_gestor_pedidos", null, 1);
         SQLiteDatabase dataBase = conexion.getWritableDatabase();
@@ -334,8 +332,6 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
         } finally {
             dataBase.close();
         }*/
-
-
     }
 
     private boolean validaPassword(String password, String rePassword) {
