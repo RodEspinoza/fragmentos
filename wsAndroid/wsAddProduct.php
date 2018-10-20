@@ -1,30 +1,39 @@
 <?php
-$hostname_localhost = "localhost:3306";
-$database_localhost = "bd_gestor_pedidos";
-$username_locahost = "root";
-$password_localhost = "";
+$hostname_localhost = "localhost";
+$database_localhost = "id3415554_bd_gestor_pedidos";
+$username_locahost = "id3415554_root";
+$password_localhost = "siempretropical";
+
+
 $json = array();
+$stock = 21;
+$name = "nombre";
+
+
+
 if(isset($_POST["stock"])&&isset($_POST["name"])){
+
+
  $stock = $_POST["stock"];
  $name = $_POST["name"];
  $conexion = mysqli_connect($hostname_localhost,$username_locahost,$password_localhost,$database_localhost);
- $insert = "INSERT INTO product(stock, name) VALUES('{$stock}', '{$name}')";
- $resultado_insert = mysqli_query($conexion, $insert);
- $last_id = mysql_insert_id($conexion);
- if($resultado_insert){
-   $consulta = "SELECT * FROM product where id={$last_id}";
-   $resultado = mysqli_query($conexion, $consulta);
-   if($registro = mysqli_fetch_array($resultado)){
-     $json['product'][] = $registro;
-   }
-   mysqli_close($conexion);
-   echo json_encode($json);
- }
- else{
-$result["id"]=0;
-$json["product"][] = $result;
-echo json_encode($json);
-   }
+ if(mysqli_connect_errno){
+     echo "".mysqli_connect_error();
+    }
+    $insert = "INSERT INTO producto(name, stock) VALUES('{$name}', {$stock})";
+
+
+ 	 if(!mysqli_query($conexion,$insert)){
+ 	     echo "".mysqli_error($conexion);
+ 	 }else{
+ 	     $last_id = mysql_insert_id($conexion);
+ 	     $consulta = "SELECT * FROM product where id {$last_id}";
+
+ 	 }
+
+
 }
+
+
 
  ?>
