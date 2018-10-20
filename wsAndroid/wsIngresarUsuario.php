@@ -7,13 +7,17 @@ $password_localhost = "siempretropical";
 
 $json=array();
 
-if(isset($_POST["email"]) && isset($_POST["pass"]) && isset($_POST["fecha"])) {
+if(isset($_POST["email"])&&isset($_POST["pass"])&&isset($_POST["fecha"])) {
 
 	$email = $_POST["email"];
 	$pass = $_POST["pass"];
 	$fecha = $_POST["fecha"];
 
 	$conexion = mysqli_connect($hostname_localhost, $username_locahost, $password_localhost, $database_localhost);
+
+	if(mysqli_connect_errno){
+		echo "".mysqli_connect_error();
+	}
 
 	$insert = "INSERT INTO usuario(email,pass,fecha) VALUES('{$email}','{$pass}','{$fecha}')";
 
