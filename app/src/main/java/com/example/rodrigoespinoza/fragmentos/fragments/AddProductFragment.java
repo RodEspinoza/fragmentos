@@ -146,7 +146,7 @@ public class AddProductFragment extends Fragment {
             return params;
             }
         };
-
+        requestQueue.add(stringRequest);
         /**
             if(TextUtils.isEmpty(this.product.getName())){
 
