@@ -121,18 +121,19 @@ public class AddProductFragment extends Fragment {
     private void addNewProduct(final Product product) {
         this.progressDialog = new ProgressDialog(getContext());
         this.progressDialog.setMessage("Cargando...");
-        String uri = "http://127.0.0.1:8889/wwww/wsandroid/wsAddProduct.php";
+        String uri = "https://mrmlda.000webhostapp.com/wsAndroid/wsAddProduct.php";
         stringRequest = new StringRequest(Request.Method.POST, uri, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 progressDialog.hide();
-
+                Toast.makeText(getContext(), response, Toast.LENGTH_SHORT);
 
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 progressDialog.hide();
+                Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_SHORT);
 
 
             }
@@ -142,7 +143,7 @@ public class AddProductFragment extends Fragment {
             protected Map<String, String> getParams() throws AuthFailureError {
             Map<String, String>  params = new HashMap<>();
             params.put("name", product.getName());
-            params.put("stock", product.getStock());
+            params.put("stock", String.valueOf(product.getStock()));
             return params;
             }
         };
