@@ -19,7 +19,6 @@ if(isset($_POST["email"])&&isset($_POST["pass"])&&isset($_POST["fecha"])){
         }
 	$insert = "INSERT INTO usuario(email,pass,fecha) VALUES('{$email}','{$pass}','{$fecha}')";
 	$resultado_insert = mysqli_query($conexion,$insert);
-
 	$last_id = mysqli_insert_id($conexion);
 
 	if($resultado_insert){

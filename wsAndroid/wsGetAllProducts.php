@@ -19,7 +19,7 @@ $json=array();
 	$resultado=mysqli_query($conexion,$consulta);
 
 	while($registro=mysqli_fetch_array($resultado)){
-		$json['usuario'][] = $registro;
+		$json[] = $registro;
 	}
 
 

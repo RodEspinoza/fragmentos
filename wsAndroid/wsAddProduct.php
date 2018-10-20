@@ -30,6 +30,7 @@ if(isset($_POST["stock"])&&isset($_POST["name"])){
  	     $consulta = "SELECT * FROM product where id {$last_id}";
 
  	 }
+   mysqli_close($conexion);
 
 
 }
