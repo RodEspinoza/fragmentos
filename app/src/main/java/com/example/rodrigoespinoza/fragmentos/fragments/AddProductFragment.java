@@ -127,7 +127,11 @@ public class AddProductFragment extends Fragment {
             public void onResponse(String response) {
                 progressDialog.hide();
                 Toast.makeText(getContext(), response, Toast.LENGTH_SHORT);
-
+                ProductFragment nextFrag = new ProductFragment();
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.containerFragmentMenu, nextFrag,"findThisFragment")
+                        .addToBackStack(null)
+                        .commit();
             }
         }, new Response.ErrorListener() {
             @Override
