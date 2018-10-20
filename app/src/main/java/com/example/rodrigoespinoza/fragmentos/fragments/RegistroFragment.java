@@ -260,7 +260,7 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
         }
     }
     private Integer registrarUsuario(User usuario) {
-
+    final Integer id ;
     try {
         this.progressDialog = new ProgressDialog(getContext());
         this.progressDialog.setMessage("Cargando... ");
@@ -272,10 +272,19 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
             @Override
             public void onResponse(String response) {
                 try {
+                    JSONObject jsonObject = null;
+                    jsonObject = new JSONObject(response);
+                    JSONArray json = jsonObject.optJSONArray("id_usuario");
 
+                    JSONObject jo = null;
+                    jo = json.getJSONObject(0);
+
+
+
+                    Toast.makeText(getContext(), jo.toString(), Toast.LENGTH_LONG).show();
 
                 } catch (Exception ex) {
-
+                    Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         }, new Response.ErrorListener() {
@@ -296,9 +305,9 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
                 return params;
             }
         };
-        Toast.makeText(getContext(), stringRequest.toString(), Toast.LENGTH_LONG).show();
+        //Toast.makeText(getContext(), stringRequest.toString(), Toast.LENGTH_LONG).show();
         requestQueue.add(stringRequest);
-        return 1;
+        return  1;
     } catch (Exception ex) {
         Toast.makeText(getContext(), "Error" + ex.getMessage(), Toast.LENGTH_SHORT).show();
         return 0;
