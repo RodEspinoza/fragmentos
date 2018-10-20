@@ -3,6 +3,7 @@ package com.example.rodrigoespinoza.fragmentos.fragments;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
@@ -270,8 +271,12 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
         stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                progressDialog.hide();
-                Toast.makeText(getContext(), response, Toast.LENGTH_LONG);
+                try {
+
+
+                } catch (Exception ex) {
+
+                }
             }
         }, new Response.ErrorListener() {
             @Override
@@ -291,7 +296,7 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
                 return params;
             }
         };
-        Toast.makeText(getContext(), stringRequest.toString(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), stringRequest.toString(), Toast.LENGTH_LONG).show();
         requestQueue.add(stringRequest);
         return 1;
     } catch (Exception ex) {

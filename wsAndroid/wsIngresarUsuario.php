@@ -21,18 +21,21 @@ if(mysqli_connect_errno){
 	echo "".mysqli_connect_error();
 }
 
-$insert = "INSERT INTO usuario(email,pass,fecha) VALUES('{$email}','{$pass}','{$fecha}')";
+$insert = "INSERT INTO usuario(email, pass, fecha) VALUES ('{$email}','{$pass}','{$fecha}')";
 
 if (mysqli_query($conexion,$insert)){
 	$last_id = mysqli_insert_id($conexion);
-	//echo $last_id;
-	$json['id_usuario'] = $last_id;
+	$consulta = "SELECT id FROM usuario where id = {$last_id}";
+	$resultado = mysqli_query($conexion,$consulta);
+
+	if($registro = mysqli_fetch_array($resultado)){
+		$json['id_usuario'][] = $registro;
+	}
 
 } else {
-	$json['id_usuario'] = '0';
+	$json['id_usuario'][] = '0';
 }
 
 echo json_encode($json);
 mysqli_close($conexion);
-
 ?>
