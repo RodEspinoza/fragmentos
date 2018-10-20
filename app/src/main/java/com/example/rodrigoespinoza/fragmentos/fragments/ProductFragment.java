@@ -1,5 +1,7 @@
 package com.example.rodrigoespinoza.fragmentos.fragments;
 
+import android.app.ProgressDialog;
+import android.app.VoiceInteractor;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -14,11 +16,24 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.Response.ErrorListener;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.rodrigoespinoza.fragmentos.MenuActivity;
 import com.example.rodrigoespinoza.fragmentos.R;
 import com.example.rodrigoespinoza.fragmentos.model.Product;
 import com.example.rodrigoespinoza.fragmentos.model.SqlConecttion;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -30,7 +45,7 @@ import java.util.ArrayList;
  * Use the {@link ProductFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ProductFragment extends Fragment {
+public class ProductFragment extends Fragment implements ErrorListener, Response.Listener<JSONObject> {
     SqlConecttion conn;
     Button btnOpenAddProduct;
     ArrayList<Product> productArrayList;
@@ -39,6 +54,14 @@ public class ProductFragment extends Fragment {
     View view;
     AddProductFragment ourFragment;
     private OnFragmentInteractionListener mListener;
+    //Componente de Progreso
+    ProgressDialog progressDialog;
+
+    RequestQueue request;
+    JsonObjectRequest jsonObjectRequest;
+
+    //Segunda forma
+    StringRequest stringRequest;
 
     public ProductFragment() {
         // Required empty public constructor
@@ -131,22 +154,58 @@ public class ProductFragment extends Fragment {
     }
 
     private void getProducts(){
-        conn = new SqlConecttion(getContext(), "bd_gestor_pedidos", null,1);
-        SQLiteDatabase db = conn.getReadableDatabase();
-        Product product;
-        Cursor cursor = db.rawQuery("SELECT * FROM product", null);
-        this.productArrayList = new ArrayList<Product>();
-        while(cursor.moveToNext()){
-            product = new Product();
-            product.setId(cursor.getInt(0));
-            product.setName(cursor.getString(1));
-            product.setStock(cursor.getInt(2));
+        String url ="https://androidsandbox.site/wsAndroid/wsGetAllProducts.php";
+        stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String responseStr) {
+                JSONObject response;
+                try{
+                    response = new JSONObject(responseStr);
 
-            this.productArrayList.add(product);
-        }
-        setDataToList();
-        db.close();
-        conn.close();
+                    productArrayList = new ArrayList<Product>();
+                    JSONArray jsonArray = response.getJSONArray("product");
+                    for(int i=0; i< jsonArray.length();i++){
+                        Product product = new Product();
+                        JSONObject jsonObject;
+                        jsonObject = jsonArray.getJSONObject(i);
+                        product.setName(jsonObject.optString("name"));
+                        product.setStock(jsonObject.optInt("stock"));
+                        product.setId(jsonObject.optInt("id"));
+
+                    }
+                }
+                catch (JSONException e){
+                   e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
+
+
+
+        /**
+         * OFFLINE VERSION
+         * conn = new SqlConecttion(getContext(), "bd_gestor_pedidos", null,1);
+         SQLiteDatabase db = conn.getReadableDatabase();
+         Product product;
+         Cursor cursor = db.rawQuery("SELECT * FROM product", null);
+         this.productArrayList = new ArrayList<Product>();
+         while(cursor.moveToNext()){
+             product = new Product();
+             product.setId(cursor.getInt(0));
+             product.setName(cursor.getString(1));
+             product.setStock(cursor.getInt(2));
+
+             this.productArrayList.add(product);
+         }
+         setDataToList();
+         db.close();
+         conn.close();**/
     }
 
     private void setDataToList()
@@ -158,6 +217,32 @@ public class ProductFragment extends Fragment {
                             " :" + this.productArrayList.get(i).getName());
         }
     }
+
+    @Override
+    public void onErrorResponse(VolleyError error) {
+        Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onResponse(JSONObject response) {
+        try {
+
+            Product product = new Product();
+            JSONArray json = response.optJSONArray("product");
+            JSONObject jsonObject = null;
+            jsonObject = json.getJSONObject(0);
+
+            product.setId(jsonObject.optInt("id"));
+            product.setName(jsonObject.optString("name"));
+            product.setStock(jsonObject.optInt("stock"));
+
+            progressDialog.hide();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
