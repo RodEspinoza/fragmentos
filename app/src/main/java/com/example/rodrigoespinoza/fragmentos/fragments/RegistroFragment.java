@@ -285,12 +285,13 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
                 Map<String, String>  params = new HashMap<>();
                 params.put("email", user.getEmail());
                 params.put("pass", user.getPass());
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 Date date = new Date();
                 params.put("fecha", dateFormat.format(date));
                 return params;
             }
         };
+        Toast.makeText(getContext(), stringRequest.toString(), Toast.LENGTH_SHORT).show();
         requestQueue.add(stringRequest);
         return 1;
     } catch (Exception ex) {

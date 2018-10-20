@@ -11,9 +11,9 @@ $json=array();
 
 $body = json_decode(file_get_contents("php://input"), true);
 
-$email = $body['email'];
-$pass = $body['pass'];
-$fecha = $body['fecha'];
+$email = $_POST['email'];
+$pass = $_POST['pass'];
+$fecha = $_POST['fecha'];
 
 $conexion = mysqli_connect($hostname_localhost, $username_locahost, $password_localhost, $database_localhost);
 
