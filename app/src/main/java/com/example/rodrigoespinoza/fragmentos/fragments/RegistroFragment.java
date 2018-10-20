@@ -230,9 +230,13 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
 
                 String email = txtFragRegistroEmail.getText().toString();
                 String pass = txtFragRegistroPass.getText().toString();
-                
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                Date date = new Date();
+                String fecha = dateFormat.format(date);
                 Map<String, String> parametros = new HashMap<>();
-                parametros.put("rut", rut);
+                parametros.put("email", email);
+                parametros.put("pass", pass);
+                parametros.put("fecha", fecha);
                 return parametros;
             }
         };
