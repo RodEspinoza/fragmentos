@@ -212,35 +212,7 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
 
     @Override
     public void onResponse(JSONObject response) {
-        String url = "http://10.20.64.179/wsAndroid/wsIngresarUsuario-gestorPedidos.php";
 
-        stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-
-                String email = txtFragRegistroEmail.getText().toString();
-                String pass = txtFragRegistroPass.getText().toString();
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-                Date date = new Date();
-                String fecha = dateFormat.format(date);
-                Map<String, String> parametros = new HashMap<>();
-                parametros.put("email", email);
-                parametros.put("pass", pass);
-                parametros.put("fecha", fecha);
-                return parametros;
-            }
-        };
-        request.add(stringRequest);
     }
 
     /**
@@ -284,7 +256,7 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
         }
     }
     private Integer registrarUsuario(User usuario) {
-        SqlConecttion conexion = new SqlConecttion(getContext(), "bd_gestor_pedidos", null, 1);
+        /*SqlConecttion conexion = new SqlConecttion(getContext(), "bd_gestor_pedidos", null, 1);
         SQLiteDatabase dataBase = conexion.getWritableDatabase();
         try {
             ContentValues nuevoUsuario = new ContentValues();
@@ -294,17 +266,57 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
             Date date = new Date();
             nuevoUsuario.put("fecha", dateFormat.format(date));
             Long id = dataBase.insert("user", "id",nuevoUsuario);
-            //Toast.makeText(getContext(), id.toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), id.toString(), Toast.LENGTH_SHORT).show();
             dataBase.close();
             conexion.close();
             return Integer.parseInt(id.toString());
         } catch (Exception ex) {
             dataBase.close();
             conexion.close();
-           // Toast.makeText(getContext(),"No pude registrar, " + ex.getMessage().toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(),"No pude registrar, " + ex.getMessage().toString(), Toast.LENGTH_SHORT).show();
             return 0;
         } finally {
             dataBase.close();
+        }*/
+
+        try {
+            progressDialog = new ProgressDialog(getContext());
+            progressDialog.setMessage("Cargando...");
+            progressDialog.show();
+
+            String url = "http://localhost:3306/wsIngresarUsuario-gestorPedidos.php";
+
+            stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+            }){
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+
+                    String email = txtFragRegistroEmail.getText().toString();
+                    String pass = txtFragRegistroPass.getText().toString();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                    Date date = new Date();
+                    String fecha = dateFormat.format(date);
+                    Map<String, String> parametros = new HashMap<>();
+                    parametros.put("email", email);
+                    parametros.put("pass", pass);
+                    parametros.put("fecha", fecha);
+                    return parametros;
+                }
+            };
+
+            request.add(stringRequest);
+            return 1;
+        } catch (Exception ex){
+            return 0;
         }
     }
 
