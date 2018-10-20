@@ -121,7 +121,7 @@ public class AddProductFragment extends Fragment {
     private void addNewProduct(final Product product) {
         this.progressDialog = new ProgressDialog(getContext());
         this.progressDialog.setMessage("Cargando...");
-        String uri = "https://mrmlda.000webhostapp.com/wsAndroid/wsAddProduct.php";
+        String uri = "http://androidsandbox.site/wsAndroid/wsAddProduct.php";
         stringRequest = new StringRequest(Request.Method.POST, uri, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
