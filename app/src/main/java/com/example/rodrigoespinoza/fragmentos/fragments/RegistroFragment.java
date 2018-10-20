@@ -325,6 +325,8 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
         } finally {
             dataBase.close();
         }*/
+
+
     }
 
     private boolean validaPassword(String password, String rePassword) {

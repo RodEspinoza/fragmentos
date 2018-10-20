@@ -1,10 +1,9 @@
 <?php
 
 $hostname_localhost = "localhost";
-$database_localhost = "id3415554_bd_gestor_pedidos";
-$username_locahost = "id3415554_root";
+$database_localhost = "u114296893_gesto";
+$username_locahost = "u114296893_root";
 $password_localhost = "siempretropical";
-
 $json=array();
 
 
