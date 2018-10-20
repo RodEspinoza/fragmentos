@@ -31,7 +31,7 @@ public class Product {
         this.name = name;
     }
 
-    public Integer getStock() {
+    public String getStock() {
         return stock;
     }
 
