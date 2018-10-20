@@ -1,5 +1,6 @@
 package com.example.rodrigoespinoza.fragmentos.fragments;
 
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -17,13 +18,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.rodrigoespinoza.fragmentos.MenuActivity;
 import com.example.rodrigoespinoza.fragmentos.R;
 import com.example.rodrigoespinoza.fragmentos.model.Product;
 import com.example.rodrigoespinoza.fragmentos.model.SqlConecttion;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,6 +56,8 @@ public class AddProductFragment extends Fragment {
     Button btnSubmitNewProduct;
     RequestQueue requestQueue;
     JsonObjectRequest jsonObjectRequest;
+    ProgressDialog progressDialog;
+    StringRequest stringRequest;
     private OnFragmentInteractionListener mListener;
 
     public AddProductFragment() {
@@ -94,6 +105,7 @@ public class AddProductFragment extends Fragment {
             }
         });
         this.requestQueue = Volley.newRequestQueue(getContext());
+
         return this.view;
     }
 
@@ -106,7 +118,36 @@ public class AddProductFragment extends Fragment {
 
     }
 
-    private void addNewProduct(Product product) {
+    private void addNewProduct(final Product product) {
+        this.progressDialog = new ProgressDialog(getContext());
+        this.progressDialog.setMessage("Cargando...");
+        String uri = "http://127.0.0.1:8889/wwww/wsandroid/wsAddProduct.php";
+        stringRequest = new StringRequest(Request.Method.POST, uri, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                progressDialog.hide();
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.hide();
+
+
+            }
+        }
+        ){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+            Map<String, String>  params = new HashMap<>();
+            params.put("name", product.getName());
+            params.put("stock", product.getStock());
+            return params;
+            }
+        };
+
+        /**
             if(TextUtils.isEmpty(this.product.getName())){
 
             }
@@ -131,7 +172,8 @@ public class AddProductFragment extends Fragment {
                 Toast.makeText(getContext(), "500", Toast.LENGTH_SHORT).show();
                 db.close();
             }
-        }
+        **/
+    }
 
 
     // TODO: Rename method, update argument and hook method into UI event
