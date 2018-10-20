@@ -32,7 +32,7 @@ if(isset($_GET["nombre"])&&isset($_GET["apellido"])&&isset($_GET["rut"])){
 		mysqli_close($conexion);
 		echo json_encode($json);
 
-			
+
 	}
 	else{
 		$result["rut"]=0;
