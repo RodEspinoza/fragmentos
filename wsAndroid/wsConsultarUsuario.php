@@ -1,38 +1,47 @@
 <?php
 
-$hostname_localhost = "localhost";
-$database_localhost = "bd_usuarios";
+$hostname_localhost = "localhost:3306";
+$database_localhost = "bd_gestor_pedidos";
 $username_locahost = "root";
-$password_localhost = "";
+$password_localhost = "siempretropical";
 
 $json=array();
 
 
-if(isset($_GET["rut"])){
+if(isset($_POST["email"])&&isset($_POST["pass"])&&isset($_POST["fecha"])){
 
-	$rut=$_GET["rut"];
+	$email = $_POST["email"];
+	$pass = $_POST["pass"];
+	$fecha = $_POST["fecha"];
 
 	$conexion = mysqli_connect($hostname_localhost,$username_locahost,$password_localhost,$database_localhost);
-	$consulta = "SELECT * FROM usuario where rut='{$rut}'";
+	$insert = "INSERT INTO usuario(email,pass,fecha) VALUES('{$email}','{$pass}','{$fecha}')";
+	$resultado_insert = mysqli_query($conexion,$insert);
 
+	$last_id = mysqli_insert_id($conexion);
 
-	$resultado=mysqli_query($conexion,$consulta);
+	if($resultado_insert){
 
-	if($registro=mysqli_fetch_array($resultado)){
+		$consulta = "SELECT * FROM usuario where id={$last_id}";
+		$resultado = mysqli_query($conexion,$consulta);
+
+		if($registro = mysqli_fetch_array($resultado)){
 			$json['usuario'][] = $registro;
+		}
+		mysqli_close($conexion);
+		echo json_encode($json);
 	}
-	else
-	{
-		$result["rut"]=0;
+	else{
+		$result["id"]=0;
 		$json['usuario'][] = $result;
 		echo json_encode($json);
 	}
 
+}
 
-	mysqli_close($conexion);
-	echo json_encode($json);
 
-			
-	}
+else{
+
+}
 
 ?>

@@ -3,7 +3,6 @@ $hostname_localhost = "localhost:3306";
 $database_localhost = "bd_gestor_pedidos";
 $username_locahost = "root";
 $password_localhost = "";
-echo "<h2>PHP is Fun!</h2>";
 $json = array();
 if(isset($_POST["stock"])&&isset($_POST["name"])){
  $stock = $_POST["stock"];
