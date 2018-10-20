@@ -284,7 +284,7 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
             progressDialog.setMessage("Cargando...");
             progressDialog.show();
 
-            String url = "http://localhost:3306/wsIngresarUsuario-gestorPedidos.php";
+            String url = "https://androidsandbox.site/wsAndroid/wsIngresarUsuario-gestorPedidos.php";
 
             stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
                 @Override

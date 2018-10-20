@@ -9,13 +9,16 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
+
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -23,10 +26,12 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.rodrigoespinoza.fragmentos.MenuActivity;
+import com.example.rodrigoespinoza.fragmentos.ProductAdapter;
 import com.example.rodrigoespinoza.fragmentos.R;
 import com.example.rodrigoespinoza.fragmentos.model.Product;
 import com.example.rodrigoespinoza.fragmentos.model.SqlConecttion;
@@ -36,6 +41,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,14 +51,18 @@ import java.util.ArrayList;
  * Use the {@link ProductFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ProductFragment extends Fragment implements ErrorListener, Response.Listener<JSONObject> {
+public class ProductFragment extends Fragment {
     SqlConecttion conn;
     Button btnOpenAddProduct;
-    ArrayList<Product> productArrayList;
+
     ArrayList<String> detailList;
-    ListView listViewProducts;
+
     View view;
-    AddProductFragment ourFragment;
+    private RecyclerView mList;
+    private LinearLayoutManager linearLayoutManager;
+    private DividerItemDecoration dividerItemDecoration;
+    private List<Product> productList;
+    private RecyclerView.Adapter adapter;
     private OnFragmentInteractionListener mListener;
     //Componente de Progreso
     ProgressDialog progressDialog;
@@ -105,26 +115,20 @@ public class ProductFragment extends Fragment implements ErrorListener, Response
                         .commit();
             }
         });
-        this.listViewProducts = this.view.findViewById(R.id.listProduct);
+        mList = this.view.findViewById(R.id.listProduct);
+        productList = new ArrayList<>();
+        adapter = new ProductAdapter(getContext(), productList);
+        this.linearLayoutManager = new LinearLayoutManager(getContext());
+        this.linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        dividerItemDecoration = new DividerItemDecoration(
+                mList.getContext(), linearLayoutManager.getOrientation());
+
+        mList.setHasFixedSize(true);
+        mList.setLayoutManager(linearLayoutManager);
+        mList.addItemDecoration(dividerItemDecoration);
+        mList.setAdapter(adapter);
         getProducts();
-        ArrayAdapter arrayAdapter = new ArrayAdapter(
-                getContext(), android.R.layout.simple_expandable_list_item_1, detailList);
-        this.listViewProducts.setAdapter(arrayAdapter);
-        this.listViewProducts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                EditProductFragment nextFrag = new EditProductFragment();
-                Bundle bundle = new Bundle();
-                bundle.putInt("product_id", productArrayList.get(position).getId());
-                bundle.putString("product_name", productArrayList.get(position).getName());
-                bundle.putInt("product_stock", productArrayList.get(position).getStock());
-                nextFrag.setArguments(bundle);
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.containerFragmentMenu, nextFrag,"findThisFragment")
-                        .addToBackStack(null)
-                        .commit();
-            }
-        });
+
 
         return this.view;
     }
@@ -153,95 +157,47 @@ public class ProductFragment extends Fragment implements ErrorListener, Response
         mListener = null;
     }
 
-    private void getProducts(){
+    private void getProducts() {
         String url ="https://androidsandbox.site/wsAndroid/wsGetAllProducts.php";
-        stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+        final ProgressDialog progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("Cargando...");
+        progressDialog.show();
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
             @Override
-            public void onResponse(String responseStr) {
-                JSONObject response;
-                try{
-                    response = new JSONObject(responseStr);
+            public void onResponse(JSONArray response) {
+                for (int i = 0; i < response.length(); i++) {
+                    try {
+                        JSONObject jsonObject = response.getJSONObject(i);
 
-                    productArrayList = new ArrayList<Product>();
-                    JSONArray jsonArray = response.getJSONArray("product");
-                    for(int i=0; i< jsonArray.length();i++){
                         Product product = new Product();
-                        JSONObject jsonObject;
-                        jsonObject = jsonArray.getJSONObject(i);
-                        product.setName(jsonObject.optString("name"));
-                        product.setStock(jsonObject.optInt("stock"));
-                        product.setId(jsonObject.optInt("id"));
+                        product.setStock(jsonObject.getInt("stock"));
+                        product.setName(jsonObject.getString("name"));
 
+
+                        productList.add(product);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        progressDialog.dismiss();
                     }
                 }
-                catch (JSONException e){
-                   e.printStackTrace();
-                }
+                adapter.notifyDataSetChanged();
+                progressDialog.dismiss();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                error.getMessage();
+                progressDialog.dismiss();
             }
         });
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
-
-
-
-        /**
-         * OFFLINE VERSION
-         * conn = new SqlConecttion(getContext(), "bd_gestor_pedidos", null,1);
-         SQLiteDatabase db = conn.getReadableDatabase();
-         Product product;
-         Cursor cursor = db.rawQuery("SELECT * FROM product", null);
-         this.productArrayList = new ArrayList<Product>();
-         while(cursor.moveToNext()){
-             product = new Product();
-             product.setId(cursor.getInt(0));
-             product.setName(cursor.getString(1));
-             product.setStock(cursor.getInt(2));
-
-             this.productArrayList.add(product);
-         }
-         setDataToList();
-         db.close();
-         conn.close();**/
+        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+        requestQueue.add(jsonArrayRequest);
     }
 
-    private void setDataToList()
-    {
-        this.detailList =  new ArrayList<String>();
-        for(int i=0; i < this.productArrayList.size(); i++){
-            this.detailList.add(
-                    this.productArrayList.get(i).getId().toString() +
-                            " :" + this.productArrayList.get(i).getName());
-        }
-    }
 
-    @Override
-    public void onErrorResponse(VolleyError error) {
-        Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
-    }
 
-    @Override
-    public void onResponse(JSONObject response) {
-        try {
 
-            Product product = new Product();
-            JSONArray json = response.optJSONArray("product");
-            JSONObject jsonObject = null;
-            jsonObject = json.getJSONObject(0);
-
-            product.setId(jsonObject.optInt("id"));
-            product.setName(jsonObject.optString("name"));
-            product.setStock(jsonObject.optInt("stock"));
-
-            progressDialog.hide();
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * This interface must be implemented by activities that contain this
