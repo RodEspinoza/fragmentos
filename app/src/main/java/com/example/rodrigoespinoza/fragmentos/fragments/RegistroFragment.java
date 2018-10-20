@@ -60,6 +60,7 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
     Button btnFragRegistroRegistrar;
 
     //Componente de progreso
+    RequestQueue requestQueue;
     ProgressDialog progressDialog;
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
@@ -155,12 +156,12 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
                         person.setLocation(localidad);
                         person.setId_user(registrarUsuario(user));
 
-                        if (registrarPersona(person) != 0) {
+                        /*if (registrarPersona(person) != 0) {
                             Toast.makeText(getContext(), "Registrado", Toast.LENGTH_SHORT).show();
                             setLoginFragment();
                         } else {
                             Toast.makeText(getContext(), "Ha ocurrido un problema, intentelo mas tarde", Toast.LENGTH_SHORT).show();
-                        }
+                        }*/
                     } else {
                         Toast.makeText(getContext(),"Rut Invalido", Toast.LENGTH_SHORT).show();
                     }
@@ -169,6 +170,8 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
                 }
             }
         });
+
+        this.requestQueue = Volley.newRequestQueue(getContext());
 
         return this.view;
     }
@@ -256,6 +259,44 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
         }
     }
     private Integer registrarUsuario(User usuario) {
+
+    try {
+        this.progressDialog = new ProgressDialog(getContext());
+        this.progressDialog.setMessage("Cargando... ");
+        this.progressDialog.show();
+
+        String url = "https://androidsandbox.site/wsAndroid/wsIngresarUsuario.php";
+
+        stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                progressDialog.hide();
+                Toast.makeText(getContext(), response, Toast.LENGTH_LONG);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.hide();
+                Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_SHORT);
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String>  params = new HashMap<>();
+                params.put("email", user.getEmail());
+                params.put("pass", user.getPass());
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                Date date = new Date();
+                params.put("fecha", dateFormat.format(date));
+                return params;
+            }
+        };
+        requestQueue.add(stringRequest);
+        return 1;
+    } catch (Exception ex) {
+        Toast.makeText(getContext(), "Error" + ex.getMessage(), Toast.LENGTH_SHORT).show();
+        return 0;
+    }
         /*SqlConecttion conexion = new SqlConecttion(getContext(), "bd_gestor_pedidos", null, 1);
         SQLiteDatabase dataBase = conexion.getWritableDatabase();
         try {
@@ -278,46 +319,6 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
         } finally {
             dataBase.close();
         }*/
-
-        try {
-            progressDialog = new ProgressDialog(getContext());
-            progressDialog.setMessage("Cargando...");
-            progressDialog.show();
-
-            String url = "http://localhost:3306/wsIngresarUsuario-gestorPedidos.php";
-
-            stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-
-                }
-            }){
-                @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-
-                    String email = txtFragRegistroEmail.getText().toString();
-                    String pass = txtFragRegistroPass.getText().toString();
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-                    Date date = new Date();
-                    String fecha = dateFormat.format(date);
-                    Map<String, String> parametros = new HashMap<>();
-                    parametros.put("email", email);
-                    parametros.put("pass", pass);
-                    parametros.put("fecha", fecha);
-                    return parametros;
-                }
-            };
-
-            request.add(stringRequest);
-            return 1;
-        } catch (Exception ex){
-            return 0;
-        }
     }
 
     private boolean validaPassword(String password, String rePassword) {
