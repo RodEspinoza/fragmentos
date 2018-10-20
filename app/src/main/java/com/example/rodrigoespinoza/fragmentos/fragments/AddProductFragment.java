@@ -17,6 +17,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.rodrigoespinoza.fragmentos.MenuActivity;
 import com.example.rodrigoespinoza.fragmentos.R;
 import com.example.rodrigoespinoza.fragmentos.model.Product;
@@ -42,7 +45,8 @@ public class AddProductFragment extends Fragment {
     EditText txProductName, txProductStock;
     Product product;
     Button btnSubmitNewProduct;
-
+    RequestQueue requestQueue;
+    JsonObjectRequest jsonObjectRequest;
     private OnFragmentInteractionListener mListener;
 
     public AddProductFragment() {
@@ -89,6 +93,7 @@ public class AddProductFragment extends Fragment {
 
             }
         });
+        this.requestQueue = Volley.newRequestQueue(getContext());
         return this.view;
     }
 
