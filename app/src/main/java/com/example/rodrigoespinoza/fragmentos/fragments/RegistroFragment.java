@@ -1,5 +1,6 @@
 package com.example.rodrigoespinoza.fragmentos.fragments;
 
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -17,14 +18,27 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.rodrigoespinoza.fragmentos.R;
 import com.example.rodrigoespinoza.fragmentos.Utils;
 import com.example.rodrigoespinoza.fragmentos.model.Person;
 import com.example.rodrigoespinoza.fragmentos.model.SqlConecttion;
 import com.example.rodrigoespinoza.fragmentos.model.User;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,7 +48,7 @@ import java.util.Date;
  * Use the {@link RegistroFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RegistroFragment extends Fragment {
+public class RegistroFragment extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener {
     View view;
     User user;
     Person person;
@@ -44,6 +58,14 @@ public class RegistroFragment extends Fragment {
     RadioGroup rgFragRegistroSexo;
     Spinner spFragRegistroLocalidad;
     Button btnFragRegistroRegistrar;
+
+    //Componente de progreso
+    ProgressDialog progressDialog;
+    RequestQueue request;
+    JsonObjectRequest jsonObjectRequest;
+
+    //Segunda forma
+    StringRequest stringRequest;
 
     private OnFragmentInteractionListener mListener;
 
@@ -74,11 +96,13 @@ public class RegistroFragment extends Fragment {
         if (getArguments() != null) {
 
         }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         this.view = inflater.inflate(R.layout.fragment_registro, container, false);
         this.user = new User();
         this.person = new Person();
@@ -179,6 +203,40 @@ public class RegistroFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onErrorResponse(VolleyError error) {
+
+    }
+
+    @Override
+    public void onResponse(JSONObject response) {
+        String url = "http://10.20.64.179/wsAndroid/wsIngresarUsuario-gestorPedidos.php";
+
+        stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                String email = txtFragRegistroEmail.getText().toString();
+                String pass = txtFragRegistroPass.getText().toString();
+                
+                Map<String, String> parametros = new HashMap<>();
+                parametros.put("rut", rut);
+                return parametros;
+            }
+        };
+        request.add(stringRequest);
     }
 
     /**
