@@ -118,16 +118,27 @@ public class LoginFragment extends Fragment {
                 @Override
                 public void onResponse(String response) {
                     try {
+                        JSONObject jsonObject = null;
+                        jsonObject = new JSONObject(response);
+                        JSONArray json = jsonObject.optJSONArray("id_usuario");
 
+                        JSONObject jo = null;
+                        jo = json.getJSONObject(0);
 
+                        Integer id = jo.optInt("id");
+
+                        Toast.makeText(getContext(), jo.toString(), Toast.LENGTH_LONG).show();
                     } catch (Exception ex) {
 
                     }
+                    progressDialog.hide();
+                    Toast.makeText(getContext(), response, Toast.LENGTH_LONG);
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                    progressDialog.hide();
+                    Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG);
                 }
             }) {
                 @Override
