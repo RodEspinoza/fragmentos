@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,6 +69,7 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
 
     //Segunda forma
     StringRequest stringRequest;
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -245,19 +247,17 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
             stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    try {
-                        JSONObject jsonObject = null;
+                        /*JSONObject jsonObject = null;
                         jsonObject = new JSONObject(response);
                         JSONArray json = jsonObject.optJSONArray("id_persona");
 
                         JSONObject jo = null;
                         jo = json.getJSONObject(0);
 
-                        Integer id =  jo.optInt("id");
-
-                    } catch (Exception ex) {
-                        Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
+                        Integer id =  jo.optInt("id");*/
+                    LoginFragment nextFrag = new LoginFragment();
+                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.containerFragmentMenu, nextFrag).commit();
                     progressDialog.hide();
                     Toast.makeText(getContext(), response, Toast.LENGTH_SHORT);
                 }
