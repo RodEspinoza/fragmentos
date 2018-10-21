@@ -64,11 +64,12 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
     //Componente de progreso
     RequestQueue requestQueue;
     ProgressDialog progressDialog;
+    StringRequest stringRequest;
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
 
     //Segunda forma
-    StringRequest stringRequest;
+
 
 
     private OnFragmentInteractionListener mListener;

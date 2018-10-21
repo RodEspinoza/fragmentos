@@ -1,12 +1,11 @@
 <?php
 
-$hostname_localhost = "localhost:3306";
-$database_localhost = "bd_gestor_pedidos";
-$username_locahost = "root";
+$hostname_localhost = "localhost";
+$database_localhost = "u114296893_gesto";
+$username_locahost = "u114296893_root";
 $password_localhost = "siempretropical";
 
 $json=array();
-
 
 if(isset($_POST["email"])&&isset($_POST["pass"])){
 
@@ -15,18 +14,14 @@ if(isset($_POST["email"])&&isset($_POST["pass"])){
 
 	$conexion = mysqli_connect($hostname_localhost,$username_locahost,$password_localhost,$database_localhost);
 	$select = "SELECT id FROM usuario WHERE email = {$email} AND pass = {$pass}";
-	$resultado_select = mysqli_query($conexion,$insert);
-
-	if ($resultado_select) {
-
-		$json['id_usuario'][] = $resultado_select;
-		
-		mysqli_close($conexion);
-		echo json_encode($json);
+	$resultado_select = mysqli_query($conexion,$select);
+	
+	if($registro = mysqli_fetch_array($resultado_select)){
+		$json['id_usuario'][] = $registro;
+	} else {
+		echo "".mysqli_error($conexion);
 	}
-	else{
-		echo "Error: " . mysqli_error($conexion);
-	}
+
 
 } else {
 

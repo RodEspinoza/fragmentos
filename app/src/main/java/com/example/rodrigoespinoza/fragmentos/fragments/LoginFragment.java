@@ -1,5 +1,6 @@
 package com.example.rodrigoespinoza.fragmentos.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -15,9 +16,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.example.rodrigoespinoza.fragmentos.MenuActivity;
 import com.example.rodrigoespinoza.fragmentos.R;
 import com.example.rodrigoespinoza.fragmentos.model.SqlConecttion;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,6 +46,10 @@ public class LoginFragment extends Fragment {
     Intent intent;
     View view;
     EditText txUserFragmentLogin, txPassWordLogin;
+
+    RequestQueue requestQueue;
+    ProgressDialog progressDialog;
+    StringRequest stringRequest;
 
     private OnFragmentInteractionListener mListener;
 
@@ -69,6 +86,8 @@ public class LoginFragment extends Fragment {
             public void onClick(View v) {
                 String user = txUserFragmentLogin.getText().toString();
                 String password = txPassWordLogin.getText().toString();
+                //Toast.makeText(getContext(), "usuario: " + user + " pass " + password, Toast.LENGTH_LONG).show();
+                autenticaUsuario(user, password);
                // Integer id = autenticaUsuario(user, password);
                 /*if(id != 0) {
                     intent = new Intent(getActivity(), MenuActivity.class);
@@ -78,10 +97,10 @@ public class LoginFragment extends Fragment {
                 }else{
                     Toast.makeText(getContext(),
                             "Usuario o contraseña no coinciden", Toast.LENGTH_SHORT);
-                }*/
+                }
                 intent = new Intent(getActivity(), MenuActivity.class);
                 intent.putExtra("id", 9099);
-                startActivity(intent);
+                startActivity(intent);*/
 
 
             }
@@ -89,9 +108,42 @@ public class LoginFragment extends Fragment {
         return this.view;
     }
 
-    private Integer autenticaUsuario(String user, String password) {
+    private void autenticaUsuario(final String user, final String password) {
+        this.progressDialog = new ProgressDialog(getContext());
+        this.progressDialog.setMessage("Cargando... ");
+        //this.progressDialog.show();
+        try {
+            String url = "https://androidsandbox.site/wsAndroid/wsConsultarUsuario.php";
+            stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
 
-        SqlConecttion conn =  new SqlConecttion(
+
+                    } catch (Exception ex) {
+
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("email", user.toString());
+                    params.put("pass", password.toString());
+                    return params;
+                }
+            };
+            requestQueue.add(stringRequest);
+        } catch (Exception ex) {
+            Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+        /*SqlConecttion conn =  new SqlConecttion(
                 getContext(), "bd_gestor_pedidos", null, 1);
         SQLiteDatabase db = conn.getReadableDatabase();
         try {
@@ -117,7 +169,7 @@ public class LoginFragment extends Fragment {
             return 0;
         } finally {
             conn.close();
-        }
+        }*/
     }
 
     // TODO: Rename method, update argument and hook method into UI event
