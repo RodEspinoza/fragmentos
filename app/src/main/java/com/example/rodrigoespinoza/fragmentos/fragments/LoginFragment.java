@@ -88,19 +88,7 @@ public class LoginFragment extends Fragment {
                 String password = txPassWordLogin.getText().toString();
                 //Toast.makeText(getContext(), "usuario: " + user + " pass " + password, Toast.LENGTH_LONG).show();
                 autenticaUsuario(user, password);
-               // Integer id = autenticaUsuario(user, password);
-                /*if(id != 0) {
-                    intent = new Intent(getActivity(), MenuActivity.class);
-                    intent.putExtra("id", id);
-                    startActivity(intent);
-                    Toast.makeText(getContext(), "login ?", Toast.LENGTH_SHORT);
-                }else{
-                    Toast.makeText(getContext(),
-                            "Usuario o contraseña no coinciden", Toast.LENGTH_SHORT);
-                }
-                intent = new Intent(getActivity(), MenuActivity.class);
-                intent.putExtra("id", 9099);
-                startActivity(intent);*/
+
 
 
             }
@@ -143,33 +131,7 @@ public class LoginFragment extends Fragment {
             Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
         }
 
-        /*SqlConecttion conn =  new SqlConecttion(
-                getContext(), "bd_gestor_pedidos", null, 1);
-        SQLiteDatabase db = conn.getReadableDatabase();
-        try {
-            String[] parametrosBuscar = {user, password};
-            String[] camposTraer = {"id"};
 
-            Cursor cursor = db.query(
-                    "user",
-                    camposTraer,
-                    "email = ? AND pass = ?",
-                    parametrosBuscar,
-                    null, null, null);
-
-            cursor.moveToFirst();
-            Integer id = cursor.getInt(cursor.getColumnIndex("id"));
-            //Toast.makeText(this, cursor.getString(0), Toast.LENGTH_SHORT).show();
-            cursor.close();
-            conn.close();
-            return id;
-        } catch (Exception ex) {
-            Toast.makeText(getContext(), "", Toast.LENGTH_SHORT);
-            conn.close();
-            return 0;
-        } finally {
-            conn.close();
-        }*/
     }
 
     // TODO: Rename method, update argument and hook method into UI event
