@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -58,12 +59,9 @@ public class ProductFragment extends Fragment {
     ArrayList<String> detailList;
 
     View view;
-    private RecyclerView mList;
-    private LinearLayoutManager linearLayoutManager;
-    private DividerItemDecoration dividerItemDecoration;
-    private List<Product> productList;
-    private RecyclerView.Adapter adapter;
-    private OnFragmentInteractionListener mListener;
+    ListView listView;
+    ArrayList<Product> productList;
+
     //Componente de Progreso
     ProgressDialog progressDialog;
 
@@ -105,6 +103,8 @@ public class ProductFragment extends Fragment {
         this.view = inflater.inflate(
                 R.layout.fragment_product, container, false);
         this.btnOpenAddProduct = this.view.findViewById(R.id.btnOpenProduct);
+        productList = new ArrayList<>();
+        detailList = new ArrayList<>();
         this.btnOpenAddProduct.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,47 +115,17 @@ public class ProductFragment extends Fragment {
                         .commit();
             }
         });
-        mList = this.view.findViewById(R.id.listProduct);
-        productList = new ArrayList<>();
-        adapter = new ProductAdapter(getContext(), productList);
-        this.linearLayoutManager = new LinearLayoutManager(getContext());
-        this.linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        dividerItemDecoration = new DividerItemDecoration(
-                mList.getContext(), linearLayoutManager.getOrientation());
+        listView = this.view.findViewById(R.id.listProduct);
 
-        mList.setHasFixedSize(true);
-        mList.setLayoutManager(linearLayoutManager);
-        mList.addItemDecoration(dividerItemDecoration);
-        mList.setAdapter(adapter);
         getProducts();
+
+
 
 
         return this.view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
 
     private void getProducts() {
         String url ="https://androidsandbox.site/wsAndroid/wsGetAllProducts.php";
@@ -171,17 +141,16 @@ public class ProductFragment extends Fragment {
                         JSONObject jsonObject = response.getJSONObject(i);
 
                         Product product = new Product();
-                        product.setStock(jsonObject.getInt("stock"));
+                        product.setStock(Integer.parseInt(jsonObject.getString("stock")));
                         product.setName(jsonObject.getString("name"));
-
-
+                        product.setId(Integer.parseInt(jsonObject.getString("id")));
                         productList.add(product);
                     } catch (JSONException e) {
                         e.printStackTrace();
                         progressDialog.dismiss();
                     }
                 }
-                adapter.notifyDataSetChanged();
+                setDataToList();
                 progressDialog.dismiss();
             }
         }, new Response.ErrorListener() {
@@ -193,6 +162,7 @@ public class ProductFragment extends Fragment {
         });
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(jsonArrayRequest);
+
     }
 
 
@@ -212,5 +182,17 @@ public class ProductFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+    private void setDataToList()
+    {
+        this.detailList =  new ArrayList<String>();
+        for(int i=0; i < this.productList.size();i++){
+            this.detailList.add(
+                    this.productList.get(i).getId().toString() +
+                            " :" + this.productList.get(i).getName());
+        }
+        ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_expandable_list_item_1, detailList);
+
+        this.listView.setAdapter(arrayAdapter);
     }
 }
