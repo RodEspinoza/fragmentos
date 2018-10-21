@@ -31,9 +31,8 @@ if (mysqli_query($conexion,$insert)){
 	if($registro = mysqli_fetch_array($resultado)){
 		$json['id_usuario'][] = $registro;
 	}
-
 } else {
-	$json['id_usuario'][] = '0';
+	echo "".mysqli_error($conexion);
 }
 
 echo json_encode($json);

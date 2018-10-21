@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,11 +64,13 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
     //Componente de progreso
     RequestQueue requestQueue;
     ProgressDialog progressDialog;
+    StringRequest stringRequest;
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
 
     //Segunda forma
-    StringRequest stringRequest;
+
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -235,8 +238,55 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
         void onFragmentInteraction(Uri uri);
     }
 
-    private Integer registrarPersona(Person persona) {
-        SqlConecttion conexion = new SqlConecttion(getContext(), "bd_gestor_pedidos", null, 1);
+    private void registrarPersona(final Integer id) {
+        this.progressDialog = new ProgressDialog(getContext());
+        this.progressDialog.setMessage("Cargando... ");
+        this.progressDialog.show();
+        try {
+            String url = "https://androidsandbox.site/wsAndroid/wsIngresarPersona.php";
+
+            stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                        /*JSONObject jsonObject = null;
+                        jsonObject = new JSONObject(response);
+                        JSONArray json = jsonObject.optJSONArray("id_persona");
+
+                        JSONObject jo = null;
+                        jo = json.getJSONObject(0);
+
+                        Integer id =  jo.optInt("id");*/
+
+                    progressDialog.hide();
+                    Toast.makeText(getContext(), response, Toast.LENGTH_SHORT);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    progressDialog.hide();
+                    Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_SHORT);
+                }
+            }){
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String>  params = new HashMap<>();
+
+                    params.put("rut", person.getRut());
+                    params.put("nombre", person.getName());
+                    params.put("last_name", person.getLast_name());
+                    params.put("sexo", person.getSexo());
+                    params.put("location", person.getLocation());
+                    params.put("id_user",id.toString());
+                    return params;
+                }
+            };
+            //Toast.makeText(getContext(), stringRequest.toString(), Toast.LENGTH_LONG).show();
+            requestQueue.add(stringRequest);
+        } catch (Exception ex){
+
+        }
+
+        /*SqlConecttion conexion = new SqlConecttion(getContext(), "bd_gestor_pedidos", null, 1);
         SQLiteDatabase dataBase = conexion.getWritableDatabase();
         try {
             ContentValues nuevaPersona = new ContentValues();
@@ -250,66 +300,67 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
             //Toast.makeText(getContext(), id.toString(), Toast.LENGTH_SHORT).show();
             dataBase.close();
             conexion.close();
-            return Integer.parseInt(id.toString());
+
         } catch (Exception ex) {
             dataBase.close();
             conexion.close();
             //Toast.makeText(getContext(),"No pude registrar, " + ex.getMessage().toString(), Toast.LENGTH_SHORT).show();
-            return 0;
+
         } finally {
             dataBase.close();
-        }
+        }*/
     }
     private void registrarUsuario(User usuario) {
-    try {
         this.progressDialog = new ProgressDialog(getContext());
         this.progressDialog.setMessage("Cargando... ");
         this.progressDialog.show();
+        try {
+            String url = "https://androidsandbox.site/wsAndroid/wsIngresarUsuario.php";
 
-        String url = "https://androidsandbox.site/wsAndroid/wsIngresarUsuario.php";
+            stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONObject jsonObject = null;
+                        jsonObject = new JSONObject(response);
+                        JSONArray json = jsonObject.optJSONArray("id_usuario");
 
-        stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = null;
-                    jsonObject = new JSONObject(response);
-                    JSONArray json = jsonObject.optJSONArray("id_usuario");
+                        JSONObject jo = null;
+                        jo = json.getJSONObject(0);
 
-                    JSONObject jo = null;
-                    jo = json.getJSONObject(0);
+                        Integer id = jo.optInt("id");
 
-                    Integer id =  jo.optInt("id");
-
-                } catch (Exception ex) {
-                    Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_SHORT).show();
+                        registrarPersona(id);
+                    } catch (Exception ex) {
+                        Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                    progressDialog.hide();
+                    Toast.makeText(getContext(), response, Toast.LENGTH_SHORT);
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                progressDialog.hide();
-                Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_SHORT);
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String>  params = new HashMap<>();
-                params.put("email", user.getEmail());
-                params.put("pass", user.getPass());
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                Date date = new Date();
-                params.put("fecha", dateFormat.format(date));
-                return params;
-            }
-        };
-        //Toast.makeText(getContext(), stringRequest.toString(), Toast.LENGTH_LONG).show();
-        requestQueue.add(stringRequest);
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    progressDialog.hide();
+                    Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_SHORT);
+                }
+            }){
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String>  params = new HashMap<>();
+                    params.put("email", user.getEmail());
+                    params.put("pass", user.getPass());
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    Date date = new Date();
+                    params.put("fecha", dateFormat.format(date));
+                    return params;
+                }
+            };
+            //Toast.makeText(getContext(), stringRequest.toString(), Toast.LENGTH_LONG).show();
+            requestQueue.add(stringRequest);
+        } catch (Exception ex) {
+            Toast.makeText(getContext(), "Error" + ex.getMessage(), Toast.LENGTH_SHORT).show();
+        }
 
-    } catch (Exception ex) {
-        Toast.makeText(getContext(), "Error" + ex.getMessage(), Toast.LENGTH_SHORT).show();
-
-    }
         /*SqlConecttion conexion = new SqlConecttion(getContext(), "bd_gestor_pedidos", null, 1);
         SQLiteDatabase dataBase = conexion.getWritableDatabase();
         try {
