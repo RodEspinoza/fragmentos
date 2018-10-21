@@ -241,7 +241,7 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
     private void registrarPersona(final Integer id) {
         this.progressDialog = new ProgressDialog(getContext());
         this.progressDialog.setMessage("Cargando... ");
-        this.progressDialog.show();
+        //this.progressDialog.show();
         try {
             String url = "https://androidsandbox.site/wsAndroid/wsIngresarPersona.php";
 
@@ -313,7 +313,7 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
     private void registrarUsuario(User usuario) {
         this.progressDialog = new ProgressDialog(getContext());
         this.progressDialog.setMessage("Cargando... ");
-        this.progressDialog.show();
+        //this.progressDialog.show();
         try {
             String url = "https://androidsandbox.site/wsAndroid/wsIngresarUsuario.php";
 

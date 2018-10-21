@@ -7,24 +7,22 @@ $password_localhost = "siempretropical";
 
 $json=array();
 
-if(isset($_POST["email"])&&isset($_POST["pass"])){
+$body = json_decode(file_get_contents("php://input"), true);
 
-	$email = $_POST["email"];
-	$pass = $_POST["pass"];
+$email = $_POST["email"];
+$pass = $_POST["pass"];
 
-	$conexion = mysqli_connect($hostname_localhost,$username_locahost,$password_localhost,$database_localhost);
-	$select = "SELECT id FROM usuario WHERE email = {$email} AND pass = {$pass}";
-	$resultado_select = mysqli_query($conexion,$select);
-	
-	if($registro = mysqli_fetch_array($resultado_select)){
-		$json['id_usuario'][] = $registro;
-	} else {
-		echo "".mysqli_error($conexion);
-	}
+$conexion = mysqli_connect($hostname_localhost,$username_locahost,$password_localhost,$database_localhost);
+$query = "SELECT id FROM usuario WHERE email = '{$email}' AND pass = '{$pass}'";
 
+$result = mysqli_query($conexion, $query);
 
+if ($result){
+	$registro=mysqli_fetch_array($result);
+	$json['id_usuario'][]= $registro;
+	echo json_encode($json);
 } else {
-
+	echo "".mysqli_error($conexion);
 }
-
+mysqli_close($conexion);
 ?>
