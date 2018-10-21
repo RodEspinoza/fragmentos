@@ -29,12 +29,11 @@ if (mysqli_query($conexion,$insert)){
 	$resultado = mysqli_query($conexion,$consulta);
 
 	if($registro = mysqli_fetch_array($resultado)){
-		$json['id_usuario'][] = $registro;
+		$json['id_usuario'] = $registro;
 	}
+	echo json_encode($json);
 } else {
-	$json['id_usuario'][] = '0';
+	echo "".mysqli_error($conexion);
 }
-
-echo json_encode($json);
 mysqli_close($conexion);
 ?>

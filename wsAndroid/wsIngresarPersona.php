@@ -27,14 +27,17 @@ $insert = "INSERT INTO persona(rut,nombre,last_name,sexo,location,id_user)
 
 if (mysqli_query($conexion,$insert)){
 	$last_id = mysqli_insert_id($conexion);
-	//echo $last_id;
-	$json['id_usuario'] = $last_id;
+	$consulta = "SELECT id FROM persona where id = {$last_id}";
+	$resultado = mysqli_query($conexion,$consulta);
 
+	if($registro = mysqli_fetch_array($resultado)){
+		$json['id_persona'] = $registro;
+	}
+	echo json_encode($json);
 } else {
-	$json['id_usuario'] = '0';
+	echo "".mysqli_error($conexion);
 }
 
-echo json_encode($json);
 mysqli_close($conexion);
 
 ?>
