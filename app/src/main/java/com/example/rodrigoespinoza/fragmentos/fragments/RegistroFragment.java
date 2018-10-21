@@ -255,9 +255,7 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
                         jo = json.getJSONObject(0);
 
                         Integer id =  jo.optInt("id");*/
-                    LoginFragment nextFrag = new LoginFragment();
-                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.replace(R.id.containerFragmentMenu, nextFrag).commit();
+
                     progressDialog.hide();
                     Toast.makeText(getContext(), response, Toast.LENGTH_SHORT);
                 }
