@@ -18,10 +18,10 @@
         android:layout_height="wrap_content"
         android:id="@+id/btnOpenProduct"
         android:text="@string/btnAddProduct"/>
-    <android.support.v7.widget.RecyclerView
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/listProduct">
-    </android.support.v7.widget.RecyclerView>
+    </ListView>
 
 </LinearLayout>
