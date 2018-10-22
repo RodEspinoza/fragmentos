@@ -119,7 +119,10 @@ public class LoginFragment extends Fragment {
 
                         Integer id = jo.optInt("id");
 
-                        Toast.makeText(getContext(), jo.toString(), Toast.LENGTH_LONG).show();
+                        intent = new Intent(getActivity(), MenuActivity.class);
+                        startActivity(intent);
+
+                        //Toast.makeText(getContext(), jo.toString(), Toast.LENGTH_LONG).show();
 
                     } catch (Exception ex) {
 
