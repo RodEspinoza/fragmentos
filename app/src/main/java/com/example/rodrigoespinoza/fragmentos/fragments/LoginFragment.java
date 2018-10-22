@@ -95,6 +95,7 @@ public class LoginFragment extends Fragment {
 
             }
         });
+
         this.requestQueue = Volley.newRequestQueue(getContext());
         return this.view;
     }
@@ -119,6 +120,7 @@ public class LoginFragment extends Fragment {
                         Integer id = jo.optInt("id");
 
                         Toast.makeText(getContext(), jo.toString(), Toast.LENGTH_LONG).show();
+
                     } catch (Exception ex) {
 
                     }

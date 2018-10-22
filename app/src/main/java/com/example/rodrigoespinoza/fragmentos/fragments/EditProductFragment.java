@@ -1,5 +1,6 @@
 package com.example.rodrigoespinoza.fragmentos.fragments;
 
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -14,9 +15,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.example.rodrigoespinoza.fragmentos.R;
 import com.example.rodrigoespinoza.fragmentos.model.Product;
 import com.example.rodrigoespinoza.fragmentos.model.SqlConecttion;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,7 +43,9 @@ public class EditProductFragment extends Fragment {
     Product product;
     View view;
 
-
+    RequestQueue requestQueue;
+    ProgressDialog progressDialog;
+    StringRequest stringRequest;
 
     private OnFragmentInteractionListener mListener;
 
@@ -101,7 +113,43 @@ public class EditProductFragment extends Fragment {
         return this.view;
     }
 
-    private void updateProduct(Product product) {
+    private void updateProduct(final Product product) {
+        this.progressDialog = new ProgressDialog(getContext());
+        this.progressDialog.setMessage("Cargando...");
+        this.progressDialog.show();
+        String url ="https://androidsandbox.site/wsAndroid/wsEditProduct.php";
+        stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                progressDialog.hide();
+                Toast.makeText(getContext(), response, Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.hide();
+                Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                String id = product.getId().toString();
+                String name = product.getName();
+                String stock = product.getStock().toString();
+                Map<String,String> parametros = new HashMap<>();
+                parametros.put("id", id);
+                parametros.put("name", name);
+                parametros.put("stock", stock);
+                return parametros;
+
+            }
+        }
+        ;
+
+        requestQueue.add(stringRequest);
+
+        /**
         SqlConecttion conn = new SqlConecttion(
                 getContext(), "bd_gestor_pedidos", null, 1);
         SQLiteDatabase db = conn.getWritableDatabase();
@@ -118,7 +166,7 @@ public class EditProductFragment extends Fragment {
             db.close();
             conn.close();
             Toast.makeText(getContext(),"Wrong update.",Toast.LENGTH_SHORT).show();
-        }
+        }**/
     }
 
     private void deleteProduct(Integer id) {
