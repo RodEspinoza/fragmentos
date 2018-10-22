@@ -123,6 +123,11 @@ public class EditProductFragment extends Fragment {
             public void onResponse(String response) {
                 progressDialog.hide();
                 Toast.makeText(getContext(), response, Toast.LENGTH_SHORT).show();
+                ProductFragment nextFrag = new ProductFragment();
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.containerFragmentMenu, nextFrag,"findThisFragment")
+                        .addToBackStack(null)
+                        .commit();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -148,25 +153,7 @@ public class EditProductFragment extends Fragment {
         ;
 
         requestQueue.add(stringRequest);
-
-        /**
-        SqlConecttion conn = new SqlConecttion(
-                getContext(), "bd_gestor_pedidos", null, 1);
-        SQLiteDatabase db = conn.getWritableDatabase();
-        try{
-
-            String params[] = {product.getId().toString()};
-            ContentValues values = new ContentValues();
-            values.put("stock", product.getStock());
-            values.put("name", product.getName());
-            db.update("product", values,"id=?", params);
-            setProductFragment();
-        }
-        catch (Exception exp){
-            db.close();
-            conn.close();
-            Toast.makeText(getContext(),"Wrong update.",Toast.LENGTH_SHORT).show();
-        }**/
+        
     }
 
     private void deleteProduct(Integer id) {
