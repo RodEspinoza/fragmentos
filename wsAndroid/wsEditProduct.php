@@ -13,7 +13,7 @@ if(isset($_POST["id"])&&isset($_POST["stock"])&&isset($_POST["name"])){
   $conexion = mysqli_connect(
     $hostname_localhost,$username_locahost,$password_localhost,$database_localhost);
   $stmt = $conexion->prepare(
-    "UPDATE product SET name='{$name}', stock ='{$stock}' WHERE id='{$id_product}'");
+    "UPDATE producto SET name='{$name}', stock ='{$stock}' WHERE id='{$id_product}'");
   $stmt->execute();
   $nrows = $stmt->affected_rows;
   if(!$nrows){
