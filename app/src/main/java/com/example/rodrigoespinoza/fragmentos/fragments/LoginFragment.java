@@ -22,9 +22,11 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.rodrigoespinoza.fragmentos.MenuActivity;
 import com.example.rodrigoespinoza.fragmentos.R;
 import com.example.rodrigoespinoza.fragmentos.model.SqlConecttion;
+import com.example.rodrigoespinoza.fragmentos.model.User;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -46,7 +48,7 @@ public class LoginFragment extends Fragment {
     Intent intent;
     View view;
     EditText txUserFragmentLogin, txPassWordLogin;
-
+    User user;
     RequestQueue requestQueue;
     ProgressDialog progressDialog;
     StringRequest stringRequest;
@@ -76,6 +78,7 @@ public class LoginFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        User user = new User();
         // Inflate the layout for this fragment
         this.view = inflater.inflate(R.layout.fragment_login, container, false);
         this.btnFragLogin = this.view.findViewById(R.id.btnFragLogin);
@@ -84,19 +87,19 @@ public class LoginFragment extends Fragment {
         this.btnFragLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String user = txUserFragmentLogin.getText().toString();
-                String password = txPassWordLogin.getText().toString();
                 //Toast.makeText(getContext(), "usuario: " + user + " pass " + password, Toast.LENGTH_LONG).show();
-                autenticaUsuario(user, password);
-
-
+                User user = new User(
+                        txUserFragmentLogin.getText().toString(),
+                        txPassWordLogin.getText().toString());
+                autenticaUsuario(user);
 
             }
         });
+        this.requestQueue = Volley.newRequestQueue(getContext());
         return this.view;
     }
 
-    private void autenticaUsuario(final String user, final String password) {
+    private void autenticaUsuario(final User user) {
         this.progressDialog = new ProgressDialog(getContext());
         this.progressDialog.setMessage("Cargando... ");
         //this.progressDialog.show();
@@ -132,12 +135,14 @@ public class LoginFragment extends Fragment {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = new HashMap<>();
-                    params.put("email", user.toString());
-                    params.put("pass", password.toString());
+                    params.put("email", user.getEmail());
+                    params.put("pass", user.getPass());
                     return params;
                 }
             };
+            if(stringRequest != null){
             requestQueue.add(stringRequest);
+            }
         } catch (Exception ex) {
             Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
         }

@@ -1,5 +1,7 @@
 package com.example.rodrigoespinoza.fragmentos.model;
 
+import android.text.Editable;
+
 import java.util.Date;
 
 public class User {
@@ -17,6 +19,11 @@ public class User {
         this.pass = pass;
         this.register_date = register_date;
     }
+    public User(String email, String pass){
+        this.email = email;
+        this.pass = pass;
+    }
+
 
     public Integer getId() {
         return id;
