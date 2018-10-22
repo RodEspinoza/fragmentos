@@ -22,4 +22,11 @@
         app:headerLayout="@layout/nav_header_menu"
         app:menu="@menu/activity_menu_drawer" />
 
+    <pl.droidsonroids.gif.GifImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/apiloco"
+        android:background="@android:color/background_dark"
+        />
+
 </android.support.v4.widget.DrawerLayout>
