@@ -153,7 +153,7 @@ public class EditProductFragment extends Fragment {
         ;
 
         requestQueue.add(stringRequest);
-        
+
     }
 
     private void deleteProduct(Integer id) {
