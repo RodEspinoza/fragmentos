@@ -194,6 +194,7 @@ public class ProductFragment extends Fragment {
         ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_expandable_list_item_1, detailList);
 
         this.listView.setAdapter(arrayAdapter);
+        /**
         this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -209,7 +210,7 @@ public class ProductFragment extends Fragment {
                         .commit();
 
             }
-        });
+        });**/
 
     }
 }
