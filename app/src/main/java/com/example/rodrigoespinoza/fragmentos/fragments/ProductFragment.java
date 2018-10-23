@@ -194,6 +194,20 @@ public class ProductFragment extends Fragment {
         ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_expandable_list_item_1, detailList);
 
         this.listView.setAdapter(arrayAdapter);
+        this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                EditProductFragment nextFrag = new EditProductFragment();
+                Bundle bundle = new Bundle();
+                bundle.putInt("product_id", productList.get(position).getId());
+                bundle.putInt("product_stock", productList.get(position).getStock());
+                Toast.makeText(getContext(), productList.get(position).getName(), Toast.LENGTH_LONG).show();
+                nextFrag.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(
+                        R.id.containerFragmentMenu, nextFrag, "findThisFrag"
+                ).addToBackStack(null).commit();
+            }
+        });
         /**
         this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

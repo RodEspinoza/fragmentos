@@ -79,6 +79,7 @@ public class EditProductFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         this.view = inflater.inflate(R.layout.fragment_edit_product, container, false);
+      /**
         this.btnUpdateProduct = this.view.findViewById(R.id.btnFragEditProduct);
         this.btnDeleteProduct = this.view.findViewById(R.id.btnFragDeleteProduct);
         this.txFragEditProductName = this.view.findViewById(R.id.txFragEditProductName);
@@ -109,7 +110,7 @@ public class EditProductFragment extends Fragment {
 
             }
         });
-
+        **/
         return this.view;
     }
 
