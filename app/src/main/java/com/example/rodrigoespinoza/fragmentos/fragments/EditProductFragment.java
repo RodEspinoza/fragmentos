@@ -21,6 +21,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.rodrigoespinoza.fragmentos.R;
 import com.example.rodrigoespinoza.fragmentos.model.Product;
 import com.example.rodrigoespinoza.fragmentos.model.SqlConecttion;
@@ -79,14 +80,13 @@ public class EditProductFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         this.view = inflater.inflate(R.layout.fragment_edit_product, container, false);
-      /**
         this.btnUpdateProduct = this.view.findViewById(R.id.btnFragEditProduct);
         this.btnDeleteProduct = this.view.findViewById(R.id.btnFragDeleteProduct);
         this.txFragEditProductName = this.view.findViewById(R.id.txFragEditProductName);
         this.txtFragEditProductStock = this.view.findViewById(R.id.txtFragEditProductStock);
         Bundle productBundle = this.getArguments();
-        if (productBundle != null)
-        {
+        if(!productBundle.isEmpty()){
+            Toast.makeText(getContext(), productBundle.toString(), Toast.LENGTH_LONG).show();
             this.product = new Product(
                     Integer.parseInt(productBundle.get("product_id").toString()),
                     productBundle.get("product_name").toString(),
@@ -95,12 +95,6 @@ public class EditProductFragment extends Fragment {
             this.txFragEditProductName.setText(this.product.getName());
             this.txtFragEditProductStock.setText(this.product.getStock().toString());
         }
-        this.btnDeleteProduct.setOnClickListener(new AdapterView.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                deleteProduct(product.getId());
-            }
-        });
         this.btnUpdateProduct.setOnClickListener(new AdapterView.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,7 +104,19 @@ public class EditProductFragment extends Fragment {
 
             }
         });
+      /**
+
+
+
+        this.btnDeleteProduct.setOnClickListener(new AdapterView.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                deleteProduct(product.getId());
+            }
+        });
+
         **/
+        this.requestQueue = Volley.newRequestQueue(getContext());
         return this.view;
     }
 

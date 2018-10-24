@@ -103,7 +103,8 @@ public class LoginFragment extends Fragment {
     private void autenticaUsuario(final User user) {
         this.progressDialog = new ProgressDialog(getContext());
         this.progressDialog.setMessage("Cargando... ");
-        //this.progressDialog.show();
+        this.progressDialog.show();
+
         try {
             String url = "https://androidsandbox.site/wsAndroid/wsConsultarUsuario.php";
             stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
