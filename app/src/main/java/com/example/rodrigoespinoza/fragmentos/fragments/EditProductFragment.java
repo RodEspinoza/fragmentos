@@ -104,10 +104,6 @@ public class EditProductFragment extends Fragment {
 
             }
         });
-      /**
-
-
-
         this.btnDeleteProduct.setOnClickListener(new AdapterView.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -115,7 +111,6 @@ public class EditProductFragment extends Fragment {
             }
         });
 
-        **/
         this.requestQueue = Volley.newRequestQueue(getContext());
         return this.view;
     }
