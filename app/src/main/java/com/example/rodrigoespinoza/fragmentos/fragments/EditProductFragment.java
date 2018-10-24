@@ -21,6 +21,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.rodrigoespinoza.fragmentos.R;
 import com.example.rodrigoespinoza.fragmentos.model.Product;
 import com.example.rodrigoespinoza.fragmentos.model.SqlConecttion;
@@ -94,16 +95,6 @@ public class EditProductFragment extends Fragment {
             this.txFragEditProductName.setText(this.product.getName());
             this.txtFragEditProductStock.setText(this.product.getStock().toString());
         }
-      /**
-
-
-       
-        this.btnDeleteProduct.setOnClickListener(new AdapterView.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                deleteProduct(product.getId());
-            }
-        });
         this.btnUpdateProduct.setOnClickListener(new AdapterView.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,7 +104,19 @@ public class EditProductFragment extends Fragment {
 
             }
         });
+      /**
+
+
+
+        this.btnDeleteProduct.setOnClickListener(new AdapterView.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                deleteProduct(product.getId());
+            }
+        });
+
         **/
+        this.requestQueue = Volley.newRequestQueue(getContext());
         return this.view;
     }
 
