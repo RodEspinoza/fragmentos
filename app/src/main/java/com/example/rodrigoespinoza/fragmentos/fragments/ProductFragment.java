@@ -201,7 +201,7 @@ public class ProductFragment extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putInt("product_id", productList.get(position).getId());
                 bundle.putInt("product_stock", productList.get(position).getStock());
-                Toast.makeText(getContext(), productList.get(position).getName(), Toast.LENGTH_LONG).show();
+                bundle.putString("product_name", productList.get(position).getName());
                 nextFrag.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction().replace(
                         R.id.containerFragmentMenu, nextFrag, "findThisFrag"
