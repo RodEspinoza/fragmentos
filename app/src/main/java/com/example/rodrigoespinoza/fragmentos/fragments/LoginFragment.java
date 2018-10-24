@@ -120,6 +120,7 @@ public class LoginFragment extends Fragment {
                         Integer id = jo.optInt("id");
 
                         intent = new Intent(getActivity(), MenuActivity.class);
+                        intent.putExtra("id", id);
                         startActivity(intent);
 
                         //Toast.makeText(getContext(), jo.toString(), Toast.LENGTH_LONG).show();
