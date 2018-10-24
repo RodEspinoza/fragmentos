@@ -1,5 +1,6 @@
 package com.example.rodrigoespinoza.fragmentos.fragments;
 
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -22,13 +23,25 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.rodrigoespinoza.fragmentos.MenuActivity;
 import com.example.rodrigoespinoza.fragmentos.R;
 import com.example.rodrigoespinoza.fragmentos.Utils;
 import com.example.rodrigoespinoza.fragmentos.model.Person;
 import com.example.rodrigoespinoza.fragmentos.model.SqlConecttion;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -51,6 +64,10 @@ public class EditPersonFragment extends Fragment {
     Integer idUser;
     String localidad, sexo;
     Intent intent;
+
+    RequestQueue requestQueue;
+    ProgressDialog progressDialog;
+    StringRequest stringRequest;
 
     private OnFragmentInteractionListener mListener;
 
@@ -139,11 +156,51 @@ public class EditPersonFragment extends Fragment {
                 }
             }
         });
+        this.requestQueue = Volley.newRequestQueue(getContext());
         return this.view;
     }
 
-    private boolean actualizarPerson(String name, String last_name, String sexo, String localidad, Integer idUser) {
-        conn = new SqlConecttion(getContext(), "bd_gestor_pedidos", null, 1);
+    private boolean actualizarPerson(final String name, final String last_name, final String sexo, final String localidad, final Integer idUser) {
+        this.progressDialog = new ProgressDialog(getContext());
+        this.progressDialog.setMessage("Cargando... ");
+        //this.progressDialog.show();
+
+        try {
+            String url = "https://androidsandbox.site/wsAndroid/wsEditarPersona.php";
+            stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    progressDialog.hide();
+                    Toast.makeText(getContext(), response, Toast.LENGTH_LONG);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    progressDialog.hide();
+                    Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG);
+                }
+            }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("id", idUser.toString());
+                    params.put("name", name);
+                    params.put("last_name", last_name);
+                    params.put("sexo", sexo);
+                    params.put("location", localidad);
+                    return params;
+                }
+            };
+            if(stringRequest != null){
+                requestQueue.add(stringRequest);
+            }
+            return true;
+        } catch (Exception ex) {
+            Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        /*conn = new SqlConecttion(getContext(), "bd_gestor_pedidos", null, 1);
         SQLiteDatabase db = conn.getWritableDatabase();
 
         try {
@@ -165,7 +222,7 @@ public class EditPersonFragment extends Fragment {
             conn.close();
             db.close();
             return false;
-        }
+        }*/
     }
 
     private void getCampos(Integer idUser) {
