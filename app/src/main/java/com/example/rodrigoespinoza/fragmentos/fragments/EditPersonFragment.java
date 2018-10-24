@@ -225,8 +225,50 @@ public class EditPersonFragment extends Fragment {
         }*/
     }
 
-    private void getCampos(Integer idUser) {
-        conn = new SqlConecttion(getContext(), "bd_gestor_pedidos", null, 1);
+    private void getCampos(final Integer idUser) {
+        this.progressDialog = new ProgressDialog(getContext());
+        this.progressDialog.setMessage("Cargando... ");
+        //this.progressDialog.show();
+
+        try {
+            String url = "https://androidsandbox.site/wsAndroid/wsGetPersona.php";
+            stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        Toast.makeText(getContext(), jsonObject.toString(), Toast.LENGTH_LONG).show();
+                    } catch (Exception ex) {
+                        Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+
+                    progressDialog.hide();
+                    Toast.makeText(getContext(), response, Toast.LENGTH_LONG);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    progressDialog.hide();
+                    Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG);
+                }
+            }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("id", idUser.toString());
+                    return params;
+                }
+            };
+            if(stringRequest != null){
+                requestQueue.add(stringRequest);
+            }
+        } catch (Exception ex) {
+            Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+
+        /*conn = new SqlConecttion(getContext(), "bd_gestor_pedidos", null, 1);
         SQLiteDatabase db = conn.getReadableDatabase();
 
         String[] buscar = {idUser.toString()};
@@ -241,7 +283,7 @@ public class EditPersonFragment extends Fragment {
             } else {
                 rbFragEditPersonFemenino.setChecked(true);
             }
-        }
+        }*/
     }
 
     // TODO: Rename method, update argument and hook method into UI event
