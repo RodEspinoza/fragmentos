@@ -238,7 +238,8 @@ public class EditPersonFragment extends Fragment {
 
                     try {
                         JSONObject jsonObject = new JSONObject(response);
-                        Toast.makeText(getContext(), jsonObject.toString(), Toast.LENGTH_LONG).show();
+                        JSONArray json = jsonObject.optJSONArray("persona");
+                        Toast.makeText(getContext(), json.toString(), Toast.LENGTH_LONG).show();
                     } catch (Exception ex) {
                         Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
                     }
@@ -260,9 +261,7 @@ public class EditPersonFragment extends Fragment {
                     return params;
                 }
             };
-            if(stringRequest != null){
-                requestQueue.add(stringRequest);
-            }
+            requestQueue.add(stringRequest);
         } catch (Exception ex) {
             Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
         }
