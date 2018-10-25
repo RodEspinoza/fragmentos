@@ -163,7 +163,7 @@ public class EditPersonFragment extends Fragment {
     private boolean actualizarPerson(final String name, final String last_name, final String sexo, final String localidad, final Integer idUser) {
         this.progressDialog = new ProgressDialog(getContext());
         this.progressDialog.setMessage("Cargando... ");
-        //this.progressDialog.show();
+        this.progressDialog.show();
 
         try {
             String url = "https://androidsandbox.site/wsAndroid/wsEditarPersona.php";
@@ -228,7 +228,7 @@ public class EditPersonFragment extends Fragment {
     private void getCampos(final Integer idUser) {
         this.progressDialog = new ProgressDialog(getContext());
         this.progressDialog.setMessage("Cargando... ");
-        //this.progressDialog.show();
+        this.progressDialog.show();
 
         try {
             String url = "https://androidsandbox.site/wsAndroid/wsGetPersona.php";
