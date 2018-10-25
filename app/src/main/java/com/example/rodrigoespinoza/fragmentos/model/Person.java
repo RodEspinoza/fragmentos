@@ -23,6 +23,10 @@ public class Person {
         this.id_user = id_user;
     }
 
+    public Person(Integer id_user){
+        this.id_user = id_user;
+    }
+
     public Integer getId() {
         return id;
     }
