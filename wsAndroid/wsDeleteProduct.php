@@ -7,11 +7,20 @@ $password_localhost = "siempretropical";
 $json=array();
 
 
-if(isset($_POST["rut"])){
+if(isset($_POST["id"])){
 	$id=$_POST["id"];
-  $conexion = mysqli_connect($hostname_localhost,$username_locahost,$password_localhost,$database_localhost);
-  $stmt = $conexion->prepare("DELETE from producto WHERE id = '{id}'");
-	$stmt->execute();
+
+	$conexion = mysqli_connect($hostname_localhost,$username_locahost,$password_localhost,$database_localhost);
+
+	$stmt = $conexion->prepare("DELETE from producto WHERE id = '{$id}'");
+
+  $stmt->execute();
+
+    if (mysqli_connect_errno())
+  {
+  echo "Failed to connect to MySQL: " . mysqli_connect_error();
+  }
+
   $nrows = $stmt->affected_rows;
 
 	if(!$nrows){
