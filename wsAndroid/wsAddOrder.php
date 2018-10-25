@@ -12,7 +12,7 @@ if(isset($_POST["fecha"])&&isset($_POST["state"])&&isset($_POST["total"])&&isset
  $state = $_POST["state"];
  $total = $_POST["total"];
  $idPerson = $_POST["id_person"];
- $idProduct = $_POST["idProduct"];
+ $idProduct = $_POST["id_product"];
 
  $conexion = mysqli_connect($hostname_localhost,$username_locahost,$password_localhost,$database_localhost);
 
@@ -20,7 +20,7 @@ if(isset($_POST["fecha"])&&isset($_POST["state"])&&isset($_POST["total"])&&isset
      echo "".mysqli_connect_error();
     }
 
-    $insert = "INSERT INTO pedido(fecha,estado,total,id_person,id_product) VALUES('{$fecha}', '{$state}', '{$total}', '{$id_person}', '{$id_product}')";
+    $insert = "INSERT INTO pedido(fecha,estado,total,id_person,id_product) VALUES('{$fecha}', '{$state}', '{$total}', '{$idPerson}', '{$idProduct}')";
 
     $resultado_insert = mysqli_query($conexion, $insert);
 
