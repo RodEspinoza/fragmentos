@@ -65,6 +65,8 @@ public class EditPersonFragment extends Fragment {
     String localidad, sexo;
     Intent intent;
 
+    Person person;
+
     RequestQueue requestQueue;
     ProgressDialog progressDialog;
     StringRequest stringRequest;
@@ -135,11 +137,11 @@ public class EditPersonFragment extends Fragment {
         });
 
         Bundle menuBundle = this.getArguments();
-        if (menuBundle != null) {
-            idUser = Integer.parseInt(menuBundle.get("idUser").toString());
+        if (!menuBundle.isEmpty()) {
+            person = new Person(Integer.parseInt(menuBundle.get("idUser").toString()));
+            getCampos(person);
         }
         //obtenemos los valores guardados
-        getCampos(idUser);
 
         this.btnFragEditPersonEdit = (Button) this.view.findViewById(R.id.btnFragEditPersonEdit);
         this.btnFragEditPersonEdit.setOnClickListener(new View.OnClickListener() {
@@ -225,29 +227,25 @@ public class EditPersonFragment extends Fragment {
         }*/
     }
 
-    private void getCampos(final Integer idUser) {
+    private void getCampos(final Person person) {
         this.progressDialog = new ProgressDialog(getContext());
         this.progressDialog.setMessage("Cargando... ");
         this.progressDialog.show();
 
-        try {
-            String url = "https://androidsandbox.site/wsAndroid/wsGetPersona.php";
-            stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-
-                    try {
-                        JSONObject jsonObject = new JSONObject(response);
-                        JSONArray json = jsonObject.optJSONArray("persona");
-                        Toast.makeText(getContext(), json.toString(), Toast.LENGTH_LONG).show();
-                    } catch (Exception ex) {
-                        Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-
-                    progressDialog.hide();
-                    Toast.makeText(getContext(), response, Toast.LENGTH_LONG);
+        String url = "https://androidsandbox.site/wsAndroid/wsGetPersona.php";
+        stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONArray json = jsonObject.optJSONArray("persona");
+                    Toast.makeText(getContext(), json.toString(), Toast.LENGTH_LONG).show();
+                } catch (Exception ex) {
+                    Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
                 }
-            }, new Response.ErrorListener() {
+                progressDialog.hide();
+                Toast.makeText(getContext(), response, Toast.LENGTH_LONG);
+            }}, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     progressDialog.hide();
@@ -257,15 +255,11 @@ public class EditPersonFragment extends Fragment {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = new HashMap<>();
-                    params.put("id", idUser.toString());
+                    params.put("id", person.getId_user().toString());
                     return params;
                 }
             };
             requestQueue.add(stringRequest);
-        } catch (Exception ex) {
-            Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
-        }
-
 
         /*conn = new SqlConecttion(getContext(), "bd_gestor_pedidos", null, 1);
         SQLiteDatabase db = conn.getReadableDatabase();
