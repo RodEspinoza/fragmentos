@@ -3,10 +3,12 @@ package com.example.rodrigoespinoza.fragmentos.fragments;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +45,7 @@ public class EditProductFragment extends Fragment {
     SqlConecttion sqlConecttion;
     Product product;
     View view;
-
+    String baseUrl ="https://androidsandbox.site/wsAndroid";
     RequestQueue requestQueue;
     ProgressDialog progressDialog;
     StringRequest stringRequest;
@@ -86,7 +88,7 @@ public class EditProductFragment extends Fragment {
         this.txtFragEditProductStock = this.view.findViewById(R.id.txtFragEditProductStock);
         Bundle productBundle = this.getArguments();
         if(!productBundle.isEmpty()){
-            Toast.makeText(getContext(), productBundle.toString(), Toast.LENGTH_LONG).show();
+
             this.product = new Product(
                     Integer.parseInt(productBundle.get("product_id").toString()),
                     productBundle.get("product_name").toString(),
@@ -107,7 +109,23 @@ public class EditProductFragment extends Fragment {
         this.btnDeleteProduct.setOnClickListener(new AdapterView.OnClickListener(){
             @Override
             public void onClick(View v) {
-                deleteProduct(product.getId());
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder
+                        .setMessage("¿Eliminar producto "+ product.getName() +"?")
+                        .setPositiveButton("Eliminar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                deleteProduct(product.getId());
+                            }
+                        })
+                        .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        })
+                        .show();
+
             }
         });
 
@@ -116,15 +134,13 @@ public class EditProductFragment extends Fragment {
     }
 
     private void updateProduct(final Product product) {
-        this.progressDialog = new ProgressDialog(getContext());
-        this.progressDialog.setMessage("Cargando...");
-        this.progressDialog.show();
-        String url ="https://androidsandbox.site/wsAndroid/wsEditProduct.php";
+        callProgressDialog();
+        String url = this.baseUrl+"/wsEditProduct.php";
         stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 progressDialog.hide();
-                Toast.makeText(getContext(), response, Toast.LENGTH_SHORT).show();
+
                 ProductFragment nextFrag = new ProductFragment();
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.containerFragmentMenu, nextFrag,"findThisFragment")
@@ -158,21 +174,37 @@ public class EditProductFragment extends Fragment {
 
     }
 
-    private void deleteProduct(Integer id) {
-        SqlConecttion conn = new SqlConecttion(
-                getContext(), "bd_gestor_pedidos", null, 1);
-        SQLiteDatabase db = conn.getWritableDatabase();
-        String params[] = {id.toString()};
-        try{
-            db.delete("product", "id=?", params);
-            db.close();
-            conn.close();
-            setProductFragment();
-        }catch (Exception exp){
-            db.close();
-            conn.close();
-            Toast.makeText(getContext(),"Wrong update.",Toast.LENGTH_SHORT).show();
+    private void deleteProduct(final Integer id) {
+            callProgressDialog();
+            String url = this.baseUrl+"/wsDeleteProduct.php";
+            stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                progressDialog.hide();
+                setProductFragment();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.hide();
+                Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
+
+            }
         }
+        ){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+
+                Map<String,String> parametros = new HashMap<>();
+                parametros.put("id", id.toString());
+                return parametros;
+            }
+        };
+        requestQueue.add(stringRequest);
+
+
 
     }
 
@@ -183,7 +215,11 @@ public class EditProductFragment extends Fragment {
                 .addToBackStack(null)
                 .commit();
     }
-
+    private void callProgressDialog(){
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("Cargando...");
+        progressDialog.show();
+    }
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
