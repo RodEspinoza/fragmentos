@@ -1,2 +1,3 @@
 # fragmentos
-## OLD URL https://github.com/novacane/aaaa.git
+
+Old url withouth Fragments https://github.com/novacane/aaaa.git
