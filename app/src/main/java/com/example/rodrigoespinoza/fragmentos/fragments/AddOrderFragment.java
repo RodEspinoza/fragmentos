@@ -10,12 +10,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioGroup;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -28,8 +32,10 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.rodrigoespinoza.fragmentos.MenuActivity;
 import com.example.rodrigoespinoza.fragmentos.R;
+import com.example.rodrigoespinoza.fragmentos.model.Order;
 import com.example.rodrigoespinoza.fragmentos.model.Product;
 import com.example.rodrigoespinoza.fragmentos.model.SqlConecttion;
+import com.example.rodrigoespinoza.fragmentos.model.User;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,6 +60,15 @@ public class AddOrderFragment extends Fragment {
     JsonObjectRequest jsonObjectRequest;
     ProgressDialog progressDialog;
     StringRequest stringRequest;
+    Spinner spProducts;
+    String selected_product;
+    Order order;
+    RadioGroup radioGroupStatus;
+    TextView twTotal;
+    Boolean status = false;
+    Integer person_id;
+    User user;
+
     private OnFragmentInteractionListener mListener;
 
     public AddOrderFragment() {
