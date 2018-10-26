@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -25,6 +26,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+
+import com.example.rodrigoespinoza.fragmentos.fragments.AddOrderFragment;
+
 import com.example.rodrigoespinoza.fragmentos.fragments.AddProductFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.EditPersonFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.EditProductFragment;
@@ -45,7 +50,8 @@ public class MenuActivity extends AppCompatActivity
         AddProductFragment.OnFragmentInteractionListener,
         ProductFragment.OnFragmentInteractionListener,
         ProductOrders.OnFragmentInteractionListener,
-        EditPersonFragment.OnFragmentInteractionListener
+        EditPersonFragment.OnFragmentInteractionListener,
+        AddOrderFragment.OnFragmentInteractionListener
         {
 
     Person person;
@@ -134,22 +140,14 @@ public class MenuActivity extends AppCompatActivity
         if (id == R.id.nav_products) {
             ourFragment = new ProductFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.containerFragmentMenu, ourFragment).commit();
-        }/* else if (id == R.id.nav_order) {
+        } else if (id == R.id.nav_order) {
             ourFragment = new ProductOrders();
             getSupportFragmentManager().beginTransaction().replace(R.id.containerFragmentMenu, ourFragment).commit();
 
-        }*/ else if (id == R.id.nav_edit_person) {
+        } else if (id == R.id.nav_edit_person) {
             ourFragment = new EditPersonFragment();
             getCampos(person);
             getSupportFragmentManager().beginTransaction().replace(R.id.containerFragmentMenu, ourFragment).commit();
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
 
         }
 

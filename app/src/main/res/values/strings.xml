@@ -37,4 +37,6 @@
     <string name="nav_order_fragment">Ordenes</string>
     <string name="btnEditarPerson">Editar Perfil</string>
     <string name="title_activity_splash">SplashActivity</string>
+    <string name="btnAddOrder">Agregar orden</string>
+    <string name="btnOpenAddNewOrder">Crear nueva orden</string>
 </resources>
