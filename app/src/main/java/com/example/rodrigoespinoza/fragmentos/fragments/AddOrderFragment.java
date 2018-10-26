@@ -1,26 +1,59 @@
 package com.example.rodrigoespinoza.fragmentos.fragments;
 
+import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.rodrigoespinoza.fragmentos.MenuActivity;
 import com.example.rodrigoespinoza.fragmentos.R;
+import com.example.rodrigoespinoza.fragmentos.model.Product;
+import com.example.rodrigoespinoza.fragmentos.model.SqlConecttion;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link AddOrderFragment.OnFragmentInteractionListener} interface
+ * {@link AddProductFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link AddOrderFragment#newInstance} factory method to
+ * Use the {@link AddProductFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class AddOrderFragment extends Fragment {
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
 
+    // TODO: Rename and change types of parameters
+    View view;
+    Button btnSubmitNewOrder;
+    RequestQueue requestQueue;
+    JsonObjectRequest jsonObjectRequest;
+    ProgressDialog progressDialog;
+    StringRequest stringRequest;
     private OnFragmentInteractionListener mListener;
 
     public AddOrderFragment() {
@@ -31,14 +64,14 @@ public class AddOrderFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AddOrderFragment.
+
+     * @return A new instance of fragment AddProductFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static AddOrderFragment newInstance(String param1, String param2) {
-        AddOrderFragment fragment = new AddOrderFragment();
+    public static AddProductFragment newInstance(String param1, String param2) {
+        AddProductFragment fragment = new AddProductFragment();
         Bundle args = new Bundle();
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -46,15 +79,37 @@ public class AddOrderFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
 
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_order, container, false);
+        this.view = inflater.inflate(R.layout.fragment_add_order, container, false);
+
+        this.btnSubmitNewOrder = this.view.findViewById(R.id.btnSubmitNewOrder);
+        this.btnSubmitNewOrder.setOnClickListener(new AdapterView.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                submitOrder();
+
+            }
+        });
+
+        return this.view;
     }
+
+
+    private void submitOrder()
+    {
+
+
+    }
+
+
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

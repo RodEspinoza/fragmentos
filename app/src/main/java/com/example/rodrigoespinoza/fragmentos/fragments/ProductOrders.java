@@ -77,7 +77,11 @@ public class ProductOrders extends Fragment {
         this.btnOpenAddOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                AddOrderFragment nextFrag = new AddOrderFragment();
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.containerFragmentMenu, nextFrag,"findThisFragment")
+                        .addToBackStack(null)
+                        .commit();
             }
         });
         getProductOrder();
