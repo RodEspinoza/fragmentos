@@ -13,24 +13,17 @@ import com.example.rodrigoespinoza.fragmentos.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link OrderFragment.OnFragmentInteractionListener} interface
+ * {@link AddOrderFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link OrderFragment#newInstance} factory method to
+ * Use the {@link AddOrderFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class OrderFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+public class AddOrderFragment extends Fragment {
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
-    public OrderFragment() {
+    public AddOrderFragment() {
         // Required empty public constructor
     }
 
@@ -40,13 +33,12 @@ public class OrderFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment OrderFragment.
+     * @return A new instance of fragment AddOrderFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static OrderFragment newInstance(String param1, String param2) {
-        OrderFragment fragment = new OrderFragment();
+    public static AddOrderFragment newInstance(String param1, String param2) {
+        AddOrderFragment fragment = new AddOrderFragment();
         Bundle args = new Bundle();
-
         fragment.setArguments(args);
         return fragment;
     }
@@ -61,7 +53,7 @@ public class OrderFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_order, container, false);
+        return inflater.inflate(R.layout.fragment_add_order, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
