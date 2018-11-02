@@ -16,7 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.rodrigoespinoza.fragmentos.fragments.AddOrderFragment;
+import com.example.rodrigoespinoza.fragmentos.fragments.AddNewOrderFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.AddProductFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.EditPersonFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.EditProductFragment;
@@ -31,7 +31,7 @@ public class MenuActivity extends AppCompatActivity
         ProductFragment.OnFragmentInteractionListener,
         ProductOrders.OnFragmentInteractionListener,
         EditPersonFragment.OnFragmentInteractionListener,
-        AddOrderFragment.OnFragmentInteractionListener
+        AddNewOrderFragment.OnFragmentInteractionListener
         {
 
     @Override
