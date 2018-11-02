@@ -39,4 +39,8 @@
     <string name="title_activity_splash">SplashActivity</string>
     <string name="btnAddOrder">Agregar orden</string>
     <string name="btnOpenAddNewOrder">Crear nueva orden</string>
+    <string name="spProducts">Producto</string>
+    <string name="isStatusActive">Activo</string>
+    <string name="isStatusInactive">Pendite</string>
+    <string name="btnSubmitNewOrder">Agregar orden</string>
 </resources>
