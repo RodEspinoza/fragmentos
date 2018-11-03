@@ -35,6 +35,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -58,6 +59,7 @@ public class AddNewOrderFragment extends Fragment implements Response.Listener<J
     private ArrayList<String> productList;
     Order order;
     Product product;
+    Person person;
     RadioGroup rStatus;
     String status;
     TextView txTotal;
@@ -92,6 +94,11 @@ public class AddNewOrderFragment extends Fragment implements Response.Listener<J
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Bundle menuBundle = this.getArguments();
+        if (!menuBundle.isEmpty()) {
+            person = new Person();
+            person.setId(Integer.parseInt(menuBundle.get("person_id").toString()));
+        }
         this.view = inflater.inflate(R.layout.fragment_add_new_order, container, false);
         this.spProductos = this.view.findViewById(R.id.spProducts);
         this.productList = new ArrayList<>();
@@ -106,19 +113,19 @@ public class AddNewOrderFragment extends Fragment implements Response.Listener<J
                 if(product.getId() == null){
                     Toast.makeText(getContext(), "Producto no seleccionado", Toast.LENGTH_SHORT);
                 }
-
+                order = new Order();
+                order.setPerson(person);
+                order.setProduct(product);
+                order.setTotal(Integer.parseInt(txTotal.getText().toString()));
+                Date date = new Date();
+                order.setFecha(date);
+                order.setState(status.toString());
+                saveOrder(order);
             }
         });
         getProducts();
 
-        this.order = new Order();
-        Person person = new Person();// TODO: SACAR EL ID DE LA PERSONA
-        this.order.setPerson(person);
-        this.order.setProduct(product);
-        this.order.setTotal(Integer.parseInt(this.txTotal.getText().toString()));
-        Date date = new Date();
-        this.order.setFecha(date);
-        this.order.setState(status.toString());
+
       /*  if(saveOrder(this.order)>0){
             Toast.makeText(getContext(), "Orden almacenada", Toast.LENGTH_SHORT).show();
         }
@@ -151,15 +158,18 @@ public class AddNewOrderFragment extends Fragment implements Response.Listener<J
         }){
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                Date date = new Date();
                 Map<String, String>  params = new HashMap<>();
-                params.put("fecha", order.getFecha();
-                params.put("state", String.valueOf(product.getStock()));
+                params.put("fecha", dateFormat.format(date));
+                params.put("state", order.getState());
                 params.put("total", order.getTotal().toString());
                 params.put("id_person", order.getPerson().getId().toString());
                 params.put("id_product", order.getProduct().getId().toString());
                 return params;
             }
         };
+        requestQueue.add(stringRequest);
     }
 
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Fragmentos</string>
+    <string name="nav_products">Products</string>
+    <string name="helloProducts">Products</string>
+    <string name="btnAddProduct">Add product</string>
+    <string name="nav_add_products">Create product</string>
+    <string name="txProductName">Product name</string>
+    <string name="txProductStock">Product Stock</string>
+    <string name="btnUpdateProduct">Update product</string>
+    <string name="txUpdateProductName">New product name</string>
+    <string name="txUpdateProductStock">Update stock</string>
+</resources>
