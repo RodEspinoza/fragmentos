@@ -27,6 +27,12 @@ public class Person {
         this.id_user = id_user;
     }
 
+    public Person(String name, String last_name, String sexo){
+        this.name = name;
+        this.last_name = last_name;
+        this.sexo = sexo;
+    }
+
     public Integer getId() {
         return id;
     }

@@ -137,10 +137,10 @@ public class EditPersonFragment extends Fragment {
         });
 
         Bundle menuBundle = this.getArguments();
-        if (!menuBundle.isEmpty()) {
-            person = new Person(Integer.parseInt(menuBundle.get("idUser").toString()));
-            getCampos(person);
-        }
+        /*if (!menuBundle.isEmpty()) {
+            this.txtFragEditPersonName.setText(menuBundle.get("nombre").toString());
+            this.txtFragEditPersonLastName.setText(menuBundle.get("last_name").toString());
+        }*/
         //obtenemos los valores guardados
 
         this.btnFragEditPersonEdit = (Button) this.view.findViewById(R.id.btnFragEditPersonEdit);
@@ -228,38 +228,7 @@ public class EditPersonFragment extends Fragment {
     }
 
     private void getCampos(final Person person) {
-        this.progressDialog = new ProgressDialog(getContext());
-        this.progressDialog.setMessage("Cargando... ");
-        this.progressDialog.show();
 
-        String url = "https://androidsandbox.site/wsAndroid/wsGetPersona.php";
-        stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    JSONArray json = jsonObject.optJSONArray("persona");
-                    Toast.makeText(getContext(), json.toString(), Toast.LENGTH_LONG).show();
-                } catch (Exception ex) {
-                    Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
-                }
-                progressDialog.hide();
-                Toast.makeText(getContext(), response, Toast.LENGTH_LONG);
-            }}, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    progressDialog.hide();
-                    Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG);
-                }
-            }) {
-                @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-                    Map<String, String> params = new HashMap<>();
-                    params.put("id", person.getId_user().toString());
-                    return params;
-                }
-            };
-            requestQueue.add(stringRequest);
 
         /*conn = new SqlConecttion(getContext(), "bd_gestor_pedidos", null, 1);
         SQLiteDatabase db = conn.getReadableDatabase();
