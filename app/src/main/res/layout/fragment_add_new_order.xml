@@ -30,7 +30,7 @@
 
     <EditText
         android:id="@+id/txTotalNewOrder"
-        android:text="@string/txTotalNewOrder"
+        android:hint="@string/txTotalNewOrder"
         android:inputType="number"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

@@ -11,18 +11,24 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.rodrigoespinoza.fragmentos.R;
 import com.example.rodrigoespinoza.fragmentos.model.Order;
+import com.example.rodrigoespinoza.fragmentos.model.Person;
 import com.example.rodrigoespinoza.fragmentos.model.Product;
 
 import org.json.JSONArray;
@@ -30,6 +36,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,7 +48,7 @@ import java.util.ArrayList;
  * Use the {@link AddNewOrderFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AddNewOrderFragment extends Fragment {
+public class AddNewOrderFragment extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
@@ -48,10 +57,16 @@ public class AddNewOrderFragment extends Fragment {
     String selected_product;
     private ArrayList<String> productList;
     Order order;
+    Product product;
     RadioGroup rStatus;
     String status;
     TextView txTotal;
     Button btnSubmitNewOrder;
+    RequestQueue requestQueue;
+    StringRequest stringRequest;
+    JsonObjectRequest jsonObjectRequest;
+    ProgressDialog progressDialog;
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -80,22 +95,72 @@ public class AddNewOrderFragment extends Fragment {
         this.view = inflater.inflate(R.layout.fragment_add_new_order, container, false);
         this.spProductos = this.view.findViewById(R.id.spProducts);
         this.productList = new ArrayList<>();
+        this.requestQueue = Volley.newRequestQueue(getContext());
         this.txTotal = this.view.findViewById(R.id.txTotalNewOrder);
         this.rStatus = this.view.findViewById(R.id.rdStatusNewOrder);
         this.btnSubmitNewOrder = this.view.findViewById(R.id.btnSubmitNewOrder);
         this.btnSubmitNewOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Product product = getProduct(this.selected_product);
+                getProduct(selected_product);
                 if(product.getId() == null){
                     Toast.makeText(getContext(), "Producto no seleccionado", Toast.LENGTH_SHORT);
                 }
+
             }
         });
         getProducts();
+
+        this.order = new Order();
+        Person person = new Person();// TODO: SACAR EL ID DE LA PERSONA
+        this.order.setPerson(person);
+        this.order.setProduct(product);
+        this.order.setTotal(Integer.parseInt(this.txTotal.getText().toString()));
+        Date date = new Date();
+        this.order.setFecha(date);
+        this.order.setState(status.toString());
+      /*  if(saveOrder(this.order)>0){
+            Toast.makeText(getContext(), "Orden almacenada", Toast.LENGTH_SHORT).show();
+        }
+        */
         return this.view;
     }
 
+    private void saveOrder(final Order order) {
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("Cargando...");
+        String url ="https://androidsandbox.site/wsAndroid/wsAddOrder.php";
+        stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                progressDialog.hide();
+                Toast.makeText(getContext(), response, Toast.LENGTH_SHORT);
+                ProductFragment nextFrag = new ProductFragment();
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.containerFragmentMenu, nextFrag,"findThisFragment")
+                        .addToBackStack(null)
+                        .commit();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.hide();
+                Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_SHORT);
+
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String>  params = new HashMap<>();
+                params.put("fecha", order.getFecha();
+                params.put("state", String.valueOf(product.getStock()));
+                params.put("total", order.getTotal().toString());
+                params.put("id_person", order.getPerson().getId().toString());
+                params.put("id_product", order.getProduct().getId().toString());
+                return params;
+            }
+        };
+    }
 
 
     public void onButtonPressed(Uri uri) {
@@ -156,9 +221,13 @@ public class AddNewOrderFragment extends Fragment {
         requestQueue.add(jsonArrayRequest);
     }
 
-    public Product getProduct(String productName){
+    public void getProduct(String productName){
+        String url = "https://androidsandbox.site/wsAndroid/wsGetProduct.php/?name="+productName;
+        Toast.makeText(getContext(), url, Toast.LENGTH_SHORT);
+        final Product product = new Product();
 
-        return new Product();
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
+        requestQueue.add(jsonObjectRequest);
     }
 
     @Override
@@ -176,6 +245,31 @@ public class AddNewOrderFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onResponse(JSONObject response) {
+        ProgressDialog progressDialog;
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("Cargando consulta...");
+        progressDialog.show();
+        try{
+            product = new Product();
+            JSONArray json = response.optJSONArray("producto");
+            JSONObject jsonObject = null;
+            jsonObject =json.getJSONObject(0);
+            product.setId(jsonObject.getInt("id"));
+            product.setName(jsonObject.getString("name"));
+            product.setStock(jsonObject.getInt("stock"));
+            progressDialog.hide();
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onErrorResponse(VolleyError error) {
+
     }
 
     /**
