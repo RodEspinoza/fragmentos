@@ -60,10 +60,11 @@ public class MenuActivity extends AppCompatActivity
         {
 
     Person person;
+
+    Fragment ourFragment = null;
     RequestQueue requestQueue;
     ProgressDialog progressDialog;
     StringRequest stringRequest;
-    String nombre, last_name, sexo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +76,6 @@ public class MenuActivity extends AppCompatActivity
 
         if (!bundleMenu.isEmpty()) {
             person = new Person(Integer.parseInt(bundleMenu.get("id").toString()));
-            Toast.makeText(this, person.getId_user().toString(), Toast.LENGTH_LONG).show();
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -136,29 +136,21 @@ public class MenuActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        Fragment ourFragment = null;
-
-
-
-
         int id = item.getItemId();
 
         if (id == R.id.nav_products) {
+
             ourFragment = new ProductFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.containerFragmentMenu, ourFragment).commit();
+
         } else if (id == R.id.nav_order) {
+
             ourFragment = new ProductOrders();
             getSupportFragmentManager().beginTransaction().replace(R.id.containerFragmentMenu, ourFragment).commit();
 
         } else if (id == R.id.nav_edit_person) {
-            ourFragment = new EditPersonFragment();
+
             getCampos(person);
-            Bundle bundle = new Bundle();
-            bundle.putString("nombre", nombre);
-            bundle.putString("last_name", last_name);
-            bundle.putString("sexo", sexo);
-            ourFragment.setArguments(bundle);
-            getSupportFragmentManager().beginTransaction().replace(R.id.containerFragmentMenu, ourFragment).commit();
 
         }
 
@@ -178,9 +170,21 @@ public class MenuActivity extends AppCompatActivity
             public void onResponse(String response) {
                 try {
                     JSONObject jsonObject = new JSONObject(response);
-                    nombre = jsonObject.getString("nombre");
-                    last_name = jsonObject.getString("last_name");
-                    sexo = jsonObject.getString("sexo");
+                    JSONArray jsonArray = jsonObject.optJSONArray("persona");
+                    JSONObject json = jsonArray.getJSONObject(0);
+                    String name = json.optString("nombre");
+                    String last_name = json.optString("last_name");
+                    String sex = json.optString("sexo");
+
+                    ourFragment = new EditPersonFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("nombre", name);
+                    bundle.putString("last_name", last_name);
+                    bundle.putString("sexo", sex);
+                    bundle.putString("id", person.getId_user().toString());
+                    ourFragment.setArguments(bundle);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.containerFragmentMenu, ourFragment).commit();
+
                 } catch (Exception ex) {
 
                 }

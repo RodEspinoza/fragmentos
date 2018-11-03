@@ -44,11 +44,12 @@ import java.util.Map;
  */
 public class LoginFragment extends Fragment {
 
-    Button btnFragLogin;
-    Intent intent;
     View view;
+    Intent intent;
+    Button btnFragLogin;
+
     EditText txUserFragmentLogin, txPassWordLogin;
-    User user;
+
     RequestQueue requestQueue;
     ProgressDialog progressDialog;
     StringRequest stringRequest;
@@ -76,23 +77,18 @@ public class LoginFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        User user = new User();
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.view = inflater.inflate(R.layout.fragment_login, container, false);
-        this.btnFragLogin = this.view.findViewById(R.id.btnFragLogin);
+
         this.txUserFragmentLogin = this.view.findViewById(R.id.txUserFragmentLogin);
         this.txPassWordLogin = this.view.findViewById(R.id.txPasswordFragmentLogin);
+
+        this.btnFragLogin = this.view.findViewById(R.id.btnFragLogin);
         this.btnFragLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Toast.makeText(getContext(), "usuario: " + user + " pass " + password, Toast.LENGTH_LONG).show();
-                User user = new User(
-                        txUserFragmentLogin.getText().toString(),
-                        txPassWordLogin.getText().toString());
+                User user = new User(txUserFragmentLogin.getText().toString(), txPassWordLogin.getText().toString());
                 autenticaUsuario(user);
-
             }
         });
 
@@ -111,23 +107,18 @@ public class LoginFragment extends Fragment {
                 @Override
                 public void onResponse(String response) {
                     try {
-                        JSONObject jsonObject = null;
-                        jsonObject = new JSONObject(response);
-                        JSONArray json = jsonObject.optJSONArray("id_usuario");
+                        JSONObject jsonObject = new JSONObject(response);
+                        JSONArray jsonArray = jsonObject.optJSONArray("id_usuario");
 
-                        JSONObject jo = null;
-                        jo = json.getJSONObject(0);
+                        JSONObject json = jsonArray.getJSONObject(0);
 
-                        Integer id = jo.optInt("id");
+                        Integer id = json.optInt("id");
 
                         intent = new Intent(getActivity(), MenuActivity.class);
                         intent.putExtra("id", id);
                         startActivity(intent);
-
-                        //Toast.makeText(getContext(), jo.toString(), Toast.LENGTH_LONG).show();
-
                     } catch (Exception ex) {
-
+                        Toast.makeText(getContext(), "Error: " + ex.getMessage(), Toast.LENGTH_LONG).show();
                     }
                     progressDialog.hide();
                     Toast.makeText(getContext(), response, Toast.LENGTH_LONG);
@@ -153,8 +144,6 @@ public class LoginFragment extends Fragment {
         } catch (Exception ex) {
             Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
         }
-
-
     }
 
     // TODO: Rename method, update argument and hook method into UI event

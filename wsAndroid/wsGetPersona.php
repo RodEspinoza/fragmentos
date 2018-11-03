@@ -18,7 +18,7 @@ $body = json_decode(file_get_contents("php://input"), true);
     $result = mysqli_query($conexion, $query);
 
     while($registro=mysqli_fetch_array($result)){
-		$json["persona"] = $registro;
+		$json["persona"][] = $registro;
     }
     
     mysqli_close($conexion);

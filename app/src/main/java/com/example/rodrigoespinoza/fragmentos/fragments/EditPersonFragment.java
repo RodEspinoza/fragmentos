@@ -106,6 +106,8 @@ public class EditPersonFragment extends Fragment {
         this.txtFragEditPersonName = (EditText) this.view.findViewById(R.id.txtFragEditPersonName);
         this.txtFragEditPersonLastName = (EditText) this.view.findViewById(R.id.txtFragEditPersonLastName);
         this.rgFragEditPerson = (RadioGroup) this.view.findViewById(R.id.rgFragEditPerson);
+        this.rbFragEditPersonMasculino = (RadioButton) this.view.findViewById(R.id.rbFragEditPersonMasculino);
+        this.rbFragEditPersonFemenino = (RadioButton) this.view.findViewById(R.id.rbFragEditPersonFemenino);
         this.rgFragEditPerson.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -117,10 +119,20 @@ public class EditPersonFragment extends Fragment {
             }
         });
 
-        this.rbFragEditPersonMasculino = (RadioButton) this.view.findViewById(R.id.rbFragEditPersonMasculino);
-        this.rbFragEditPersonFemenino = (RadioButton) this.view.findViewById(R.id.rbFragEditPersonFemenino);
-        this.spFragEditPersonLocalidad = (Spinner) this.view.findViewById(R.id.spFragEditPersonLocalidad);
+        Bundle menuBundle = this.getArguments();
+        if (!menuBundle.isEmpty()) {
+            this.txtFragEditPersonName.setText(menuBundle.get("nombre").toString());
+            this.txtFragEditPersonLastName.setText(menuBundle.get("last_name").toString());
+            this.sexo = menuBundle.get("sexo").toString();
+            this.idUser = Integer.parseInt(menuBundle.get("id").toString());
+            if (sexo.equals("Masculino")){
+                this.rbFragEditPersonMasculino.setChecked(true);
+            } else {
+                this.rbFragEditPersonFemenino.setChecked(true);
+            }
+        }
 
+        this.spFragEditPersonLocalidad = (Spinner) this.view.findViewById(R.id.spFragEditPersonLocalidad);
         ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), R.layout.support_simple_spinner_dropdown_item,
                 Utils.getLocations());
         arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
@@ -136,19 +148,12 @@ public class EditPersonFragment extends Fragment {
             }
         });
 
-        Bundle menuBundle = this.getArguments();
-        /*if (!menuBundle.isEmpty()) {
-            this.txtFragEditPersonName.setText(menuBundle.get("nombre").toString());
-            this.txtFragEditPersonLastName.setText(menuBundle.get("last_name").toString());
-        }*/
-        //obtenemos los valores guardados
-
         this.btnFragEditPersonEdit = (Button) this.view.findViewById(R.id.btnFragEditPersonEdit);
         this.btnFragEditPersonEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (actualizarPerson(txtFragEditPersonName.getText().toString(), txtFragEditPersonLastName.getText().toString(),
-                        sexo, localidad, idUser)){
+            if (actualizarPerson(txtFragEditPersonName.getText().toString(), txtFragEditPersonLastName.getText().toString(),
+                    sexo, localidad, idUser)){
                     Toast.makeText(getContext(), "Actualizado", Toast.LENGTH_SHORT).show();
                     intent = new Intent(getActivity(), MenuActivity.class);
                     intent.putExtra("id",idUser);
