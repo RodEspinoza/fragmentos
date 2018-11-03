@@ -10,8 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -45,7 +48,10 @@ public class AddNewOrderFragment extends Fragment {
     String selected_product;
     private ArrayList<String> productList;
     Order order;
-    RadioGroup rdStatus;
+    RadioGroup rStatus;
+    String status;
+    TextView txTotal;
+    Button btnSubmitNewOrder;
 
     private OnFragmentInteractionListener mListener;
 
@@ -74,9 +80,23 @@ public class AddNewOrderFragment extends Fragment {
         this.view = inflater.inflate(R.layout.fragment_add_new_order, container, false);
         this.spProductos = this.view.findViewById(R.id.spProducts);
         this.productList = new ArrayList<>();
+        this.txTotal = this.view.findViewById(R.id.txTotalNewOrder);
+        this.rStatus = this.view.findViewById(R.id.rdStatusNewOrder);
+        this.btnSubmitNewOrder = this.view.findViewById(R.id.btnSubmitNewOrder);
+        this.btnSubmitNewOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Product product = getProduct(this.selected_product);
+                if(product.getId() == null){
+                    Toast.makeText(getContext(), "Producto no seleccionado", Toast.LENGTH_SHORT);
+                }
+            }
+        });
         getProducts();
         return this.view;
     }
+
+
 
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -134,6 +154,11 @@ public class AddNewOrderFragment extends Fragment {
         });
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(jsonArrayRequest);
+    }
+
+    public Product getProduct(String productName){
+
+        return new Product();
     }
 
     @Override
