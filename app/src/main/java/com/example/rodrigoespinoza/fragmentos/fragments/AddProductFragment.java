@@ -5,7 +5,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,14 +22,18 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.rodrigoespinoza.fragmentos.MenuActivity;
 import com.example.rodrigoespinoza.fragmentos.R;
 import com.example.rodrigoespinoza.fragmentos.model.Product;
-import com.example.rodrigoespinoza.fragmentos.model.SqlConecttion;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,12 +46,7 @@ import java.util.Map;
  * create an instance of this fragment.
  */
 public class AddProductFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     Intent intent;
     View view;
     EditText txProductName, txProductStock;
@@ -72,7 +70,7 @@ public class AddProductFragment extends Fragment {
      * @return A new instance of fragment AddProductFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static AddProductFragment newInstance(String param1, String param2) {
+    public static AddProductFragment newInstance() {
         AddProductFragment fragment = new AddProductFragment();
         Bundle args = new Bundle();
 
@@ -219,4 +217,5 @@ public class AddProductFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
 }

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.AddNewOrderFragment"
+    android:orientation="vertical">
+
+
+    <Spinner
+        android:id="@+id/spProducts"
+        android:text="@string/spProducts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <RadioGroup
+        android:id="@+id/rdStatusNewOrder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RadioButton
+            android:id="@+id/rdFalseNewOrder"
+            android:text="@string/isStatusActive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <RadioButton
+            android:id="@+id/rdTrueNewOrder"
+            android:text="@string/isStatusInactive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/txTotalNewOrder"
+        android:inputType="number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/btnSubmitNewOrder"
+        android:text="@string/btnSubmitNewOrder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>

@@ -18,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -29,7 +30,10 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 
-import com.example.rodrigoespinoza.fragmentos.fragments.AddOrderFragment;
+//import com.example.rodrigoespinoza.fragmentos.fragments.AddOrderFragment;
+
+
+import com.example.rodrigoespinoza.fragmentos.fragments.AddNewOrderFragment;
 
 import com.example.rodrigoespinoza.fragmentos.fragments.AddProductFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.EditPersonFragment;
@@ -52,7 +56,7 @@ public class MenuActivity extends AppCompatActivity
         ProductFragment.OnFragmentInteractionListener,
         ProductOrders.OnFragmentInteractionListener,
         EditPersonFragment.OnFragmentInteractionListener,
-        AddOrderFragment.OnFragmentInteractionListener
+        AddNewOrderFragment.OnFragmentInteractionListener
         {
 
     Person person;
