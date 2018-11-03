@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -58,7 +59,7 @@ public class MenuActivity extends AppCompatActivity
     RequestQueue requestQueue;
     ProgressDialog progressDialog;
     StringRequest stringRequest;
-
+    String nombre, last_name, sexo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +71,7 @@ public class MenuActivity extends AppCompatActivity
 
         if (!bundleMenu.isEmpty()) {
             person = new Person(Integer.parseInt(bundleMenu.get("id").toString()));
+            Toast.makeText(this, person.getId_user().toString(), Toast.LENGTH_LONG).show();
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -147,6 +149,11 @@ public class MenuActivity extends AppCompatActivity
         } else if (id == R.id.nav_edit_person) {
             ourFragment = new EditPersonFragment();
             getCampos(person);
+            Bundle bundle = new Bundle();
+            bundle.putString("nombre", nombre);
+            bundle.putString("last_name", last_name);
+            bundle.putString("sexo", sexo);
+            ourFragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction().replace(R.id.containerFragmentMenu, ourFragment).commit();
 
         }
@@ -156,10 +163,10 @@ public class MenuActivity extends AppCompatActivity
         return true;
     }
 
-    private void getCampos(final Person person) {
+    private void getCampos(final Person per) {
         this.progressDialog = new ProgressDialog(this);
         this.progressDialog.setMessage("Cargando... ");
-        this.progressDialog.show();
+        //this.progressDialog.show();
 
         String url = "https://androidsandbox.site/wsAndroid/wsGetPersona.php";
         stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -167,8 +174,9 @@ public class MenuActivity extends AppCompatActivity
             public void onResponse(String response) {
                 try {
                     JSONObject jsonObject = new JSONObject(response);
-                    JSONArray json = jsonObject.optJSONArray("persona");
-
+                    nombre = jsonObject.getString("nombre");
+                    last_name = jsonObject.getString("last_name");
+                    sexo = jsonObject.getString("sexo");
                 } catch (Exception ex) {
 
                 }
@@ -184,10 +192,11 @@ public class MenuActivity extends AppCompatActivity
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("id", person.getId_user().toString());
+                params.put("id", per.getId_user().toString());
                 return params;
             }
         };
+
         requestQueue.add(stringRequest);
     }
 

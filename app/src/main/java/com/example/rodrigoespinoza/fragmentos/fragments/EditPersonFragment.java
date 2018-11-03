@@ -138,7 +138,8 @@ public class EditPersonFragment extends Fragment {
 
         Bundle menuBundle = this.getArguments();
         /*if (!menuBundle.isEmpty()) {
-            person = new Person(Integer.parseInt(menuBundle.get("idUser").toString()));
+            this.txtFragEditPersonName.setText(menuBundle.get("nombre").toString());
+            this.txtFragEditPersonLastName.setText(menuBundle.get("last_name").toString());
         }*/
         //obtenemos los valores guardados
 
