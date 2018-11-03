@@ -1,9 +1,8 @@
 <resources>
     <string name="app_name">Fragmentos</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_menu">MenuActivity</string>
+    <string name="title_activity_menu">Menu Activity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -36,7 +35,7 @@
     <string name="nav_edit_person">Editar Perfil</string>
     <string name="nav_order_fragment">Ordenes</string>
     <string name="btnEditarPerson">Editar Perfil</string>
-    <string name="title_activity_splash">SplashActivity</string>
+    <string name="title_activity_splash">Ordenes</string>
     <string name="btnAddOrder">Agregar orden</string>
     <string name="btnOpenAddNewOrder">Crear nueva orden</string>
     <string name="spProducts">Producto</string>

@@ -146,6 +146,9 @@ public class MenuActivity extends AppCompatActivity
         } else if (id == R.id.nav_order) {
 
             ourFragment = new ProductOrders();
+            Bundle bundle = new Bundle();
+            bundle.putString("person_id", person.getId_user().toString());
+            ourFragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction().replace(R.id.containerFragmentMenu, ourFragment).commit();
 
         } else if (id == R.id.nav_edit_person) {
