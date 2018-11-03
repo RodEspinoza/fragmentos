@@ -31,7 +31,7 @@ if (mysqli_query($conexion,$insert)){
 	$resultado = mysqli_query($conexion,$consulta);
 
 	if($registro = mysqli_fetch_array($resultado)){
-		$json['id_persona'] = $registro;
+		$json['id_persona'][] = $registro;
 	}
 	echo json_encode($json);
 } else {

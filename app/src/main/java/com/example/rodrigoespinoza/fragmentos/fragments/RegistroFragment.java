@@ -54,8 +54,10 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
     View view;
     User user;
     Person person;
+
     EditText txtFragRegistroEmail, txtFragRegistroPass, txtFragRegistroRePass;
     EditText txtFragRegistroRut, txtFragRegistroNombre, txtFragRegistroApellido;
+
     String sexoSeleccionado, localidad;
     RadioGroup rgFragRegistroSexo;
     Spinner spFragRegistroLocalidad;
@@ -67,10 +69,6 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
     StringRequest stringRequest;
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
-
-    //Segunda forma
-
-
 
     private OnFragmentInteractionListener mListener;
 
@@ -118,6 +116,7 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
         this.txtFragRegistroNombre = this.view.findViewById(R.id.txtFragRegistroNombre);
         this.txtFragRegistroApellido = this.view.findViewById(R.id.txtFragRegistroApellido);
         this.rgFragRegistroSexo = this.view.findViewById(R.id.rgFragRegistroSexo);
+
         this.spFragRegistroLocalidad = this.view.findViewById(R.id.spFragRegistroLocalidad);
         this.rgFragRegistroSexo.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -148,25 +147,11 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
         this.btnFragRegistroRegistrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (validaPassword(txtFragRegistroPass.getText().toString(), txtFragRegistroRePass.getText().toString())){
-                    if (validaRut(txtFragRegistroRut.getText().toString())){
+                if (validaPassword(txtFragRegistroPass.getText().toString(), txtFragRegistroRePass.getText().toString())) {
+                    if (validaRut(txtFragRegistroRut.getText().toString())) {
 
-                        user.setEmail(txtFragRegistroEmail.getText().toString());
-                        user.setPass(txtFragRegistroPass.getText().toString());
-                        person.setRut(txtFragRegistroRut.getText().toString());
-                        person.setName(txtFragRegistroNombre.getText().toString());
-                        person.setLast_name(txtFragRegistroApellido.getText().toString());
-                        person.setSexo(sexoSeleccionado);
-                        person.setLocation(localidad);
-                        registrarUsuario(user);
-                        //person.setId_user(registrarUsuario(user));
+                        registrarUsuario(txtFragRegistroEmail.getText().toString(), txtFragRegistroPass.getText().toString());
 
-                        /*if (registrarPersona(person) != 0) {
-                            Toast.makeText(getContext(), "Registrado", Toast.LENGTH_SHORT).show();
-                            setLoginFragment();
-                        } else {
-                            Toast.makeText(getContext(), "Ha ocurrido un problema, intentelo mas tarde", Toast.LENGTH_SHORT).show();
-                        }*/
                     } else {
                         Toast.makeText(getContext(),"Rut Invalido", Toast.LENGTH_SHORT).show();
                     }
@@ -238,25 +223,24 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
         void onFragmentInteraction(Uri uri);
     }
 
-    private void registrarPersona(final Integer id) {
+    private void registrarPersona(final String rut, final String nombre, final String apellido, final String sexo, final String localidad, final Integer idUser) {
         this.progressDialog = new ProgressDialog(getContext());
         this.progressDialog.setMessage("Cargando... ");
         //this.progressDialog.show();
         try {
             String url = "https://androidsandbox.site/wsAndroid/wsIngresarPersona.php";
-
             stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                        /*JSONObject jsonObject = null;
-                        jsonObject = new JSONObject(response);
-                        JSONArray json = jsonObject.optJSONArray("id_persona");
-
-                        JSONObject jo = null;
-                        jo = json.getJSONObject(0);
-
-                        Integer id =  jo.optInt("id");*/
-
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        JSONArray jsonArray = jsonObject.optJSONArray("id_persona");
+                        JSONObject json = jsonArray.getJSONObject(0);
+                        Integer id  = json.optInt("id");
+                        Toast.makeText(getContext(), "Registrado", Toast.LENGTH_LONG).show();
+                    } catch (Exception ex) {
+                        Toast.makeText(getContext(), "Ha ocurrido un error, vuelva a intentarlo mas tarde", Toast.LENGTH_LONG).show();
+                    }
                     progressDialog.hide();
                     Toast.makeText(getContext(), response, Toast.LENGTH_SHORT);
                 }
@@ -270,13 +254,12 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String>  params = new HashMap<>();
-
-                    params.put("rut", person.getRut());
-                    params.put("nombre", person.getName());
-                    params.put("last_name", person.getLast_name());
-                    params.put("sexo", person.getSexo());
-                    params.put("location", person.getLocation());
-                    params.put("id_user",id.toString());
+                    params.put("rut", rut);
+                    params.put("nombre", nombre);
+                    params.put("last_name", apellido);
+                    params.put("sexo", sexo);
+                    params.put("location", localidad);
+                    params.put("id_user",idUser.toString());
                     return params;
                 }
             };
@@ -310,7 +293,7 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
             dataBase.close();
         }*/
     }
-    private void registrarUsuario(User usuario) {
+    private void registrarUsuario(final String email, final String pass) {
         this.progressDialog = new ProgressDialog(getContext());
         this.progressDialog.setMessage("Cargando... ");
         //this.progressDialog.show();
@@ -321,18 +304,17 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
                 @Override
                 public void onResponse(String response) {
                     try {
-                        JSONObject jsonObject = null;
-                        jsonObject = new JSONObject(response);
-                        JSONArray json = jsonObject.optJSONArray("id_usuario");
+                        JSONObject jsonObject = new JSONObject(response);
+                        JSONArray jsonArray = jsonObject.optJSONArray("id_usuario");
 
-                        JSONObject jo = null;
-                        jo = json.getJSONObject(0);
+                        JSONObject json = jsonArray.getJSONObject(0);
 
-                        Integer id = jo.optInt("id");
+                        Integer id = json.optInt("id");
 
-                        registrarPersona(id);
+                        registrarPersona(txtFragRegistroRut.getText().toString(), txtFragRegistroNombre.getText().toString(),
+                                txtFragRegistroApellido.getText().toString(), sexoSeleccionado, localidad, id);
                     } catch (Exception ex) {
-                        Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Ha ocurrido un error, vuelva a intentarlo mas tarde", Toast.LENGTH_SHORT).show();
                     }
                     progressDialog.hide();
                     Toast.makeText(getContext(), response, Toast.LENGTH_SHORT);
@@ -347,8 +329,8 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String>  params = new HashMap<>();
-                    params.put("email", user.getEmail());
-                    params.put("pass", user.getPass());
+                    params.put("email", email);
+                    params.put("pass", pass);
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                     Date date = new Date();
                     params.put("fecha", dateFormat.format(date));
@@ -398,7 +380,7 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
         rut = rut.replace("-","");
         try {
             Integer rutAux = Integer.parseInt(rut.substring(0, rut.length() - 1));
-            char dv = rut.charAt(Integer.parseInt(rut.substring(rut.length() - 1, rut.length())));
+            char dv = rut.charAt(rut.length() - 1);
             int m = 0, s = 1;
             for (; rutAux != 0; rutAux /= 10)
             {

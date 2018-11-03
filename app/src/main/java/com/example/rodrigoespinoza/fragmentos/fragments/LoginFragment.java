@@ -118,7 +118,7 @@ public class LoginFragment extends Fragment {
                         intent.putExtra("id", id);
                         startActivity(intent);
                     } catch (Exception ex) {
-                        Toast.makeText(getContext(), "Error: " + ex.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Usuario o Contraseña Invalida", Toast.LENGTH_LONG).show();
                     }
                     progressDialog.hide();
                     Toast.makeText(getContext(), response, Toast.LENGTH_LONG);

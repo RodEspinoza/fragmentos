@@ -207,11 +207,10 @@ public class MenuActivity extends AppCompatActivity
                 return params;
             }
         };
-
         requestQueue.add(stringRequest);
     }
 
-            @Override
+    @Override
     public void onFragmentInteraction(Uri uri) {
 
     }
