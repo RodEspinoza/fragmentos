@@ -49,18 +49,8 @@ public class MainActivity
         this.loginFragment = new LoginFragment();
 
 
-        SharedPreferences sharedPreferences = this.getPreferences(Context.MODE_PRIVATE);
-        final Person person = new Person();
-        sharedPreferences.getAll();
-        person.setId(sharedPreferences.getInt("person_id", 0));
-        if(person.getId() != 0){
-            Intent intent = new Intent(this, MenuActivity.class);
-            startActivity(intent);
 
-        }else
-            {
         getSupportFragmentManager().beginTransaction().add(R.id.containerFragment, this.loginFragment).commit();
-        }
 
     }
 

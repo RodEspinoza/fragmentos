@@ -165,7 +165,7 @@ public class MenuActivity extends AppCompatActivity
     private void getCampos(final Person per) {
         this.progressDialog = new ProgressDialog(this);
         this.progressDialog.setMessage("Cargando... ");
-        //this.progressDialog.show();
+        this.progressDialog.show();
 
         String url = "https://androidsandbox.site/wsAndroid/wsGetPersona.php";
         stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -185,6 +185,7 @@ public class MenuActivity extends AppCompatActivity
                     bundle.putString("last_name", last_name);
                     bundle.putString("sexo", sex);
                     bundle.putString("id", person.getId_user().toString());
+                    progressDialog.hide();
                     ourFragment.setArguments(bundle);
                     getSupportFragmentManager().beginTransaction().replace(R.id.containerFragmentMenu, ourFragment).commit();
 
