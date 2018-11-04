@@ -2,6 +2,7 @@ package com.example.rodrigoespinoza.fragmentos.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -94,11 +95,11 @@ public class AddNewOrderFragment extends Fragment implements Response.Listener<J
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Bundle menuBundle = this.getArguments();
-        if (!menuBundle.isEmpty()) {
-            person = new Person();
-            person.setId(Integer.parseInt(menuBundle.get("person_id").toString()));
-        }
+
+        SharedPreferences sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+        final Person person = new Person();
+        sharedPreferences.getAll();
+        person.setId(sharedPreferences.getInt("person_id", 0));
         this.view = inflater.inflate(R.layout.fragment_add_new_order, container, false);
         this.spProductos = this.view.findViewById(R.id.spProducts);
         this.productList = new ArrayList<>();

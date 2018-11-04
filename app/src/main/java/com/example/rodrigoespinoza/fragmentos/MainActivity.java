@@ -12,9 +12,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.rodrigoespinoza.fragmentos.fragments.LoginFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.RegistroFragment;
+import com.example.rodrigoespinoza.fragmentos.model.Person;
 
 public class MainActivity
         extends AppCompatActivity
@@ -26,6 +28,7 @@ public class MainActivity
 
     RegistroFragment registroFragment;
     LoginFragment loginFragment;
+    MenuActivity menuActivity;
     Button btnOpenLoginFragment, btnOpenSigInFragment;
 
     @Override
@@ -46,7 +49,18 @@ public class MainActivity
         this.loginFragment = new LoginFragment();
 
 
+        SharedPreferences sharedPreferences = this.getPreferences(Context.MODE_PRIVATE);
+        final Person person = new Person();
+        sharedPreferences.getAll();
+        person.setId(sharedPreferences.getInt("person_id", 0));
+        if(person.getId() != 0){
+            Intent intent = new Intent(this, MenuActivity.class);
+            startActivity(intent);
+
+        }else
+            {
         getSupportFragmentManager().beginTransaction().add(R.id.containerFragment, this.loginFragment).commit();
+        }
 
     }
 

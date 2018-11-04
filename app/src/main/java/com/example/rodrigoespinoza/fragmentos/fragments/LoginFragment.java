@@ -1,8 +1,10 @@
 package com.example.rodrigoespinoza.fragmentos.fragments;
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -116,6 +118,11 @@ public class LoginFragment extends Fragment {
 
                         intent = new Intent(getActivity(), MenuActivity.class);
                         intent.putExtra("id", id);
+                        SharedPreferences sharedPreferences = getContext().getSharedPreferences("data", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putInt("user_id", id);
+                        editor.commit();
+
                         startActivity(intent);
                     } catch (Exception ex) {
                         Toast.makeText(getContext(), "Usuario o Contraseña Invalida", Toast.LENGTH_LONG).show();
