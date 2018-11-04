@@ -12,9 +12,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.rodrigoespinoza.fragmentos.fragments.LoginFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.RegistroFragment;
+import com.example.rodrigoespinoza.fragmentos.model.Person;
 
 public class MainActivity
         extends AppCompatActivity
@@ -26,6 +28,7 @@ public class MainActivity
 
     RegistroFragment registroFragment;
     LoginFragment loginFragment;
+    MenuActivity menuActivity;
     Button btnOpenLoginFragment, btnOpenSigInFragment;
 
     @Override
@@ -44,6 +47,7 @@ public class MainActivity
         //Se importan los fragmentos o vistas
         this.registroFragment = new RegistroFragment();
         this.loginFragment = new LoginFragment();
+
 
 
         getSupportFragmentManager().beginTransaction().add(R.id.containerFragment, this.loginFragment).commit();
