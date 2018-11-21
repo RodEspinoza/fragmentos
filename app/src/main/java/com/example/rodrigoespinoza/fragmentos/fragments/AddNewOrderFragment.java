@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -98,6 +99,8 @@ public class AddNewOrderFragment extends Fragment implements Response.Listener<J
 
         SharedPreferences sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
         final Person person = new Person();
+
+        final Product product = new Product();
         sharedPreferences.getAll();
         person.setId(sharedPreferences.getInt("person_id", 0));
         this.view = inflater.inflate(R.layout.fragment_add_new_order, container, false);
@@ -111,16 +114,19 @@ public class AddNewOrderFragment extends Fragment implements Response.Listener<J
             @Override
             public void onClick(View v) {
                 getProduct(selected_product);
+
                 if(product.getId() == null){
                     Toast.makeText(getContext(), "Producto no seleccionado", Toast.LENGTH_SHORT);
                 }
+                status = ((RadioButton)view.findViewById(rStatus.getCheckedRadioButtonId())).getText().toString();
                 order = new Order();
                 order.setPerson(person);
                 order.setProduct(product);
                 order.setTotal(Integer.parseInt(txTotal.getText().toString()));
                 Date date = new Date();
                 order.setFecha(date);
-                order.setState(status.toString());
+                order.setState(status);
+
                 saveOrder(order);
             }
         });
@@ -138,6 +144,7 @@ public class AddNewOrderFragment extends Fragment implements Response.Listener<J
         progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Cargando...");
         String url ="https://androidsandbox.site/wsAndroid/wsAddOrder.php";
+
         stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -212,6 +219,7 @@ public class AddNewOrderFragment extends Fragment implements Response.Listener<J
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         selected_product = spProductos.getSelectedItem().toString();
+
                     }
 
                     @Override
@@ -235,7 +243,7 @@ public class AddNewOrderFragment extends Fragment implements Response.Listener<J
     public void getProduct(String productName){
         String url = "https://androidsandbox.site/wsAndroid/wsGetProduct.php/?name="+productName;
         Toast.makeText(getContext(), url, Toast.LENGTH_SHORT);
-        final Product product = new Product();
+        product = new Product();
 
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
         requestQueue.add(jsonObjectRequest);
