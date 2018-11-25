@@ -75,7 +75,7 @@ public class MenuActivity extends AppCompatActivity
         Bundle bundleMenu = intent.getExtras();
 
         if (!bundleMenu.isEmpty()) {
-            person = new Person(Integer.parseInt(bundleMenu.get("id").toString()));
+            person = new Person(Float.parseFloat(bundleMenu.get("id").toString()));
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
