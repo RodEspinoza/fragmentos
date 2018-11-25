@@ -1,9 +1,12 @@
 package com.example.rodrigoespinoza.fragmentos.fragments;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +26,12 @@ import com.android.volley.toolbox.Volley;
 import com.example.rodrigoespinoza.fragmentos.R;
 import com.example.rodrigoespinoza.fragmentos.model.Product;
 import com.example.rodrigoespinoza.fragmentos.model.SqlConecttion;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,7 +65,7 @@ public class ProductFragment extends Fragment {
 
     //Segunda forma
     StringRequest stringRequest;
-
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
     public ProductFragment() {
         // Required empty public constructor
     }
@@ -118,8 +127,30 @@ public class ProductFragment extends Fragment {
         final ProgressDialog progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Cargando...");
         progressDialog.show();
+        db.collection("products")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Product product = new Product();
+                            product.setId(document.getId());
+                            product.setStock(Integer.parseInt(document.get("stock").toString()));
+                            product.setName((document.get("name").toString()));
+                            productList.add(product);
+                        }
+                        setDataToList();
+                        }
+                        else{
+                            Log.w("Products", "Error getting documents.", task.getException());
+                            progressDialog.dismiss();
+                        }
+                    }
+                });
 
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
+        progressDialog.dismiss();
+        /** JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 for (int i = 0; i < response.length(); i++) {
@@ -148,6 +179,7 @@ public class ProductFragment extends Fragment {
         });
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(jsonArrayRequest);
+         **/
 
     }
 
@@ -174,8 +206,8 @@ public class ProductFragment extends Fragment {
         this.detailList =  new ArrayList<String>();
         for(int i=0; i < this.productList.size();i++){
             this.detailList.add(
-                    this.productList.get(i).getId().toString() +
-                            " :" + this.productList.get(i).getName());
+
+                    this.productList.get(i).getName() + ". Stock:" + this.productList.get(i).getStock());
         }
         ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_expandable_list_item_1, detailList);
 
@@ -185,7 +217,7 @@ public class ProductFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 EditProductFragment nextFrag = new EditProductFragment();
                 Bundle bundle = new Bundle();
-                bundle.putInt("product_id", productList.get(position).getId());
+                bundle.putString("product_id", productList.get(position).getId());
                 bundle.putInt("product_stock", productList.get(position).getStock());
                 bundle.putString("product_name", productList.get(position).getName());
                 nextFrag.setArguments(bundle);

@@ -22,6 +22,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 
+
 public class MainActivity
         extends AppCompatActivity
         implements View.OnClickListener, RegistroFragment.OnFragmentInteractionListener,
@@ -30,6 +31,7 @@ public class MainActivity
 
     Button btnDinamico, btnEstatico, btnNavegacion;
     Intent intent;
+
 
     private static final String TAG = "GoogleActivity";
     private static final int RC_SIGN_IN = 9001;

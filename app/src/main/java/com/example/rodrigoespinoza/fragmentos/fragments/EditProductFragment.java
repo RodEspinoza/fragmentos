@@ -90,7 +90,7 @@ public class EditProductFragment extends Fragment {
         if(!productBundle.isEmpty()){
 
             this.product = new Product(
-                    Integer.parseInt(productBundle.get("product_id").toString()),
+                    (productBundle.get("product_id").toString()),
                     productBundle.get("product_name").toString(),
                     Integer.parseInt(productBundle.get("product_stock").toString())
             );
@@ -174,7 +174,7 @@ public class EditProductFragment extends Fragment {
 
     }
 
-    private void deleteProduct(final Integer id) {
+    private void deleteProduct(final String id) {
             callProgressDialog();
             String url = this.baseUrl+"/wsDeleteProduct.php";
             stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -198,7 +198,7 @@ public class EditProductFragment extends Fragment {
 
 
                 Map<String,String> parametros = new HashMap<>();
-                parametros.put("id", id.toString());
+                //parametros.put("id", id);
                 return parametros;
             }
         };

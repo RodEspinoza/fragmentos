@@ -1,11 +1,11 @@
 package com.example.rodrigoespinoza.fragmentos.model;
 
 public class Product {
-    Integer id;
+    String id;
     String name;
     Integer stock;
 
-    public Product(Integer id, String name, Integer stock) {
+    public Product(String id, String name, Integer stock) {
         this.id = id;
         this.name = name;
         this.stock = stock;
@@ -15,11 +15,11 @@ public class Product {
 
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 

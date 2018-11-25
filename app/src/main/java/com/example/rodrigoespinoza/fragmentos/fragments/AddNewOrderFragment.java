@@ -203,7 +203,7 @@ public class AddNewOrderFragment extends Fragment implements Response.Listener<J
                         Product product = new Product();
                         product.setStock(Integer.parseInt(jsonObject.getString("stock")));
                         product.setName(jsonObject.getString("name"));
-                        product.setId(Integer.parseInt(jsonObject.getString("id")));
+                        product.setId((jsonObject.getString("id")));
 
                         productList.add(product.getName());
                     } catch (JSONException e) {
@@ -277,7 +277,7 @@ public class AddNewOrderFragment extends Fragment implements Response.Listener<J
             JSONArray json = response.optJSONArray("producto");
             JSONObject jsonObject = null;
             jsonObject =json.getJSONObject(0);
-            product.setId(jsonObject.getInt("id"));
+            product.setId(jsonObject.getString("id"));
             product.setName(jsonObject.getString("name"));
             product.setStock(jsonObject.getInt("stock"));
             progressDialog.hide();
