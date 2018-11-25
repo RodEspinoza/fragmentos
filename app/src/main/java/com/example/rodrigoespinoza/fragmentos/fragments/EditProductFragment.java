@@ -7,8 +7,10 @@ import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,9 @@ import com.android.volley.toolbox.Volley;
 import com.example.rodrigoespinoza.fragmentos.R;
 import com.example.rodrigoespinoza.fragmentos.model.Product;
 import com.example.rodrigoespinoza.fragmentos.model.SqlConecttion;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,6 +54,8 @@ public class EditProductFragment extends Fragment {
     RequestQueue requestQueue;
     ProgressDialog progressDialog;
     StringRequest stringRequest;
+    // Access a Cloud Firestore instance from your Activity
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private OnFragmentInteractionListener mListener;
 
@@ -135,43 +142,31 @@ public class EditProductFragment extends Fragment {
 
     private void updateProduct(final Product product) {
         callProgressDialog();
-        String url = this.baseUrl+"/wsEditProduct.php";
-        stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                progressDialog.hide();
-
+         Map<String, String> update_map = new HashMap<>();
+         update_map.put("name", product.getName());
+         update_map.put("stock",  product.getStock().toString());
+         db.collection("products")
+                 .document(product.getId())
+                 .set(update_map).addOnSuccessListener(new OnSuccessListener<Void>() {
+             @Override
+             public void onSuccess(Void aVoid) {
+                 Log.d("Nani", "DocumentSnapshot successfully written!");
+                 progressDialog.hide();
+                Toast.makeText(getContext(), "Producto Actualizado", Toast.LENGTH_SHORT);
                 ProductFragment nextFrag = new ProductFragment();
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.containerFragmentMenu, nextFrag,"findThisFragment")
-                        .addToBackStack(null)
-                        .commit();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                progressDialog.hide();
-                Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
-
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                String id = product.getId().toString();
-                String name = product.getName();
-                String stock = product.getStock().toString();
-                Map<String,String> parametros = new HashMap<>();
-                parametros.put("id", id);
-                parametros.put("name", name);
-                parametros.put("stock", stock);
-                return parametros;
-
-            }
-        }
-        ;
-
-        requestQueue.add(stringRequest);
-
+                         .replace(R.id.containerFragmentMenu, nextFrag,"findThisFragment")
+                         .addToBackStack(null)
+                         .commit();
+             }
+         }).addOnFailureListener(new OnFailureListener() {
+             @Override
+             public void onFailure(@NonNull Exception e) {
+                 progressDialog.hide();
+                 Toast.makeText(getContext(), "Nope", Toast.LENGTH_SHORT);
+             }
+         });
+         
     }
 
     private void deleteProduct(final String id) {
