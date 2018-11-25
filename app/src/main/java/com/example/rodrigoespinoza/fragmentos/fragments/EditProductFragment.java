@@ -166,38 +166,26 @@ public class EditProductFragment extends Fragment {
                  Toast.makeText(getContext(), "Nope", Toast.LENGTH_SHORT);
              }
          });
-         
+
     }
 
     private void deleteProduct(final String id) {
-            callProgressDialog();
-            String url = this.baseUrl+"/wsDeleteProduct.php";
-            stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+        callProgressDialog();
+        db.collection("products").document(id)
+                .delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
-            public void onResponse(String response) {
+            public void onSuccess(Void aVoid) {
+            setProductFragment();
+            progressDialog.hide();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w("Nani", "Error deleting document", e);
+                Toast.makeText(getContext(), "Algo salio mal", Toast.LENGTH_SHORT);
                 progressDialog.hide();
-                setProductFragment();
-
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                progressDialog.hide();
-                Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
-
-            }
-        }
-        ){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-
-
-                Map<String,String> parametros = new HashMap<>();
-                //parametros.put("id", id);
-                return parametros;
-            }
-        };
-        requestQueue.add(stringRequest);
+        });
 
 
 
