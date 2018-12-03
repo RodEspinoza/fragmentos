@@ -27,9 +27,16 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.lang.reflect.Array;
+import java.util.HashMap;
+import java.util.Map;
+
+import bolts.Task;
 
 
 public class MainActivity
@@ -53,7 +60,7 @@ public class MainActivity
     MenuActivity menuActivity;
     Button btnOpenLoginFragment, btnOpenSigInFragment;
     SignInButton sign_in_button;
-
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
     private LoginButton loginButton;
     private CallbackManager callbackManager;
 
@@ -152,15 +159,21 @@ public class MainActivity
         if(result.isSuccess()){
             //holi
             GoogleSignInAccount account = result.getSignInAccount();
-            String name = account.getDisplayName();
-            String email = account.getEmail();
-            String id = account.getId();
-            String url = account.getPhotoUrl().toString();
+            Map<String, String> params = new HashMap<>();
+            params.put("name", account.getDisplayName());
+            params.put("email", account.getEmail());
+            params.put("id", account.getId());
+            params.put("url", account.getDisplayName());
+            com.google.android.gms.tasks.Task<QuerySnapshot> user_query_register = db.collection("user")
+                    .whereEqualTo("email", account.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
+
+                        }
+                    });
+
             intent = new Intent(this, MenuActivity.class);
-            intent.putExtra("id", id);
-            intent.putExtra("name", name);
-            intent.putExtra("email",email);
-            intent.putExtra("url", url);
+
             // FALTA PASAR ID USUARIO BIEN POR QUE DICE QUE NO ES UN INT :O
             startActivity(intent);
 
