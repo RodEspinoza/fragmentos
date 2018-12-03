@@ -126,7 +126,6 @@ public class AddProductFragment extends Fragment {
     private void addNewProduct(final Product product) {
         this.progressDialog = new ProgressDialog(getContext());
         this.progressDialog.setMessage("Cargando...");
-        String uri = "https://androidsandbox.site/wsAndroid/wsAddProduct.php";
         Map<String, String>  params = new HashMap<>();
         params.put("name", product.getName());
         params.put("stock", String.valueOf(product.getStock()));

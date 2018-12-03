@@ -41,7 +41,11 @@ import com.example.rodrigoespinoza.fragmentos.fragments.EditProductFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.ProductFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.ProductOrders;
 import com.example.rodrigoespinoza.fragmentos.model.Person;
+
 import com.facebook.login.LoginManager;
+
+import com.google.firebase.auth.FirebaseAuth;
+
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -71,7 +75,7 @@ public class MenuActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
-
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         Intent intent = getIntent();
         Bundle bundleMenu = intent.getExtras();
 
@@ -157,6 +161,8 @@ public class MenuActivity extends AppCompatActivity
             getCampos(person);
 
         } else if (id == R.id.logOut){
+            FirebaseAuth mAuth=  FirebaseAuth.getInstance();
+            mAuth.signOut();
             logout();
         }
 
