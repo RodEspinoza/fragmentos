@@ -41,6 +41,7 @@ import com.example.rodrigoespinoza.fragmentos.fragments.EditProductFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.ProductFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.ProductOrders;
 import com.example.rodrigoespinoza.fragmentos.model.Person;
+import com.google.firebase.auth.FirebaseAuth;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -70,7 +71,7 @@ public class MenuActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
-
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         Intent intent = getIntent();
         Bundle bundleMenu = intent.getExtras();
 
@@ -155,6 +156,10 @@ public class MenuActivity extends AppCompatActivity
 
             getCampos(person);
 
+        } else if(id == R.id.nav_logout){
+            FirebaseAuth mAuth=  FirebaseAuth.getInstance();
+            mAuth.signOut();
+            Toast.makeText(this, "ou,,,,t", Toast.LENGTH_SHORT);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

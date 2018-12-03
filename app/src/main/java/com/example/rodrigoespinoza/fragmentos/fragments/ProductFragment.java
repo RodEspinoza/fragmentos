@@ -60,11 +60,7 @@ public class ProductFragment extends Fragment {
     //Componente de Progreso
     ProgressDialog progressDialog;
 
-    RequestQueue request;
-    JsonObjectRequest jsonObjectRequest;
 
-    //Segunda forma
-    StringRequest stringRequest;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     public ProductFragment() {
         // Required empty public constructor
@@ -123,7 +119,6 @@ public class ProductFragment extends Fragment {
 
 
     private void getProducts() {
-        String url ="https://androidsandbox.site/wsAndroid/wsGetAllProducts.php";
         final ProgressDialog progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Cargando...");
         progressDialog.show();
@@ -150,36 +145,6 @@ public class ProductFragment extends Fragment {
                 });
 
         progressDialog.dismiss();
-        /** JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                for (int i = 0; i < response.length(); i++) {
-                    try {
-                        JSONObject jsonObject = response.getJSONObject(i);
-
-                        Product product = new Product();
-                        product.setStock(Integer.parseInt(jsonObject.getString("stock")));
-                        product.setName(jsonObject.getString("name"));
-                        product.setId(Integer.parseInt(jsonObject.getString("id")));
-                        productList.add(product);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        progressDialog.dismiss();
-                    }
-                }
-                setDataToList();
-                progressDialog.dismiss();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.getMessage();
-                progressDialog.dismiss();
-            }
-        });
-        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
-        requestQueue.add(jsonArrayRequest);
-         **/
 
     }
 
