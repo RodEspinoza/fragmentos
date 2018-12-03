@@ -41,6 +41,7 @@ import com.example.rodrigoespinoza.fragmentos.fragments.EditProductFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.ProductFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.ProductOrders;
 import com.example.rodrigoespinoza.fragmentos.model.Person;
+import com.facebook.login.LoginManager;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -155,6 +156,8 @@ public class MenuActivity extends AppCompatActivity
 
             getCampos(person);
 
+        } else if (id == R.id.logOut){
+            logout();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -162,7 +165,13 @@ public class MenuActivity extends AppCompatActivity
         return true;
     }
 
-    private void getCampos(final Person per) {
+        private void logout() {
+            LoginManager.getInstance().logOut();
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
+
+            private void getCampos(final Person per) {
         this.progressDialog = new ProgressDialog(this);
         this.progressDialog.setMessage("Cargando... ");
         this.progressDialog.show();

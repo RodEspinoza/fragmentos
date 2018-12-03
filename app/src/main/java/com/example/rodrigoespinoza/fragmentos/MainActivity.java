@@ -8,9 +8,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.rodrigoespinoza.fragmentos.fragments.LoginFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.RegistroFragment;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -21,6 +28,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.lang.reflect.Array;
 
 
 public class MainActivity
@@ -44,6 +53,11 @@ public class MainActivity
     MenuActivity menuActivity;
     Button btnOpenLoginFragment, btnOpenSigInFragment;
     SignInButton sign_in_button;
+
+    private LoginButton loginButton;
+    private CallbackManager callbackManager;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -84,8 +98,43 @@ public class MainActivity
             }
         });
 
+        callbackManager = CallbackManager.Factory.create();
+        loginButton = (LoginButton) findViewById(R.id.loginButton);
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                //goMainScreen();
+            }
+
+            @Override
+            public void onCancel() {
+                Toast.makeText(getApplicationContext(), R.string.com_facebook_smart_login_confirmation_cancel, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        if (AccessToken.getCurrentAccessToken() == null){
+            //goLoginScreen();
+        }
+
         getSupportFragmentManager().beginTransaction().add(R.id.containerFragment, this.loginFragment).commit();
 
+    }
+
+    private void goLoginScreen() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+    private void goMainScreen() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     @Override
@@ -95,6 +144,8 @@ public class MainActivity
 
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResultGoogle(result);
+        } else {
+            callbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
     private void handleSignInResultGoogle(GoogleSignInResult result) {
