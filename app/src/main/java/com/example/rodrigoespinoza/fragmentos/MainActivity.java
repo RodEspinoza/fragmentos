@@ -31,12 +31,17 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.Map;
 
-import bolts.Task;
 
 
 public class MainActivity
@@ -54,6 +59,7 @@ public class MainActivity
     private GoogleSignInClient mGoogleSignInClient;
     // [START declare_auth]
     private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener fireAuthStateListener;
     private GoogleApiClient googleApiClient;
     RegistroFragment registroFragment;
     LoginFragment loginFragment;
@@ -111,6 +117,7 @@ public class MainActivity
             @Override
             public void onSuccess(LoginResult loginResult) {
                 //goMainScreen();
+                handleFacebookAccessToken(loginResult.getAccessToken());
             }
 
             @Override
@@ -124,12 +131,44 @@ public class MainActivity
             }
         });
 
+        fireAuthStateListener =  new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = mAuth.getCurrentUser();
+                if (user != null){
+                    goMainScreen();
+                }
+            }
+        };
+
         if (AccessToken.getCurrentAccessToken() == null){
             //goLoginScreen();
         }
 
         getSupportFragmentManager().beginTransaction().add(R.id.containerFragment, this.loginFragment).commit();
 
+    }
+
+    private void handleFacebookAccessToken(AccessToken accessToken) {
+        AuthCredential authCredential = FacebookAuthProvider.getCredential(accessToken.getToken());
+        mAuth.signInWithCredential(authCredential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        mAuth.addAuthStateListener(fireAuthStateListener);
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        mAuth.removeAuthStateListener(fireAuthStateListener);
     }
 
     private void goLoginScreen() {
