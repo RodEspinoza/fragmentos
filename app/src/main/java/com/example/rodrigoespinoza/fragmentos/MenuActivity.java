@@ -172,6 +172,7 @@ public class MenuActivity extends AppCompatActivity
     }
 
         private void logout() {
+            FirebaseAuth.getInstance().signOut();
             LoginManager.getInstance().logOut();
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);

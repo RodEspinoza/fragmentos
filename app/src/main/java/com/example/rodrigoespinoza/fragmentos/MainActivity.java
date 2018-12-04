@@ -38,15 +38,12 @@ import com.google.firebase.auth.FirebaseUser;
 import java.lang.reflect.Array;
 
 
-public class MainActivity
-        extends AppCompatActivity
-        implements View.OnClickListener, RegistroFragment.OnFragmentInteractionListener,
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, RegistroFragment.OnFragmentInteractionListener,
         LoginFragment.OnFragmentInteractionListener,
         GoogleApiClient.OnConnectionFailedListener{
 
     Button btnDinamico, btnEstatico, btnNavegacion;
     Intent intent;
-
 
     private static final String TAG = "GoogleActivity";
     private static final int RC_SIGN_IN = 9001;
@@ -54,7 +51,9 @@ public class MainActivity
     // [START declare_auth]
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener fireAuthStateListener;
+
     private GoogleApiClient googleApiClient;
+
     RegistroFragment registroFragment;
     LoginFragment loginFragment;
     MenuActivity menuActivity;
@@ -64,10 +63,8 @@ public class MainActivity
     private LoginButton loginButton;
     private CallbackManager callbackManager;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         // Se crean variables del mismo tipo BUTTON que tomaran el control de accion
@@ -121,7 +118,7 @@ public class MainActivity
 
             @Override
             public void onError(FacebookException error) {
-                Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.com_facebook_smart_login_confirmation_cancel, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -131,16 +128,26 @@ public class MainActivity
                 FirebaseUser user = mAuth.getCurrentUser();
                 if (user != null){
                     goMainScreen();
+                    getDataFacebook(user);
+                } else {
+                    goLoginScreen();
                 }
             }
         };
 
-        if (AccessToken.getCurrentAccessToken() == null){
-            //goLoginScreen();
-        }
-
         getSupportFragmentManager().beginTransaction().add(R.id.containerFragment, this.loginFragment).commit();
 
+    }
+
+    private void getDataFacebook(FirebaseUser user) {
+        String name = user.getDisplayName();
+        String emai = user.getEmail();
+        String id = user.getUid();
+        intent = new Intent(this, MenuActivity.class);
+        intent.putExtra("nombre",name);
+        intent.putExtra("email", emai);
+        intent.putExtra("uid", id);
+        startActivity(intent);
     }
 
     private void handleFacebookAccessToken(AccessToken accessToken) {
@@ -148,7 +155,9 @@ public class MainActivity
         mAuth.signInWithCredential(authCredential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+                if (!task.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), R.string.com_facebook_smart_login_confirmation_cancel, Toast.LENGTH_LONG).show();
+                }
             }
         });
     }
