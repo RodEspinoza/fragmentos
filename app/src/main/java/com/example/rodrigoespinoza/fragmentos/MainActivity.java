@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -28,14 +29,21 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
 import java.lang.reflect.Array;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Future;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, RegistroFragment.OnFragmentInteractionListener,
@@ -59,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     MenuActivity menuActivity;
     Button btnOpenLoginFragment, btnOpenSigInFragment;
     SignInButton sign_in_button;
-
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
     private LoginButton loginButton;
     private CallbackManager callbackManager;
 
@@ -201,15 +209,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(result.isSuccess()){
             //holi
             GoogleSignInAccount account = result.getSignInAccount();
-            String name = account.getDisplayName();
-            String email = account.getEmail();
-            String id = account.getId();
-            String url = account.getPhotoUrl().toString();
+            String USER_TAG ="USER";
+            final Map<String, String> params = new HashMap<>();
+            params.put("name", account.getDisplayName());
+            params.put("email", account.getEmail());
+            params.put("id", account.getId());
+            params.put("url", account.getDisplayName());
+            com.google.android.gms.tasks.Task<QuerySnapshot> user_query_register = db.collection("user")
+                    .whereEqualTo("email", account.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
+                            if(task.isSuccessful()){
+                                QuerySnapshot document = task.getResult();
+                                if(document.getDocuments().size()<0){
+                                 db.collection("user").add(params);
+                                 // falta crear la persona...
+                                }
+                            }
+                        }
+                    });
+
             intent = new Intent(this, MenuActivity.class);
-            intent.putExtra("id", id);
-            intent.putExtra("name", name);
-            intent.putExtra("email",email);
-            intent.putExtra("url", url);
+
             // FALTA PASAR ID USUARIO BIEN POR QUE DICE QUE NO ES UN INT :O
             startActivity(intent);
 

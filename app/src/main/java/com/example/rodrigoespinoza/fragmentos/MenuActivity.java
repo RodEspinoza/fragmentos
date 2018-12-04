@@ -82,6 +82,7 @@ public class MenuActivity extends AppCompatActivity
         if (!bundleMenu.isEmpty()) {
             person = new Person(Float.parseFloat(bundleMenu.get("id").toString()));
         }
+        Toast.makeText(this, mAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
