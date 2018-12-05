@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     RegistroFragment registroFragment;
     LoginFragment loginFragment;
-    MenuActivity menuActivity;
     Button btnOpenLoginFragment, btnOpenSigInFragment;
     SignInButton sign_in_button;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -136,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 FirebaseUser user = mAuth.getCurrentUser();
                 if (user != null){
                     createUserInDb(user);
-                    goMenuScreen(user);
+
 
                 }
             }
@@ -146,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private void createUserInDb(FirebaseUser user) {
+    private void createUserInDb(final FirebaseUser user) {
         String USER_TAG ="USER";
         final Map<String, String> params = new HashMap<>();
         params.put("name", user.getDisplayName());
@@ -162,8 +161,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             if(document.getDocuments().size()<0){
                                 db.collection("user").add(params);
                                 // falta crear la persona...
-                            }
-                        }
+                                goMenuScreen(user);
+                            }else{
+                            goMenuScreen(user);
+                        }}
                     }
                 });
 
