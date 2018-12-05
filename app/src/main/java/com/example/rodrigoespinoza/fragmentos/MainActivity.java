@@ -31,6 +31,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -40,7 +41,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import java.lang.reflect.Array;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -50,7 +51,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         LoginFragment.OnFragmentInteractionListener,
         GoogleApiClient.OnConnectionFailedListener{
 
-    Button btnDinamico, btnEstatico, btnNavegacion;
     Intent intent;
 
     private static final String TAG = "GoogleActivity";
@@ -102,13 +102,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mAuth = FirebaseAuth.getInstance();
         // [END config_signin]
-        this.sign_in_button.setOnClickListener(new View.OnClickListener() {
+        /*this.sign_in_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
                 startActivityForResult(intent,777);
             }
-        });
+        });*/
 
         callbackManager = CallbackManager.Factory.create();
         loginButton = (LoginButton) findViewById(R.id.loginButton);
@@ -129,7 +129,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(getApplicationContext(), R.string.com_facebook_smart_login_confirmation_cancel, Toast.LENGTH_SHORT).show();
             }
         });
-
         fireAuthStateListener =  new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -137,8 +136,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (user != null){
                     goMainScreen();
                     getDataFacebook(user);
-                } else {
-                    goLoginScreen();
                 }
             }
         };
@@ -149,11 +146,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void getDataFacebook(FirebaseUser user) {
         String name = user.getDisplayName();
-        String emai = user.getEmail();
+        String email = user.getEmail();
         String id = user.getUid();
         intent = new Intent(this, MenuActivity.class);
         intent.putExtra("nombre",name);
-        intent.putExtra("email", emai);
+        intent.putExtra("email", email);
         intent.putExtra("uid", id);
         startActivity(intent);
     }
@@ -170,19 +167,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    @Override
-    protected void onStart(){
-        super.onStart();
-        mAuth.addAuthStateListener(fireAuthStateListener);
-    }
-
-    @Override
-    protected void onStop(){
-        super.onStop();
-        mAuth.removeAuthStateListener(fireAuthStateListener);
-    }
 
     private void goLoginScreen() {
+        // Funcion recursiva -> estas mandando al main de nuevo xd y no va a estar logeado...
+        // y como no esta logeado al llegar al main voy a crear otro intent main y .. asi xd
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
@@ -207,6 +195,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     private void handleSignInResultGoogle(GoogleSignInResult result) {
         if(result.isSuccess()){
+
+            firebaseAuthWithGoogle(result.getSignInAccount());
             //holi
             GoogleSignInAccount account = result.getSignInAccount();
             String USER_TAG ="USER";
@@ -236,7 +226,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         }
+        else{
+            Toast.makeText(this, "No se pudo iniciar sesión", Toast.LENGTH_SHORT).show();
+        }
     }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount signInAccount) {
+         AuthCredential credential = GoogleAuthProvider.getCredential(signInAccount.getIdToken(), null);
+         mAuth.signInWithCredential(credential)
+    }
+
+
+
 
     @Override
     public void onClick(View v) {
