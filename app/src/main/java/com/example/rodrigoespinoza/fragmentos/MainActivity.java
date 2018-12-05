@@ -158,8 +158,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
                         if(task.isSuccessful()){
                             QuerySnapshot document = task.getResult();
-                            if(document.getDocuments().size()<0){
-                                db.collection("user").add(params);
+                            document.getDocuments().size();
+
+                            if(document.getDocuments().size()==0){
+                                String user_id =  db.collection("user").add(params).getResult().getId();
+                                if(user_id!=null){
+                                    Map<String, String> param_person = new HashMap<>();
+                                    param_person.put("user_id", user_id);
+                                    db.collection("person").add(params);
+
+                                }
+
                                 // falta crear la persona...
                                 goMenuScreen(user);
                             }else{
