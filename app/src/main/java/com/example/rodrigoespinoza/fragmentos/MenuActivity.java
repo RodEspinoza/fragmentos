@@ -44,6 +44,9 @@ import com.example.rodrigoespinoza.fragmentos.model.Person;
 
 import com.facebook.login.LoginManager;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 
 
@@ -70,17 +73,29 @@ public class MenuActivity extends AppCompatActivity
     RequestQueue requestQueue;
     ProgressDialog progressDialog;
     StringRequest stringRequest;
+    String TAG_MENU ="MENUActivity !!!";
+    FirebaseAuth mAuth;
+    GoogleSignInClient googleSignInClient;
+    GoogleSignInOptions gso;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
         Intent intent = getIntent();
         Bundle bundleMenu = intent.getExtras();
 
         if (!bundleMenu.isEmpty()) {
+            if(bundleMenu.get("id")!=null){
             person = new Person(Float.parseFloat(bundleMenu.get("id").toString()));
+            }
+        }
+
+        if(mAuth.getCurrentUser() != null){
+            Log.d(TAG_MENU, "done");
+        }else{
+            Log.d(TAG_MENU, "credenciales ???");
         }
         Toast.makeText(this, mAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT);
 
@@ -104,6 +119,10 @@ public class MenuActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
         this.requestQueue = Volley.newRequestQueue(this);
     }
 
@@ -173,7 +192,11 @@ public class MenuActivity extends AppCompatActivity
     }
 
         private void logout() {
-            FirebaseAuth.getInstance().signOut();
+
+            this.mAuth.signOut();
+            googleSignInClient = GoogleSignIn.getClient(this, gso);
+            googleSignInClient.signOut();
+
             LoginManager.getInstance().logOut();
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);

@@ -102,20 +102,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mAuth = FirebaseAuth.getInstance();
         // [END config_signin]
-        /*this.sign_in_button.setOnClickListener(new View.OnClickListener() {
+        this.sign_in_button.setSize(SignInButton.SIZE_WIDE);
+        this.sign_in_button.setColorScheme(SignInButton.COLOR_DARK);
+        this.sign_in_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
                 startActivityForResult(intent,777);
             }
-        });*/
+        });
 
         callbackManager = CallbackManager.Factory.create();
         loginButton = (LoginButton) findViewById(R.id.loginButton);
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                //goMainScreen();
                 handleFacebookAccessToken(loginResult.getAccessToken());
             }
 
@@ -134,8 +135,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = mAuth.getCurrentUser();
                 if (user != null){
-                    goMainScreen();
-                    getDataFacebook(user);
+                    createUserInDb(user);
+                    goMenuScreen(user);
+
                 }
             }
         };
@@ -144,15 +146,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private void getDataFacebook(FirebaseUser user) {
-        String name = user.getDisplayName();
-        String email = user.getEmail();
-        String id = user.getUid();
-        intent = new Intent(this, MenuActivity.class);
-        intent.putExtra("nombre",name);
-        intent.putExtra("email", email);
-        intent.putExtra("uid", id);
-        startActivity(intent);
+    private void createUserInDb(FirebaseUser user) {
+        String USER_TAG ="USER";
+        final Map<String, String> params = new HashMap<>();
+        params.put("name", user.getDisplayName());
+        params.put("email", user.getEmail());
+        params.put("id", user.getUid());
+        params.put("url", user.getDisplayName());
+        db.collection("user")
+                .whereEqualTo("email", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            QuerySnapshot document = task.getResult();
+                            if(document.getDocuments().size()<0){
+                                db.collection("user").add(params);
+                                // falta crear la persona...
+                            }
+                        }
+                    }
+                });
+
+
     }
 
     private void handleFacebookAccessToken(AccessToken accessToken) {
@@ -176,8 +191,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(intent);
     }
 
-    private void goMainScreen() {
-        Intent intent = new Intent(this, MainActivity.class);
+    private void goMenuScreen(FirebaseUser user) {
+
+
+        Intent intent = new Intent(this, MenuActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
@@ -197,34 +214,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(result.isSuccess()){
 
             firebaseAuthWithGoogle(result.getSignInAccount());
-            //holi
             GoogleSignInAccount account = result.getSignInAccount();
-            String USER_TAG ="USER";
-            final Map<String, String> params = new HashMap<>();
-            params.put("name", account.getDisplayName());
-            params.put("email", account.getEmail());
-            params.put("id", account.getId());
-            params.put("url", account.getDisplayName());
-            com.google.android.gms.tasks.Task<QuerySnapshot> user_query_register = db.collection("user")
-                    .whereEqualTo("email", account.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
-                            if(task.isSuccessful()){
-                                QuerySnapshot document = task.getResult();
-                                if(document.getDocuments().size()<0){
-                                 db.collection("user").add(params);
-                                 // falta crear la persona...
-                                }
-                            }
-                        }
-                    });
-
-            intent = new Intent(this, MenuActivity.class);
-
-            // FALTA PASAR ID USUARIO BIEN POR QUE DICE QUE NO ES UN INT :O
-            startActivity(intent);
-
-
+            firebaseAuthWithGoogle(account);
         }
         else{
             Toast.makeText(this, "No se pudo iniciar sesión", Toast.LENGTH_SHORT).show();
@@ -232,9 +223,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount signInAccount) {
-         AuthCredential credential = GoogleAuthProvider.getCredential(signInAccount.getIdToken(), null);
-         mAuth.signInWithCredential(credential)
+        AuthCredential credential = GoogleAuthProvider.getCredential(signInAccount.getIdToken(), null);
+        mAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (!task.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), R.string.not_firebase_auth, Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
+
 
 
 
@@ -256,10 +255,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onFragmentInteraction(Uri uri) {
-        
+
     }
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(fireAuthStateListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(fireAuthStateListener != null){
+            mAuth.removeAuthStateListener(fireAuthStateListener);
+        }
     }
 }
