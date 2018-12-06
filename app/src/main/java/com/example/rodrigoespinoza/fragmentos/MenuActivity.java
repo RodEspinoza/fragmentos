@@ -42,6 +42,14 @@ import com.example.rodrigoespinoza.fragmentos.fragments.ProductFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.ProductOrders;
 import com.example.rodrigoespinoza.fragmentos.model.Person;
 
+import com.facebook.login.LoginManager;
+
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.firebase.auth.FirebaseAuth;
+
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -65,18 +73,31 @@ public class MenuActivity extends AppCompatActivity
     RequestQueue requestQueue;
     ProgressDialog progressDialog;
     StringRequest stringRequest;
+    String TAG_MENU ="MENUActivity !!!";
+    FirebaseAuth mAuth;
+    GoogleSignInClient googleSignInClient;
+    GoogleSignInOptions gso;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
-
+        mAuth = FirebaseAuth.getInstance();
         Intent intent = getIntent();
         Bundle bundleMenu = intent.getExtras();
 
         if (!bundleMenu.isEmpty()) {
+            if(bundleMenu.get("id")!=null){
             person = new Person(Float.parseFloat(bundleMenu.get("id").toString()));
+            }
         }
+
+        if(mAuth.getCurrentUser() != null){
+            Log.d(TAG_MENU, "done");
+        }else{
+            Log.d(TAG_MENU, "credenciales ???");
+        }
+        Toast.makeText(this, mAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -98,6 +119,10 @@ public class MenuActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
         this.requestQueue = Volley.newRequestQueue(this);
     }
 
@@ -155,6 +180,10 @@ public class MenuActivity extends AppCompatActivity
 
             getCampos(person);
 
+        } else if (id == R.id.logOut){
+            FirebaseAuth mAuth=  FirebaseAuth.getInstance();
+            mAuth.signOut();
+            logout();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -162,7 +191,18 @@ public class MenuActivity extends AppCompatActivity
         return true;
     }
 
-    private void getCampos(final Person per) {
+        private void logout() {
+
+            this.mAuth.signOut();
+            googleSignInClient = GoogleSignIn.getClient(this, gso);
+            googleSignInClient.signOut();
+
+            LoginManager.getInstance().logOut();
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
+
+        private void getCampos(final Person per) {
         this.progressDialog = new ProgressDialog(this);
         this.progressDialog.setMessage("Cargando... ");
         this.progressDialog.show();
@@ -187,6 +227,7 @@ public class MenuActivity extends AppCompatActivity
                     bundle.putString("id", person.getId_user().toString());
                     progressDialog.hide();
                     ourFragment.setArguments(bundle);
+
                     getSupportFragmentManager().beginTransaction().replace(R.id.containerFragmentMenu, ourFragment).commit();
 
                 } catch (Exception ex) {

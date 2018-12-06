@@ -18,6 +18,11 @@
             android:icon="@drawable/ic_people_black_24dp"
             android:title="@string/nav_edit_person">
         </item>
+        <item
+            android:id="@+id/logOut"
+            android:icon="@drawable/com_facebook_close"
+            android:title="Cerrar Sesion">
+        </item>
 
     </group>
 

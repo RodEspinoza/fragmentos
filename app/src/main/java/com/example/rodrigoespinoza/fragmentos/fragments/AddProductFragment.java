@@ -7,8 +7,10 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +30,10 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.rodrigoespinoza.fragmentos.R;
 import com.example.rodrigoespinoza.fragmentos.model.Product;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,7 +52,7 @@ import java.util.Map;
  * create an instance of this fragment.
  */
 public class AddProductFragment extends Fragment {
-
+    private final String PRODUCT_TAG ="FRAGMENT PRODUCTO";
     Intent intent;
     View view;
     EditText txProductName, txProductStock;
@@ -57,7 +63,8 @@ public class AddProductFragment extends Fragment {
     ProgressDialog progressDialog;
     StringRequest stringRequest;
     private OnFragmentInteractionListener mListener;
-
+    // Access a Cloud Firestore instance from your Activity
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
     public AddProductFragment() {
         // Required empty public constructor
     }
@@ -119,63 +126,30 @@ public class AddProductFragment extends Fragment {
     private void addNewProduct(final Product product) {
         this.progressDialog = new ProgressDialog(getContext());
         this.progressDialog.setMessage("Cargando...");
-        String uri = "https://androidsandbox.site/wsAndroid/wsAddProduct.php";
-        stringRequest = new StringRequest(Request.Method.POST, uri, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                progressDialog.hide();
-                Toast.makeText(getContext(), response, Toast.LENGTH_SHORT);
-                ProductFragment nextFrag = new ProductFragment();
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.containerFragmentMenu, nextFrag,"findThisFragment")
-                        .addToBackStack(null)
-                        .commit();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                progressDialog.hide();
-                Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_SHORT);
-
-
-            }
-        }
-        ){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-            Map<String, String>  params = new HashMap<>();
-            params.put("name", product.getName());
-            params.put("stock", String.valueOf(product.getStock()));
-            return params;
-            }
-        };
-        requestQueue.add(stringRequest);
-        /**
-            if(TextUtils.isEmpty(this.product.getName())){
-
-            }
-            SqlConecttion conn = new SqlConecttion(
-                    getContext(), "bd_gestor_pedidos", null,1);
-            SQLiteDatabase db = conn.getWritableDatabase();
-            try{
-
-                ContentValues values = new ContentValues();
-                values.put("name", product.getName());
-                values.put("stock", product.getStock());
-                Long id = db.insert("product", "id", values);
-                Toast.makeText(getContext(), id.toString(), Toast.LENGTH_SHORT).show();
-                db.close();
-                ProductFragment nextFrag = new ProductFragment();
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.containerFragmentMenu, nextFrag,"findThisFragment")
-                        .addToBackStack(null)
-                        .commit();
-
-            }catch (SQLiteException exc){
-                Toast.makeText(getContext(), "500", Toast.LENGTH_SHORT).show();
-                db.close();
-            }
-        **/
+        Map<String, String>  params = new HashMap<>();
+        params.put("name", product.getName());
+        params.put("stock", String.valueOf(product.getStock()));
+        db.collection("products")
+                .add(params)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d(PRODUCT_TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+                        Toast.makeText(getContext(), "Producto agragado", Toast.LENGTH_SHORT).show();
+                        ProductFragment nextFrag = new ProductFragment();
+                        getActivity().getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.containerFragmentMenu, nextFrag, "findThisFrag")
+                                .addToBackStack(null)
+                                .commit();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(PRODUCT_TAG, "Error adding document", e);
+                    }
+                });
+        
     }
 
 

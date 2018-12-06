@@ -1,9 +1,12 @@
 package com.example.rodrigoespinoza.fragmentos.fragments;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +26,12 @@ import com.android.volley.toolbox.Volley;
 import com.example.rodrigoespinoza.fragmentos.R;
 import com.example.rodrigoespinoza.fragmentos.model.Product;
 import com.example.rodrigoespinoza.fragmentos.model.SqlConecttion;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,12 +60,8 @@ public class ProductFragment extends Fragment {
     //Componente de Progreso
     ProgressDialog progressDialog;
 
-    RequestQueue request;
-    JsonObjectRequest jsonObjectRequest;
 
-    //Segunda forma
-    StringRequest stringRequest;
-
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
     public ProductFragment() {
         // Required empty public constructor
     }
@@ -114,40 +119,32 @@ public class ProductFragment extends Fragment {
 
 
     private void getProducts() {
-        String url ="https://androidsandbox.site/wsAndroid/wsGetAllProducts.php";
         final ProgressDialog progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Cargando...");
         progressDialog.show();
-
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                for (int i = 0; i < response.length(); i++) {
-                    try {
-                        JSONObject jsonObject = response.getJSONObject(i);
-
-                        Product product = new Product();
-                        product.setStock(Integer.parseInt(jsonObject.getString("stock")));
-                        product.setName(jsonObject.getString("name"));
-                        product.setId(Integer.parseInt(jsonObject.getString("id")));
-                        productList.add(product);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        progressDialog.dismiss();
+        db.collection("products")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Product product = new Product();
+                            product.setId(document.getId());
+                            product.setStock(Integer.parseInt(document.get("stock").toString()));
+                            product.setName((document.get("name").toString()));
+                            productList.add(product);
+                        }
+                        setDataToList();
+                        }
+                        else{
+                            Log.w("Products", "Error getting documents.", task.getException());
+                            progressDialog.dismiss();
+                        }
                     }
-                }
-                setDataToList();
-                progressDialog.dismiss();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.getMessage();
-                progressDialog.dismiss();
-            }
-        });
-        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
-        requestQueue.add(jsonArrayRequest);
+                });
+
+        progressDialog.dismiss();
 
     }
 
@@ -174,8 +171,8 @@ public class ProductFragment extends Fragment {
         this.detailList =  new ArrayList<String>();
         for(int i=0; i < this.productList.size();i++){
             this.detailList.add(
-                    this.productList.get(i).getId().toString() +
-                            " :" + this.productList.get(i).getName());
+
+                    this.productList.get(i).getName() + ". Stock:" + this.productList.get(i).getStock());
         }
         ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_expandable_list_item_1, detailList);
 
@@ -185,7 +182,7 @@ public class ProductFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 EditProductFragment nextFrag = new EditProductFragment();
                 Bundle bundle = new Bundle();
-                bundle.putInt("product_id", productList.get(position).getId());
+                bundle.putString("product_id", productList.get(position).getId());
                 bundle.putInt("product_stock", productList.get(position).getStock());
                 bundle.putString("product_name", productList.get(position).getName());
                 nextFrag.setArguments(bundle);
@@ -194,23 +191,7 @@ public class ProductFragment extends Fragment {
                 ).addToBackStack(null).commit();
             }
         });
-        /**
-        this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                EditProductFragment nextFrag = new EditProductFragment();
-                Bundle bundle = new Bundle();
-                bundle.putInt("product_id", productList.get(position).getId());
-                bundle.putString("product_name", productList.get(position).getName());
-                bundle.putInt("product_stock", productList.get(position).getStock());
-                nextFrag.setArguments(bundle);
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.containerFragmentMenu, nextFrag,"findThisFragment")
-                        .addToBackStack(null)
-                        .commit();
 
-            }
-        });**/
 
     }
 }

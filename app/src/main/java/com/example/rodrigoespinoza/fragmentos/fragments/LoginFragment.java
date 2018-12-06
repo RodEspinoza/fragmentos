@@ -117,7 +117,7 @@ public class LoginFragment extends Fragment {
                         Integer id = json.optInt("id");
 
                         intent = new Intent(getActivity(), MenuActivity.class);
-                        intent.putExtra("id", id);
+                        intent.putExtra("person_id", id);
                         SharedPreferences sharedPreferences = getContext().getSharedPreferences("data", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putInt("user_id", id);

@@ -1,7 +1,7 @@
 package com.example.rodrigoespinoza.fragmentos.model;
 
 public class Person {
-    Integer id;
+    String id;
     String rut;
     String name;
     String last_name;
@@ -13,7 +13,7 @@ public class Person {
 
     }
 
-    public Person(Integer id, String rut, String name, String last_name, String sexo, String location, Float id_user) {
+    public Person(String id, String rut, String name, String last_name, String sexo, String location, Float id_user) {
         this.id = id;
         this.rut = rut;
         this.name = name;
@@ -33,11 +33,11 @@ public class Person {
         this.sexo = sexo;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 

@@ -35,6 +35,7 @@ import com.example.rodrigoespinoza.fragmentos.R;
 import com.example.rodrigoespinoza.fragmentos.Utils;
 import com.example.rodrigoespinoza.fragmentos.model.Person;
 import com.example.rodrigoespinoza.fragmentos.model.SqlConecttion;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -70,6 +71,8 @@ public class EditPersonFragment extends Fragment {
     RequestQueue requestQueue;
     ProgressDialog progressDialog;
     StringRequest stringRequest;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -121,15 +124,26 @@ public class EditPersonFragment extends Fragment {
 
         Bundle menuBundle = this.getArguments();
         if (!menuBundle.isEmpty()) {
-            this.txtFragEditPersonName.setText(menuBundle.get("nombre").toString());
-            this.txtFragEditPersonLastName.setText(menuBundle.get("last_name").toString());
-            this.sexo = menuBundle.get("sexo").toString();
-            this.idUser = Integer.parseInt(menuBundle.get("id").toString());
-            if (sexo.equals("Masculino")){
-                this.rbFragEditPersonMasculino.setChecked(true);
-            } else {
-                this.rbFragEditPersonFemenino.setChecked(true);
-            }
+                //loggin con firebase auth solo tiene un bundle con person id
+                if(menuBundle.get("id") != null){
+                this.txtFragEditPersonName.setText(menuBundle.get("nombre").toString());
+                this.txtFragEditPersonLastName.setText(menuBundle.get("last_name").toString());
+                this.sexo = menuBundle.get("sexo").toString();
+                this.idUser = Integer.parseInt(menuBundle.get("id").toString());
+                if (sexo.equals("Masculino")){
+                    this.rbFragEditPersonMasculino.setChecked(true);
+                } else {
+                    this.rbFragEditPersonFemenino.setChecked(true);
+                }
+                } else if (menuBundle.get("person_id") != null){
+                    person = new Person();
+                    person.setId(menuBundle.get("person_id").toString());
+                    db.collection("person").document(person.getId());
+
+                }
+                else{
+                    Toast.makeText(getContext(), "Holi", Toast.LENGTH_SHORT);
+                }
         }
 
         this.spFragEditPersonLocalidad = (Spinner) this.view.findViewById(R.id.spFragEditPersonLocalidad);
