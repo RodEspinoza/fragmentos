@@ -28,9 +28,12 @@
         android:id="@+id/loginButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <FrameLayout
         android:id="@+id/containerFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></FrameLayout>
+</ScrollView>
 </LinearLayout>

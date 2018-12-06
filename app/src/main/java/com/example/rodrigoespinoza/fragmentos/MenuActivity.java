@@ -87,8 +87,8 @@ public class MenuActivity extends AppCompatActivity
         Bundle bundleMenu = intent.getExtras();
 
         if (!bundleMenu.isEmpty()) {
-            if(bundleMenu.get("id")!=null){
-            person = new Person(Float.parseFloat(bundleMenu.get("id").toString()));
+            if(bundleMenu.get("person_id")!=null){
+            person = new Person(bundleMenu.get("person_id").toString());
             }
         }
 

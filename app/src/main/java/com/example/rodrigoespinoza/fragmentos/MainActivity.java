@@ -159,7 +159,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
                         if(task.isSuccessful()){
-                            QuerySnapshot document = task.getResult();
+                            final QuerySnapshot document = task.getResult();
+
                             if(document.getDocuments().size()==0){
                                 String user_id =  db.collection("user").add(params).getResult().getId();
                                 if(user_id!=null){
@@ -170,12 +171,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     SharedPreferences sharedPreferences = getApplication().getSharedPreferences("data", Context.MODE_PRIVATE);
                                     SharedPreferences.Editor editor = sharedPreferences.edit();
                                     editor.putString("person_id", person_id);
+                                    goMenuScreen(person_id);
                                     editor.commit();
                                 }
 
-                                goMenuScreen(user);
+
                             }else{
-                            goMenuScreen(user);
+                                db.collection("person").whereEqualTo("user_id", user.getUid())
+                                        .get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if(task.isSuccessful()){
+                                                    if (task.isSuccessful()){
+                                                    String person_id = document.getDocuments().get(0).getId();
+                                                    goMenuScreen(person_id);
+                                                    }
+                                                }
+                                            }
+                                        });
                         }}
                     }
                 });
@@ -204,11 +218,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(intent);
     }
 
-    private void goMenuScreen(FirebaseUser user) {
+    private void goMenuScreen(String person_id) {
 
 
         Intent intent = new Intent(this, MenuActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("person_id", person_id);
         startActivity(intent);
     }
 
