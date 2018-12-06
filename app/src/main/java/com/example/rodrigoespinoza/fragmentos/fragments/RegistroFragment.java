@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
@@ -33,6 +34,12 @@ import com.example.rodrigoespinoza.fragmentos.Utils;
 import com.example.rodrigoespinoza.fragmentos.model.Person;
 import com.example.rodrigoespinoza.fragmentos.model.SqlConecttion;
 import com.example.rodrigoespinoza.fragmentos.model.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -67,9 +74,7 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
     RequestQueue requestQueue;
     ProgressDialog progressDialog;
     StringRequest stringRequest;
-    RequestQueue request;
-    JsonObjectRequest jsonObjectRequest;
-
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
     private OnFragmentInteractionListener mListener;
 
     public RegistroFragment() {
@@ -226,7 +231,8 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
     private void registrarPersona(final String rut, final String nombre, final String apellido, final String sexo, final String localidad, final Integer idUser) {
         this.progressDialog = new ProgressDialog(getContext());
         this.progressDialog.setMessage("Cargando... ");
-        //this.progressDialog.show();
+        this.progressDialog.show();
+
         try {
             String url = "https://androidsandbox.site/wsAndroid/wsIngresarPersona.php";
             stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -295,8 +301,37 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
     }
     private void registrarUsuario(final String email, final String pass) {
         this.progressDialog = new ProgressDialog(getContext());
-        this.progressDialog.setMessage("Cargando... ");
-        //this.progressDialog.show();
+        this.progressDialog.setMessage("Comprobando datos de usuario ");
+        this.progressDialog.show();
+        final Map<String, String>  params = new HashMap<>();
+        params.put("email", email);
+        params.put("pass", pass);
+
+
+        db.collection("user")
+                .whereEqualTo("email", email)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            QuerySnapshot document = task.getResult();
+
+                            if(document.getDocuments().size()==0){
+                                progressDialog.show();
+                                String user_id = db.collection("user")
+                                        .add(params).getResult().getId();
+                                if(user_id!= null){
+                                    registrarPersona(txtFragRegistroRut.getText().toString(), txtFragRegistroNombre.getText().toString(),
+                                            txtFragRegistroApellido.getText().toString(), sexoSeleccionado, localidad, id);
+                                }
+                            }else{
+                                progressDialog.hide();
+                                Toast.makeText(getContext(), "Ha ocurrido un error, vuelva a intentarlo mas tarde", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
         try {
             String url = "https://androidsandbox.site/wsAndroid/wsIngresarUsuario.php";
 
@@ -311,10 +346,9 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
 
                         Integer id = json.optInt("id");
 
-                        registrarPersona(txtFragRegistroRut.getText().toString(), txtFragRegistroNombre.getText().toString(),
-                                txtFragRegistroApellido.getText().toString(), sexoSeleccionado, localidad, id);
+
                     } catch (Exception ex) {
-                        Toast.makeText(getContext(), "Ha ocurrido un error, vuelva a intentarlo mas tarde", Toast.LENGTH_SHORT).show();
+
                     }
                     progressDialog.hide();
                     Toast.makeText(getContext(), response, Toast.LENGTH_SHORT);
@@ -343,28 +377,7 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
             Toast.makeText(getContext(), "Error" + ex.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
-        /*SqlConecttion conexion = new SqlConecttion(getContext(), "bd_gestor_pedidos", null, 1);
-        SQLiteDatabase dataBase = conexion.getWritableDatabase();
-        try {
-            ContentValues nuevoUsuario = new ContentValues();
-            nuevoUsuario.put("email", usuario.getEmail());
-            nuevoUsuario.put("pass", usuario.getPass());
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-            Date date = new Date();
-            nuevoUsuario.put("fecha", dateFormat.format(date));
-            Long id = dataBase.insert("user", "id",nuevoUsuario);
-            Toast.makeText(getContext(), id.toString(), Toast.LENGTH_SHORT).show();
-            dataBase.close();
-            conexion.close();
-            return Integer.parseInt(id.toString());
-        } catch (Exception ex) {
-            dataBase.close();
-            conexion.close();
-            Toast.makeText(getContext(),"No pude registrar, " + ex.getMessage().toString(), Toast.LENGTH_SHORT).show();
-            return 0;
-        } finally {
-            dataBase.close();
-        }*/
+
     }
 
     private boolean validaPassword(String password, String rePassword) {

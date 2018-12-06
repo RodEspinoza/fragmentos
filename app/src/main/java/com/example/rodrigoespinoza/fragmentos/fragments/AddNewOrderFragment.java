@@ -120,7 +120,7 @@ public class AddNewOrderFragment extends Fragment implements Response.Listener<J
 
         final Product product = new Product();
         sharedPreferences.getAll();
-        person.setId(sharedPreferences.getInt("person_id", 0));
+        person.setId(sharedPreferences.getString("person_id", ""));
         this.view = inflater.inflate(R.layout.fragment_add_new_order, container, false);
         this.spProductos = this.view.findViewById(R.id.spProducts);
         this.productList = new ArrayList<>();
@@ -156,7 +156,7 @@ public class AddNewOrderFragment extends Fragment implements Response.Listener<J
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user != null){
             person = new Person();
-            person.setId(0);
+            person.setId("");
             order.setPerson(person);
         }else{
             // intenta con Facebook

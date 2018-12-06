@@ -47,13 +47,10 @@ import java.util.Map;
 public class EditProductFragment extends Fragment {
     Button btnUpdateProduct, btnDeleteProduct;
     EditText txtFragEditProductStock, txFragEditProductName;
-    SqlConecttion sqlConecttion;
     Product product;
     View view;
-    String baseUrl ="https://androidsandbox.site/wsAndroid";
     RequestQueue requestQueue;
     ProgressDialog progressDialog;
-    StringRequest stringRequest;
     // Access a Cloud Firestore instance from your Activity
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 

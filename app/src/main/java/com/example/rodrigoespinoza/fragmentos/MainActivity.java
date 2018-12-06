@@ -1,6 +1,8 @@
 package com.example.rodrigoespinoza.fragmentos;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
@@ -158,18 +160,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
                         if(task.isSuccessful()){
                             QuerySnapshot document = task.getResult();
-                            document.getDocuments().size();
-
                             if(document.getDocuments().size()==0){
                                 String user_id =  db.collection("user").add(params).getResult().getId();
                                 if(user_id!=null){
                                     Map<String, String> param_person = new HashMap<>();
                                     param_person.put("user_id", user_id);
-                                    db.collection("person").add(params);
+                                    String person_id = db.collection("person").add(params).getResult().getId();
 
+                                    SharedPreferences sharedPreferences = getApplication().getSharedPreferences("data", Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putString("person_id", person_id);
+                                    editor.commit();
                                 }
 
-                                // falta crear la persona...
                                 goMenuScreen(user);
                             }else{
                             goMenuScreen(user);

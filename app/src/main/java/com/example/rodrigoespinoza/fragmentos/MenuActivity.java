@@ -202,7 +202,7 @@ public class MenuActivity extends AppCompatActivity
             startActivity(intent);
         }
 
-            private void getCampos(final Person per) {
+        private void getCampos(final Person per) {
         this.progressDialog = new ProgressDialog(this);
         this.progressDialog.setMessage("Cargando... ");
         this.progressDialog.show();
@@ -227,6 +227,7 @@ public class MenuActivity extends AppCompatActivity
                     bundle.putString("id", person.getId_user().toString());
                     progressDialog.hide();
                     ourFragment.setArguments(bundle);
+
                     getSupportFragmentManager().beginTransaction().replace(R.id.containerFragmentMenu, ourFragment).commit();
 
                 } catch (Exception ex) {
