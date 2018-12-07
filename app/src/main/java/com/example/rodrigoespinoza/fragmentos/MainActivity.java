@@ -119,26 +119,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onSuccess(LoginResult loginResult) {
                 handleFacebookAccessToken(loginResult.getAccessToken());
+                //AccessToken accessToken = loginResult.getAccessToken();
             }
 
             @Override
             public void onCancel() {
-                Toast.makeText(getApplicationContext(), R.string.com_facebook_smart_login_confirmation_cancel, Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
             public void onError(FacebookException error) {
-                Toast.makeText(getApplicationContext(), R.string.com_facebook_smart_login_confirmation_cancel, Toast.LENGTH_SHORT).show();
+
             }
         });
+
         fireAuthStateListener =  new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = mAuth.getCurrentUser();
                 if (user != null){
                     createUserInDb(user);
-
-
                 }
             }
         };
@@ -174,8 +174,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     goMenuScreen(person_id);
                                     editor.commit();
                                 }
-
-
                             }else{
                                 db.collection("person").whereEqualTo("user_id", user.getUid())
                                         .get()
@@ -219,8 +217,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void goMenuScreen(String person_id) {
-
-
         Intent intent = new Intent(this, MenuActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("person_id", person_id);
@@ -240,7 +236,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     private void handleSignInResultGoogle(GoogleSignInResult result) {
         if(result.isSuccess()){
-
             firebaseAuthWithGoogle(result.getSignInAccount());
             GoogleSignInAccount account = result.getSignInAccount();
             firebaseAuthWithGoogle(account);
@@ -261,10 +256,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
     }
-
-
-
-
 
     @Override
     public void onClick(View v) {
