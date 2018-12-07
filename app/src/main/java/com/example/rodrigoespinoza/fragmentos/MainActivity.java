@@ -124,12 +124,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onCancel() {
-                Toast.makeText(getApplicationContext(), R.string.com_facebook_smart_login_confirmation_cancel, Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
             public void onError(FacebookException error) {
-                Toast.makeText(getApplicationContext(), R.string.com_facebook_smart_login_confirmation_cancel, Toast.LENGTH_SHORT).show();
+
             }
         });
         fireAuthStateListener =  new FirebaseAuth.AuthStateListener() {
@@ -254,7 +254,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (!task.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), R.string.com_facebook_smart_login_confirmation_cancel, Toast.LENGTH_LONG).show();
+                    
                 }
             }
         });
