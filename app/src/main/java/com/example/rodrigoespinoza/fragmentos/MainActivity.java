@@ -31,6 +31,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -123,12 +124,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onCancel() {
-                Toast.makeText(getApplicationContext(), R.string.com_facebook_smart_login_confirmation_cancel, Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
             public void onError(FacebookException error) {
-                Toast.makeText(getApplicationContext(), R.string.com_facebook_smart_login_confirmation_cancel, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT);
             }
         });
         fireAuthStateListener =  new FirebaseAuth.AuthStateListener() {
@@ -137,8 +138,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 FirebaseUser user = mAuth.getCurrentUser();
                 if (user != null){
                     createUserInDb(user);
-
-
                 }
             }
         };
@@ -156,44 +155,58 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         params.put("url", user.getDisplayName());
         db.collection("user")
                 .whereEqualTo("email", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()){
-                            QuerySnapshot document = task.getResult();
-                            if(document.getDocuments().size()==0){
-                                String user_id =  db.collection("user").add(params).getResult().getId();
-                                if(user_id!=null){
-                                    Map<String, String> param_person = new HashMap<>();
-                                    param_person.put("user_id", user_id);
-                                    String person_id = db.collection("person").add(params).getResult().getId();
-
-                                    SharedPreferences sharedPreferences = getApplication().getSharedPreferences("data", Context.MODE_PRIVATE);
-                                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                                    editor.putString("person_id", person_id);
-                                    editor.commit();
-                                }
-
-                                goMenuScreen(user);
-                            }else{
-                            goMenuScreen(user);
-                        }}
-                    }
-                });
-
-
-    }
-
-    private void handleFacebookAccessToken(AccessToken accessToken) {
-        AuthCredential authCredential = FacebookAuthProvider.getCredential(accessToken.getToken());
-        mAuth.signInWithCredential(authCredential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (!task.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), R.string.com_facebook_smart_login_confirmation_cancel, Toast.LENGTH_LONG).show();
-                }
+            public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    final QuerySnapshot document = task.getResult();
+
+                    if(document.getDocuments().size()==0){
+                        db.collection("user").add(params).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                Map<String, String> param_person = new HashMap<>();
+                                param_person.put("user_id", documentReference.getId());
+                                db.collection("person").add(params).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                    @Override
+                                    public void onSuccess(DocumentReference documentReference) {
+                                        String person_id = documentReference.getId();
+                                        SharedPreferences sharedPreferences = getApplication().getSharedPreferences("data", Context.MODE_PRIVATE);
+                                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                                        editor.putString("person_id", person_id);
+                                        editor.commit();
+                                        goMenuScreen(person_id);
+                                    }
+                                });
+
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT);
+                            }
+                        });
+
+
+                    }else{
+                        db.collection("person").whereEqualTo("user_id", user.getUid())
+                                .get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if(task.isSuccessful()){
+                                            if (task.isSuccessful()){
+                                                String person_id = document.getDocuments().get(0).getId();
+                                                goMenuScreen(person_id);
+                                            }
+                                        }
+                                    }
+                                });
+                    }}
             }
         });
     }
+
+
 
 
     private void goLoginScreen() {
@@ -204,11 +217,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(intent);
     }
 
-    private void goMenuScreen(FirebaseUser user) {
+    private void goMenuScreen(String person_id) {
 
 
         Intent intent = new Intent(this, MenuActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("person_id", person_id);
         startActivity(intent);
     }
 
@@ -220,12 +234,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResultGoogle(result);
         } else {
+
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
     private void handleSignInResultGoogle(GoogleSignInResult result) {
         if(result.isSuccess()){
-
             firebaseAuthWithGoogle(result.getSignInAccount());
             GoogleSignInAccount account = result.getSignInAccount();
             firebaseAuthWithGoogle(account);
@@ -233,6 +247,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         else{
             Toast.makeText(this, "No se pudo iniciar sesión", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void handleFacebookAccessToken(AccessToken accessToken) {
+        AuthCredential authCredential = FacebookAuthProvider.getCredential(accessToken.getToken());
+        mAuth.signInWithCredential(authCredential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (!task.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), R.string.not_firebase_auth, Toast.LENGTH_LONG).show();
+
+                }
+            }
+        });
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount signInAccount) {
@@ -246,8 +273,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
     }
-
-
 
 
 
