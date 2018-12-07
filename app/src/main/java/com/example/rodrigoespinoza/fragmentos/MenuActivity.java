@@ -198,11 +198,8 @@ public class MenuActivity extends AppCompatActivity
             Intent intent = new Intent(this, MapsActivity.class);
             startActivity(intent);
 
-        } else if (id == R.id.logOut) {
-
         }else if (id == R.id.logOut){
-
-
+            Toast.makeText(getApplicationContext(), "aaaa", Toast.LENGTH_SHORT);
             logout();
         }
 
