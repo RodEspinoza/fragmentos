@@ -171,8 +171,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     SharedPreferences sharedPreferences = getApplication().getSharedPreferences("data", Context.MODE_PRIVATE);
                                     SharedPreferences.Editor editor = sharedPreferences.edit();
                                     editor.putString("person_id", person_id);
-                                    goMenuScreen(person_id);
                                     editor.commit();
+                                }
+
+                                    goMenuScreen(person_id);
+
                                 }
                             }else{
                                 db.collection("person").whereEqualTo("user_id", user.getUid())
@@ -195,17 +198,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private void handleFacebookAccessToken(AccessToken accessToken) {
-        AuthCredential authCredential = FacebookAuthProvider.getCredential(accessToken.getToken());
-        mAuth.signInWithCredential(authCredential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (!task.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), R.string.com_facebook_smart_login_confirmation_cancel, Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-    }
+
 
 
     private void goLoginScreen() {
@@ -243,6 +236,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         else{
             Toast.makeText(this, "No se pudo iniciar sesión", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void handleFacebookAccessToken(AccessToken accessToken) {
+        AuthCredential authCredential = FacebookAuthProvider.getCredential(accessToken.getToken());
+        mAuth.signInWithCredential(authCredential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (!task.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), R.string.com_facebook_smart_login_confirmation_cancel, Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount signInAccount) {

@@ -87,17 +87,18 @@ public class MenuActivity extends AppCompatActivity
         Bundle bundleMenu = intent.getExtras();
 
         if (!bundleMenu.isEmpty()) {
-            if(bundleMenu.get("person_id")!=null){
+            if(bundleMenu.get("person_id").toString()!=null){
             person = new Person(bundleMenu.get("person_id").toString());
             }
         }
 
         if(mAuth.getCurrentUser() != null){
             Log.d(TAG_MENU, "done");
+            Toast.makeText(this, mAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT);
         }else{
             Log.d(TAG_MENU, "credenciales ???");
         }
-        Toast.makeText(this, mAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT);
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -123,7 +124,7 @@ public class MenuActivity extends AppCompatActivity
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-        this.requestQueue = Volley.newRequestQueue(this);
+
     }
 
     @Override
