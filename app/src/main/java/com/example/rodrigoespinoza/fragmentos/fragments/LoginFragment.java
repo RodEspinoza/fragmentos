@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,7 +30,11 @@ import com.example.rodrigoespinoza.fragmentos.MenuActivity;
 import com.example.rodrigoespinoza.fragmentos.R;
 import com.example.rodrigoespinoza.fragmentos.model.SqlConecttion;
 import com.example.rodrigoespinoza.fragmentos.model.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -104,55 +109,46 @@ public class LoginFragment extends Fragment {
         this.progressDialog.setMessage("Cargando... ");
         this.progressDialog.show();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Map<String, String> params = new HashMap<>();
+        params.put("email", user.getEmail());
+        params.put("pass", user.getPass());
+        getUserById(user, db);
 
-        try {
-            String url = "https://androidsandbox.site/wsAndroid/wsConsultarUsuario.php";
-            stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    try {
-                        JSONObject jsonObject = new JSONObject(response);
-                        JSONArray jsonArray = jsonObject.optJSONArray("id_usuario");
+    }
 
-                        JSONObject json = jsonArray.getJSONObject(0);
-
-                        Integer id = json.optInt("id");
-
-                        intent = new Intent(getActivity(), MenuActivity.class);
-                        intent.putExtra("person_id", id);
-                        SharedPreferences sharedPreferences = getContext().getSharedPreferences("data", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putInt("user_id", id);
-                        editor.commit();
-
-                        startActivity(intent);
-                    } catch (Exception ex) {
-                        Toast.makeText(getContext(), "Usuario o Contraseña Invalida", Toast.LENGTH_LONG).show();
-                    }
-                    progressDialog.hide();
-                    Toast.makeText(getContext(), response, Toast.LENGTH_LONG);
+    private void getUserById(User user, FirebaseFirestore db) {
+        db.collection("user")
+                .whereEqualTo("email", user.getEmail())
+                .whereEqualTo("pass", user.getPass())
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+            if(task.isSuccessful()){
+                if(task.getResult().getDocuments().size()>0){
+                    DocumentSnapshot documentSnapshot = task.getResult().getDocuments().get(0);
+                    getPersonByUser(documentSnapshot, db);
+                }else{
+                    Toast.makeText(getContext(), R.string.bad_credentials, Toast.LENGTH_SHORT);
                 }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    progressDialog.hide();
-                    Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG);
-                }
-            }) {
-                @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-                    Map<String, String> params = new HashMap<>();
-                    params.put("email", user.getEmail());
-                    params.put("pass", user.getPass());
-                    return params;
-                }
-            };
-            if(stringRequest != null){
-            requestQueue.add(stringRequest);
             }
-        } catch (Exception ex) {
-            Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
-        }
+            }
+        });
+    }
+
+    private void getPersonByUser(DocumentSnapshot documentSnapshot, FirebaseFirestore db) {
+        db.collection("person").whereEqualTo("user_id", documentSnapshot.getId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    if(task.getResult().getDocuments().size() != 0){
+                        DocumentSnapshot documentPerson = task.getResult().getDocuments().get(0);
+                        intent = new Intent(getActivity(), MenuActivity.class);
+                        intent.putExtra("person_id", documentPerson.getId());
+                        startActivity(intent);
+                    }
+                }
+            }
+        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event

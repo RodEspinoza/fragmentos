@@ -46,4 +46,5 @@
     <string name="txTotalNewOrder">Total</string>
     <string name="facebook_app_id">1951849398185117</string>
     <string name="not_firebase_auth">No fue posible logear con firebase</string>
+    <string name="bad_credentials">Credenciales  errones</string>
 </resources>
