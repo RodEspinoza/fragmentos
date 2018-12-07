@@ -243,27 +243,27 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
         params.put("sexo", sexo);
         params.put("location", localidad);
         params.put("id_user", idUser);
-       db.collection("person")
+        db.collection("person")
                 .add(params).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        progressDialog.hide();
-                        String person_id = documentReference.getId();
-                        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("data", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString("person_id", person_id);
-                        editor.commit();
-                        Intent intent = new Intent(getContext(), MenuActivity.class);
-                        intent.putExtra("person_id", person_id);
-                        startActivity(intent);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-           @Override
-           public void onFailure(@NonNull Exception e) {
-               progressDialog.hide();
-               Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT);
-           }
-       });
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+                progressDialog.hide();
+                String person_id = documentReference.getId();
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("data", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("person_id", person_id);
+                editor.commit();
+                Intent intent = new Intent(getContext(), MenuActivity.class);
+                intent.putExtra("person_id", person_id);
+                startActivity(intent);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                progressDialog.hide();
+                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT);
+            }
+        });
 
 
 
