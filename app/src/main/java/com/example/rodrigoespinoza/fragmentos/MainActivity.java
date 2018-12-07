@@ -168,13 +168,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             public void onSuccess(DocumentReference documentReference) {
                                 Map<String, String> param_person = new HashMap<>();
                                 param_person.put("user_id", documentReference.getId());
-                                String person_id = db.collection("person").add(params).getResult().getId();
-                                SharedPreferences sharedPreferences = getApplication().getSharedPreferences("data", Context.MODE_PRIVATE);
-                                SharedPreferences.Editor editor = sharedPreferences.edit();
-                                editor.putString("person_id", person_id);
-                                editor.commit();
-                                goMenuScreen(person_id);
-
+                                db.collection("person").add(params).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                    @Override
+                                    public void onSuccess(DocumentReference documentReference) {
+                                        String person_id = documentReference.getId();
+                                        SharedPreferences sharedPreferences = getApplication().getSharedPreferences("data", Context.MODE_PRIVATE);
+                                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                                        editor.putString("person_id", person_id);
+                                        editor.commit();
+                                        goMenuScreen(person_id);
+                                    }
+                                });
 
                             }
                         }).addOnFailureListener(new OnFailureListener() {
