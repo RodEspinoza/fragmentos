@@ -31,6 +31,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -162,19 +163,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     final QuerySnapshot document = task.getResult();
 
                     if(document.getDocuments().size()==0){
-                        String user_id =  db.collection("user").add(params).getResult().getId();
-                        if(user_id!=null){
-                            Map<String, String> param_person = new HashMap<>();
-                            param_person.put("user_id", user_id);
-                            String person_id = db.collection("person").add(params).getResult().getId();
+                        db.collection("user").add(params).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                Map<String, String> param_person = new HashMap<>();
+                                param_person.put("user_id", documentReference.getId());
+                                String person_id = db.collection("person").add(params).getResult().getId();
+                                SharedPreferences sharedPreferences = getApplication().getSharedPreferences("data", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putString("person_id", person_id);
+                                editor.commit();
+                                goMenuScreen(person_id);
 
-                            SharedPreferences sharedPreferences = getApplication().getSharedPreferences("data", Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putString("person_id", person_id);
-                            editor.commit();
-                            goMenuScreen(person_id);
 
-                        }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT);
+                            }
+                        });
+
 
                     }else{
                         db.collection("person").whereEqualTo("user_id", user.getUid())
