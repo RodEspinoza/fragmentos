@@ -42,11 +42,9 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.sun.corba.se.impl.oa.toa.TOA;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -237,64 +235,7 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
 
     private void registrarPersona(final String rut, final String nombre, final String apellido, final String sexo, final String localidad, final String idUser) {
         this.progressDialog = new ProgressDialog(getContext());
-<<<<<<< HEAD
-        this.progressDialog.setMessage("Cargando del perfil... ");
-        this.progressDialog.show();
 
-        try {
-            Map<String, String>  params = new HashMap<>();
-            params.put("rut", rut);
-            params.put("nombre", nombre);
-            params.put("last_name", apellido);
-            params.put("sexo", sexo);
-            params.put("location", localidad);
-            params.put("id_user",idUser.toString());
-
-            db.collection("person").add(params).addOnSuccessListener(
-                    new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
-                        progressDialog.hide();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    progressDialog.hide();
-                    Toast.makeText(getContext(), "Error al agregar persona "+ e.getMessage(), Toast.LENGTH_SHORT);
-                }
-            });
-            stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    try {
-                        JSONObject jsonObject = new JSONObject(response);
-                        JSONArray jsonArray = jsonObject.optJSONArray("id_persona");
-                        JSONObject json = jsonArray.getJSONObject(0);
-                        Integer id  = json.optInt("id");
-                        Toast.makeText(getContext(), "Registrado", Toast.LENGTH_LONG).show();
-                    } catch (Exception ex) {
-                        Toast.makeText(getContext(), "Ha ocurrido un error, vuelva a intentarlo mas tarde", Toast.LENGTH_LONG).show();
-                    }
-                    progressDialog.hide();
-                    Toast.makeText(getContext(), response, Toast.LENGTH_SHORT);
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    progressDialog.hide();
-                    Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_SHORT);
-                }
-            }){
-                @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-
-                    return params;
-                }
-            };
-            //Toast.makeText(getContext(), stringRequest.toString(), Toast.LENGTH_LONG).show();
-            requestQueue.add(stringRequest);
-        } catch (Exception ex){
-=======
         this.progressDialog.setMessage("Procesando valores del perfil... ");
         this.progressDialog.show();
         Map<String, String>  params = new HashMap<>();
@@ -325,7 +266,7 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT);
            }
        });
->>>>>>> e9851b376bfc7c04d835cbe80efaedf421ea78c4
+
 
 
     }
@@ -347,24 +288,7 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
                         if(task.isSuccessful()){
                             QuerySnapshot document = task.getResult();
                             if(document.getDocuments().size()==0){
-<<<<<<< HEAD
-                                progressDialog.show();
-                                db.collection("user").add(params).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                    @Override
-                                    public void onSuccess(DocumentReference documentReference) {
-                                        String user_id = documentReference.getId();
-                                        registrarPersona(txtFragRegistroRut.getText().toString(), txtFragRegistroNombre.getText().toString(),
-                                                txtFragRegistroApellido.getText().toString(), sexoSeleccionado, localidad, user_id);
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(getContext(), "Error al agregar usuario : "+e.getMessage(), Toast.LENGTH_SHORT);
-                                    }
-                                });
 
-
-=======
                                 progressDialog.hide();
                                 db.collection("user")
                                         .add(params)
@@ -383,7 +307,7 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
                                         Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT);
                                     }
                                 });
->>>>>>> e9851b376bfc7c04d835cbe80efaedf421ea78c4
+
                             }else{
                                 progressDialog.hide();
                                 Toast.makeText(getContext(), "Correo ya registrado.", Toast.LENGTH_SHORT).show();
