@@ -3,6 +3,7 @@
     package="com.example.rodrigoespinoza.fragmentos">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -43,6 +44,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".LoginGoogle" />
+
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -58,6 +60,7 @@
         <activity
             android:name=".GoogleMaps.MapsActivity"
             android:label="@string/title_activity_maps"></activity>
+
     </application>
 
 </manifest>

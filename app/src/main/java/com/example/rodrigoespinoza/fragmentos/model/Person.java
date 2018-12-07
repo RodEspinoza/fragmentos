@@ -7,13 +7,13 @@ public class Person {
     String last_name;
     String sexo;
     String location;
-    Float id_user;
+    String id_user;
 
     public Person() {
 
     }
 
-    public Person(String id, String rut, String name, String last_name, String sexo, String location, Float id_user) {
+    public Person(String id, String rut, String name, String last_name, String sexo, String location, String id_user) {
         this.id = id;
         this.rut = rut;
         this.name = name;
@@ -23,7 +23,7 @@ public class Person {
         this.id_user = id_user;
     }
 
-    public Person(Float id_user){
+    public Person(String id_user){
         this.id_user = id_user;
     }
 
@@ -81,11 +81,11 @@ public class Person {
         this.location = location;
     }
 
-    public Float getId_user() {
+    public String getId_user() {
         return id_user;
     }
 
-    public void setId_user(Float id_user) {
+    public void setId_user(String id_user) {
         this.id_user = id_user;
     }
 }
