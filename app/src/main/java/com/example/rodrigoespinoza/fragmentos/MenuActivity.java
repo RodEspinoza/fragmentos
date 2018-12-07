@@ -124,7 +124,7 @@ public class MenuActivity extends AppCompatActivity
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-        this.requestQueue = Volley.newRequestQueue(this);
+
     }
 
     @Override
