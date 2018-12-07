@@ -29,6 +29,7 @@ import com.example.rodrigoespinoza.fragmentos.MenuActivity;
 import com.example.rodrigoespinoza.fragmentos.R;
 import com.example.rodrigoespinoza.fragmentos.model.SqlConecttion;
 import com.example.rodrigoespinoza.fragmentos.model.User;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -102,6 +103,7 @@ public class LoginFragment extends Fragment {
         this.progressDialog = new ProgressDialog(getContext());
         this.progressDialog.setMessage("Cargando... ");
         this.progressDialog.show();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         try {
             String url = "https://androidsandbox.site/wsAndroid/wsConsultarUsuario.php";
