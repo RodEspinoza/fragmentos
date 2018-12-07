@@ -119,26 +119,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onSuccess(LoginResult loginResult) {
                 handleFacebookAccessToken(loginResult.getAccessToken());
-                //AccessToken accessToken = loginResult.getAccessToken();
             }
 
             @Override
             public void onCancel() {
-
+                Toast.makeText(getApplicationContext(), R.string.com_facebook_smart_login_confirmation_cancel, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onError(FacebookException error) {
-
+                Toast.makeText(getApplicationContext(), R.string.com_facebook_smart_login_confirmation_cancel, Toast.LENGTH_SHORT).show();
             }
         });
-
         fireAuthStateListener =  new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = mAuth.getCurrentUser();
                 if (user != null){
                     createUserInDb(user);
+
+
                 }
             }
         };
@@ -156,44 +156,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         params.put("url", user.getDisplayName());
         db.collection("user")
                 .whereEqualTo("email", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()){
-                            final QuerySnapshot document = task.getResult();
+            @Override
+            public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    final QuerySnapshot document = task.getResult();
 
-                            if(document.getDocuments().size()==0){
-                                String user_id =  db.collection("user").add(params).getResult().getId();
-                                if(user_id!=null){
-                                    Map<String, String> param_person = new HashMap<>();
-                                    param_person.put("user_id", user_id);
-                                    String person_id = db.collection("person").add(params).getResult().getId();
+                    if(document.getDocuments().size()==0){
+                        String user_id =  db.collection("user").add(params).getResult().getId();
+                        if(user_id!=null){
+                            Map<String, String> param_person = new HashMap<>();
+                            param_person.put("user_id", user_id);
+                            String person_id = db.collection("person").add(params).getResult().getId();
 
-                                    SharedPreferences sharedPreferences = getApplication().getSharedPreferences("data", Context.MODE_PRIVATE);
-                                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                                    editor.putString("person_id", person_id);
-                                    editor.commit();
-                                }
+                            SharedPreferences sharedPreferences = getApplication().getSharedPreferences("data", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString("person_id", person_id);
+                            editor.commit();
+                            goMenuScreen(person_id);
 
-                                    goMenuScreen(person_id);
+                        }
 
-                                }
-                            }else{
-                                db.collection("person").whereEqualTo("user_id", user.getUid())
-                                        .get()
-                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                if(task.isSuccessful()){
-                                                    if (task.isSuccessful()){
-                                                    String person_id = document.getDocuments().get(0).getId();
-                                                    goMenuScreen(person_id);
-                                                    }
-                                                }
+                    }else{
+                        db.collection("person").whereEqualTo("user_id", user.getUid())
+                                .get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if(task.isSuccessful()){
+                                            if (task.isSuccessful()){
+                                                String person_id = document.getDocuments().get(0).getId();
+                                                goMenuScreen(person_id);
                                             }
-                                        });
-                        }}
-                    }
-                });
+                                        }
+                                    }
+                                });
+                    }}
+            }
+        });
 
 
     }
@@ -210,6 +209,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void goMenuScreen(String person_id) {
+
+
         Intent intent = new Intent(this, MenuActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("person_id", person_id);
@@ -261,6 +262,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
     }
+
+
+
+
 
     @Override
     public void onClick(View v) {
