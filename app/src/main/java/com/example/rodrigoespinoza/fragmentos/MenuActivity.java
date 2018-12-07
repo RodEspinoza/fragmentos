@@ -244,39 +244,7 @@ public class MenuActivity extends AppCompatActivity
             }
             }
         });
-        String url = "https://androidsandbox.site/wsAndroid/wsGetPersona.php";
-        stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    JSONArray jsonArray = jsonObject.optJSONArray("persona");
-                    JSONObject json = jsonArray.getJSONObject(0);
-                    String name = json.optString("nombre");
-                    String last_name = json.optString("last_name");
-                    String sex = json.optString("sexo");
-
-
-                } catch (Exception ex) {
-
-                }
-                progressDialog.hide();
-
-            }}, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                progressDialog.hide();
-
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("id", per.getId_user().toString());
-                return params;
-            }
-        };
-        requestQueue.add(stringRequest);
+       
     }
 
     @Override
