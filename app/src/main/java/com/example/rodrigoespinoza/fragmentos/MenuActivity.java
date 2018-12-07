@@ -86,7 +86,7 @@ public class MenuActivity extends AppCompatActivity
     GoogleSignInClient googleSignInClient;
     GoogleSignInOptions gso;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-
+    private GoogleSignInClient mGoogleSignInClient;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,7 +103,9 @@ public class MenuActivity extends AppCompatActivity
 
         if(mAuth.getCurrentUser() != null){
             Log.d(TAG_MENU, "done");
+
             Toast.makeText(this, mAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT);
+
         }else{
             Log.d(TAG_MENU, "credenciales ???");
         }
@@ -196,18 +198,11 @@ public class MenuActivity extends AppCompatActivity
             Intent intent = new Intent(this, MapsActivity.class);
             startActivity(intent);
 
-        } else if (id == R.id.logOut){
-
-        } else if(id == R.id.nav_maps){
-            ourFragment = new MapsFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString("person_id", person.getId());
-            getSupportFragmentManager().beginTransaction().replace(R.id.containerFragmentMenu, ourFragment);
+        } else if (id == R.id.logOut) {
 
         }else if (id == R.id.logOut){
 
-            FirebaseAuth mAuth=  FirebaseAuth.getInstance();
-            mAuth.signOut();
+
             logout();
         }
 
