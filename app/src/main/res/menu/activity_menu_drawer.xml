@@ -19,6 +19,11 @@
             android:title="@string/nav_edit_person">
         </item>
         <item
+            android:id="@+id/maps"
+            android:icon="@drawable/com_facebook_tooltip_black_topnub"
+            android:title="Mapa">
+        </item>
+        <item
             android:id="@+id/logOut"
             android:icon="@drawable/com_facebook_close"
             android:title="Cerrar Sesion">

@@ -323,7 +323,7 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
                                         .add(params).getResult().getId();
                                 if(user_id!= null){
                                     registrarPersona(txtFragRegistroRut.getText().toString(), txtFragRegistroNombre.getText().toString(),
-                                            txtFragRegistroApellido.getText().toString(), sexoSeleccionado, localidad, id);
+                                            txtFragRegistroApellido.getText().toString(), sexoSeleccionado, localidad, 1);
                                 }
                             }else{
                                 progressDialog.hide();

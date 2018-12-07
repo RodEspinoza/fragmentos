@@ -33,6 +33,7 @@ import com.android.volley.toolbox.Volley;
 //import com.example.rodrigoespinoza.fragmentos.fragments.AddOrderFragment;
 
 
+import com.example.rodrigoespinoza.fragmentos.GoogleMaps.MapsActivity;
 import com.example.rodrigoespinoza.fragmentos.fragments.AddNewOrderFragment;
 
 import com.example.rodrigoespinoza.fragmentos.fragments.AddProductFragment;
@@ -179,6 +180,11 @@ public class MenuActivity extends AppCompatActivity
         } else if (id == R.id.nav_edit_person) {
 
             getCampos(person);
+
+        }else if (id == R.id.maps) {
+            
+            Intent intent = new Intent(this, MapsActivity.class);
+            startActivity(intent);
 
         } else if (id == R.id.logOut){
             FirebaseAuth mAuth=  FirebaseAuth.getInstance();
