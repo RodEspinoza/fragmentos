@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onError(FacebookException error) {
-
+                Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT);
             }
         });
         fireAuthStateListener =  new FirebaseAuth.AuthStateListener() {
@@ -138,8 +138,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 FirebaseUser user = mAuth.getCurrentUser();
                 if (user != null){
                     createUserInDb(user);
-
-
                 }
             }
         };
@@ -206,8 +204,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }}
             }
         });
-
-
     }
 
 
@@ -238,6 +234,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResultGoogle(result);
         } else {
+
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
@@ -258,7 +255,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (!task.isSuccessful()) {
-                    
+                    Toast.makeText(getApplicationContext(), R.string.not_firebase_auth, Toast.LENGTH_LONG).show();
+
                 }
             }
         });
@@ -275,8 +273,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
     }
-
-
 
 
 

@@ -268,7 +268,6 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
        });
 
 
-
     }
     private void registrarUsuario(final String email, final String pass) {
         this.progressDialog = new ProgressDialog(getContext());

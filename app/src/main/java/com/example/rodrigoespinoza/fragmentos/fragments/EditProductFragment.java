@@ -138,7 +138,7 @@ public class EditProductFragment extends Fragment {
     }
 
     private void updateProduct(final Product product) {
-        callProgressDialog();
+         callProgressDialog();
          Map<String, String> update_map = new HashMap<>();
          update_map.put("name", product.getName());
          update_map.put("stock",  product.getStock().toString());

@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -27,7 +28,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+
 
 
 //import com.example.rodrigoespinoza.fragmentos.fragments.AddOrderFragment;
@@ -38,6 +39,7 @@ import com.example.rodrigoespinoza.fragmentos.fragments.AddNewOrderFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.AddProductFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.EditPersonFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.EditProductFragment;
+import com.example.rodrigoespinoza.fragmentos.fragments.MapsFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.ProductFragment;
 import com.example.rodrigoespinoza.fragmentos.fragments.ProductOrders;
 import com.example.rodrigoespinoza.fragmentos.model.Person;
@@ -47,7 +49,12 @@ import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 
 import org.json.JSONArray;
@@ -77,6 +84,7 @@ public class MenuActivity extends AppCompatActivity
     FirebaseAuth mAuth;
     GoogleSignInClient googleSignInClient;
     GoogleSignInOptions gso;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,7 +181,7 @@ public class MenuActivity extends AppCompatActivity
 
             ourFragment = new ProductOrders();
             Bundle bundle = new Bundle();
-            bundle.putString("person_id", person.getId_user().toString());
+            bundle.putString("person_id", person.getId());
             ourFragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction().replace(R.id.containerFragmentMenu, ourFragment).commit();
 
@@ -181,7 +189,13 @@ public class MenuActivity extends AppCompatActivity
 
             getCampos(person);
 
-        } else if (id == R.id.logOut){
+        } else if(id == R.id.nav_maps){
+            ourFragment = new MapsFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString("person_id", person.getId());
+            getSupportFragmentManager().beginTransaction().replace(R.id.containerFragmentMenu, ourFragment);
+
+        }else if (id == R.id.logOut){
             FirebaseAuth mAuth=  FirebaseAuth.getInstance();
             mAuth.signOut();
             logout();
@@ -208,6 +222,28 @@ public class MenuActivity extends AppCompatActivity
         this.progressDialog.setMessage("Cargando... ");
         this.progressDialog.show();
 
+        DocumentReference docRef = db.collection("persona").document(per.getId());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+            if(task.isSuccessful()){
+                DocumentSnapshot document = task.getResult();
+                if(document.exists()){
+
+                    ourFragment = new EditPersonFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("nombre", document.get("name").toString());
+                    bundle.putString("last_name", document.get("last_name").toString());
+                    bundle.putString("sexo", document.get("sex").toString());
+                    bundle.putString("id", document.getId());
+                    progressDialog.hide();
+                    ourFragment.setArguments(bundle);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.containerFragmentMenu, ourFragment).commit();
+
+                }
+            }
+            }
+        });
         String url = "https://androidsandbox.site/wsAndroid/wsGetPersona.php";
         stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -220,16 +256,6 @@ public class MenuActivity extends AppCompatActivity
                     String last_name = json.optString("last_name");
                     String sex = json.optString("sexo");
 
-                    ourFragment = new EditPersonFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("nombre", name);
-                    bundle.putString("last_name", last_name);
-                    bundle.putString("sexo", sex);
-                    bundle.putString("id", person.getId_user().toString());
-                    progressDialog.hide();
-                    ourFragment.setArguments(bundle);
-
-                    getSupportFragmentManager().beginTransaction().replace(R.id.containerFragmentMenu, ourFragment).commit();
 
                 } catch (Exception ex) {
 

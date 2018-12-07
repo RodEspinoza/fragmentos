@@ -237,7 +237,7 @@ public class AddNewOrderFragment extends Fragment implements Response.Listener<J
         Toast.makeText(getContext(), "", Toast.LENGTH_SHORT);
         product = new Product();
         final String TAG ="orden";
-        Task<QuerySnapshot> query = db.collection("products")
+        db.collection("products")
                 .whereEqualTo("name", productName).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
