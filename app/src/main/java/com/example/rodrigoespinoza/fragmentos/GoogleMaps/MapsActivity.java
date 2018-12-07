@@ -2,18 +2,24 @@ package com.example.rodrigoespinoza.fragmentos.GoogleMaps;
 
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.example.rodrigoespinoza.fragmentos.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.common.collect.MapMaker;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    Marker marker;
+    LatLng latLong;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +47,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        LatLng pteAlto = new LatLng(-33.609528, -70.575474);
+        mMap.addMarker(new MarkerOptions().position(pteAlto).title("Marker in Puente Alto"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pteAlto,18));
+
+        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                if (marker != null) {
+                    marker.remove();
+                }
+
+                String latitud = String.valueOf(latLng.latitude);
+                String longitud = String.valueOf(latLng.longitude);
+
+                Toast.makeText(MapsActivity.this, "Latitud: " + latitud + " Longitud: " + longitud, Toast.LENGTH_SHORT).show();
+                marker = mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher)).anchor(0.0f, 1.0f).position(latLng));
+
+                latLong = latLng;
+            }
+        });
     }
 }
