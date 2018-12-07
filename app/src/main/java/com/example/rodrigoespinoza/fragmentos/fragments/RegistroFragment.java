@@ -35,11 +35,15 @@ import com.example.rodrigoespinoza.fragmentos.model.Person;
 import com.example.rodrigoespinoza.fragmentos.model.SqlConecttion;
 import com.example.rodrigoespinoza.fragmentos.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.sun.corba.se.impl.oa.toa.TOA;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -228,13 +232,33 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
         void onFragmentInteraction(Uri uri);
     }
 
-    private void registrarPersona(final String rut, final String nombre, final String apellido, final String sexo, final String localidad, final Integer idUser) {
+    private void registrarPersona(final String rut, final String nombre, final String apellido, final String sexo, final String localidad, final String idUser) {
         this.progressDialog = new ProgressDialog(getContext());
-        this.progressDialog.setMessage("Cargando... ");
+        this.progressDialog.setMessage("Cargando del perfil... ");
         this.progressDialog.show();
 
         try {
-            String url = "https://androidsandbox.site/wsAndroid/wsIngresarPersona.php";
+            Map<String, String>  params = new HashMap<>();
+            params.put("rut", rut);
+            params.put("nombre", nombre);
+            params.put("last_name", apellido);
+            params.put("sexo", sexo);
+            params.put("location", localidad);
+            params.put("id_user",idUser.toString());
+
+            db.collection("person").add(params).addOnSuccessListener(
+                    new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                        progressDialog.hide();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    progressDialog.hide();
+                    Toast.makeText(getContext(), "Error al agregar persona "+ e.getMessage(), Toast.LENGTH_SHORT);
+                }
+            });
             stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
@@ -259,13 +283,7 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
             }){
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
-                    Map<String, String>  params = new HashMap<>();
-                    params.put("rut", rut);
-                    params.put("nombre", nombre);
-                    params.put("last_name", apellido);
-                    params.put("sexo", sexo);
-                    params.put("location", localidad);
-                    params.put("id_user",idUser.toString());
+
                     return params;
                 }
             };
@@ -319,12 +337,21 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
 
                             if(document.getDocuments().size()==0){
                                 progressDialog.show();
-                                String user_id = db.collection("user")
-                                        .add(params).getResult().getId();
-                                if(user_id!= null){
-                                    registrarPersona(txtFragRegistroRut.getText().toString(), txtFragRegistroNombre.getText().toString(),
-                                            txtFragRegistroApellido.getText().toString(), sexoSeleccionado, localidad, id);
-                                }
+                                db.collection("user").add(params).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                    @Override
+                                    public void onSuccess(DocumentReference documentReference) {
+                                        String user_id = documentReference.getId();
+                                        registrarPersona(txtFragRegistroRut.getText().toString(), txtFragRegistroNombre.getText().toString(),
+                                                txtFragRegistroApellido.getText().toString(), sexoSeleccionado, localidad, user_id);
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(getContext(), "Error al agregar usuario : "+e.getMessage(), Toast.LENGTH_SHORT);
+                                    }
+                                });
+
+
                             }else{
                                 progressDialog.hide();
                                 Toast.makeText(getContext(), "Ha ocurrido un error, vuelva a intentarlo mas tarde", Toast.LENGTH_SHORT).show();
