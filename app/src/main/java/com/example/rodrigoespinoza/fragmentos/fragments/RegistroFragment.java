@@ -1,5 +1,5 @@
 package com.example.rodrigoespinoza.fragmentos.fragments;
-​
+
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -19,7 +19,7 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
-​
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -43,15 +43,15 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-​
+
 import org.json.JSONArray;
 import org.json.JSONObject;
-​
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-​
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -64,26 +64,26 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
     View view;
     User user;
     Person person;
-​
+
     EditText txtFragRegistroEmail, txtFragRegistroPass, txtFragRegistroRePass;
     EditText txtFragRegistroRut, txtFragRegistroNombre, txtFragRegistroApellido;
-​
+
     String sexoSeleccionado, localidad;
     RadioGroup rgFragRegistroSexo;
     Spinner spFragRegistroLocalidad;
     Button btnFragRegistroRegistrar;
-​
+
     //Componente de progreso
     RequestQueue requestQueue;
     ProgressDialog progressDialog;
     StringRequest stringRequest;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     private OnFragmentInteractionListener mListener;
-​
+
     public RegistroFragment() {
         // Required empty public constructor
     }
-​
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -96,35 +96,35 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
     public static RegistroFragment newInstance(String param1, String param2) {
         RegistroFragment fragment = new RegistroFragment();
         Bundle args = new Bundle();
-​
+
         fragment.setArguments(args);
         return fragment;
     }
-​
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-​
+
         }
-​
+
     }
-​
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-​
+
         this.view = inflater.inflate(R.layout.fragment_registro, container, false);
         this.user = new User();
         this.person = new Person();
-        this.txtFragRegistroEmail = this.view.findViewById(R.id.txtFragRegistroEmail);
+        this.txtFragRegistroEmail =  this.view.findViewById(R.id.txtFragRegistroEmail);
         this.txtFragRegistroPass = this.view.findViewById(R.id.txtFragRegistroPass);
         this.txtFragRegistroRePass = this.view.findViewById(R.id.txtFragRegistroRePass);
         this.txtFragRegistroRut = this.view.findViewById(R.id.txtFragRegistroRut);
         this.txtFragRegistroNombre = this.view.findViewById(R.id.txtFragRegistroNombre);
         this.txtFragRegistroApellido = this.view.findViewById(R.id.txtFragRegistroApellido);
         this.rgFragRegistroSexo = this.view.findViewById(R.id.rgFragRegistroSexo);
-​
+
         this.spFragRegistroLocalidad = this.view.findViewById(R.id.spFragRegistroLocalidad);
         this.rgFragRegistroSexo.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -139,16 +139,16 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
         ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), R.layout.support_simple_spinner_dropdown_item, Utils.getLocations());
         arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         this.spFragRegistroLocalidad.setAdapter(arrayAdapter);
-​
+
         this.spFragRegistroLocalidad.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 localidad = spFragRegistroLocalidad.getSelectedItem().toString();
             }
-​
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-​
+
             }
         });
         this.btnFragRegistroRegistrar = (Button) this.view.findViewById(R.id.btnFragRegistroRegistrar);
@@ -157,9 +157,9 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
             public void onClick(View v) {
                 if (validaPassword(txtFragRegistroPass.getText().toString(), txtFragRegistroRePass.getText().toString())) {
                     if (validaRut(txtFragRegistroRut.getText().toString())) {
-​
+
                         registrarUsuario(txtFragRegistroEmail.getText().toString(), txtFragRegistroPass.getText().toString());
-​
+
                     } else {
                         Toast.makeText(getContext(),"Rut Invalido", Toast.LENGTH_SHORT).show();
                     }
@@ -168,12 +168,12 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
                 }
             }
         });
-​
+
         this.requestQueue = Volley.newRequestQueue(getContext());
-​
+
         return this.view;
     }
-​
+
     private void setLoginFragment() {
         LoginFragment nextFrag = new LoginFragment();
         getActivity().getSupportFragmentManager().beginTransaction()
@@ -181,14 +181,14 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
                 .addToBackStack(null)
                 .commit();
     }
-​
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
     }
-​
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -199,23 +199,23 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
                     + " must implement OnFragmentInteractionListener");
         }
     }
-​
+
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
-​
+
     @Override
     public void onErrorResponse(VolleyError error) {
-​
+
     }
-​
+
     @Override
     public void onResponse(JSONObject response) {
-​
+
     }
-​
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -230,53 +230,53 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-​
+
     private void registrarPersona(final String rut, final String nombre, final String apellido, final String sexo, final String localidad, final String idUser) {
         this.progressDialog = new ProgressDialog(getContext());
-​
+
         this.progressDialog.setMessage("Procesando valores del perfil... ");
         this.progressDialog.show();
-        Map<String, String> params = new HashMap<>();
+        Map<String, String>  params = new HashMap<>();
         params.put("rut", rut);
         params.put("nombre", nombre);
         params.put("last_name", apellido);
         params.put("sexo", sexo);
         params.put("location", localidad);
         params.put("id_user", idUser);
-        db.collection("person")
+       db.collection("person")
                 .add(params).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-            @Override
-            public void onSuccess(DocumentReference documentReference) {
-                progressDialog.hide();
-                String person_id = documentReference.getId();
-                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("data", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("person_id", person_id);
-                editor.commit();
-                Intent intent = new Intent(getContext(), MenuActivity.class);
-                intent.putExtra("person_id", person_id);
-                startActivity(intent);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                progressDialog.hide();
-                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT);
-            }
-        });
-​
-​
-​
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        progressDialog.hide();
+                        String person_id = documentReference.getId();
+                        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("data", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("person_id", person_id);
+                        editor.commit();
+                        Intent intent = new Intent(getContext(), MenuActivity.class);
+                        intent.putExtra("person_id", person_id);
+                        startActivity(intent);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+           @Override
+           public void onFailure(@NonNull Exception e) {
+               progressDialog.hide();
+               Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT);
+           }
+       });
+
+
+
     }
     private void registrarUsuario(final String email, final String pass) {
         this.progressDialog = new ProgressDialog(getContext());
         this.progressDialog.setMessage("Comprobando datos de usuario ");
         this.progressDialog.show();
-        final Map<String, String> params = new HashMap<>();
+        final Map<String, String>  params = new HashMap<>();
         params.put("email", email);
         params.put("pass", pass);
-​
-​
+
+
         db.collection("user")
                 .whereEqualTo("email", email)
                 .get()
@@ -286,7 +286,7 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
                         if(task.isSuccessful()){
                             QuerySnapshot document = task.getResult();
                             if(document.getDocuments().size()==0){
-​
+
                                 progressDialog.hide();
                                 db.collection("user")
                                         .add(params)
@@ -296,7 +296,7 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
                                                 progressDialog.hide();
                                                 registrarPersona(txtFragRegistroRut.getText().toString(), txtFragRegistroNombre.getText().toString(),
                                                         txtFragRegistroApellido.getText().toString(), sexoSeleccionado, localidad, documentReference.getId());
-​
+
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
                                     @Override
@@ -305,7 +305,7 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
                                         Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT);
                                     }
                                 });
-​
+
                             }else{
                                 progressDialog.hide();
                                 Toast.makeText(getContext(), "Correo ya registrado.", Toast.LENGTH_SHORT).show();
@@ -313,9 +313,9 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
                         }
                     }
                 });
-​
+
     }
-​
+
     private boolean validaPassword(String password, String rePassword) {
         if(password.equals(rePassword)){
             return true;
