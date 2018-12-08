@@ -234,6 +234,7 @@ public class MenuActivity extends AppCompatActivity
 
                     ourFragment = new EditPersonFragment();
                     Bundle bundle = new Bundle();
+
                     bundle.putString("nombre", document.get("name").toString());
                     bundle.putString("last_name", document.get("last_name").toString());
                     bundle.putString("sexo", document.get("sex").toString());

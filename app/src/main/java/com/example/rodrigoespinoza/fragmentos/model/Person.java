@@ -23,8 +23,8 @@ public class Person {
         this.id_user = id_user;
     }
 
-    public Person(String id_user){
-        this.id_user = id_user;
+    public Person(String id){
+        this.id = id_user;
     }
 
     public Person(String name, String last_name, String sexo){
