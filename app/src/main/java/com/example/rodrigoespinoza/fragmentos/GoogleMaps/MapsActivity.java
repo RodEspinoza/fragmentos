@@ -6,10 +6,13 @@ import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.rodrigoespinoza.fragmentos.R;
@@ -21,7 +24,13 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.common.collect.MapMaker;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -29,6 +38,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Marker marker;
     LatLng latLong;
     LatLng latActual;
+
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +64,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         double latitud = location.getLatitude();
-        double
+        double longitud = location.getLongitude();
+        latActual = new LatLng(latitud,longitud);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -78,8 +90,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
         LatLng pteAlto = new LatLng(-33.609528, -70.575474);
-        mMap.addMarker(new MarkerOptions().position(pteAlto).title("Marker in Puente Alto"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pteAlto,18));
+
+        mMap.addMarker(new MarkerOptions().position(latActual).title("Marker in Puente Alto"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latActual,18));
 
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
@@ -90,17 +103,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     marker.remove();
                 }
 
-                String latitud = String.valueOf(latLng.latitude);
-                String longitud = String.valueOf(latLng.longitude);
+                Toast.makeText(MapsActivity.this, "Long Clic", Toast.LENGTH_SHORT).show();
 
-                Toast.makeText(MapsActivity.this, "Latitud: " + latitud + " Longitud: " + longitud, Toast.LENGTH_SHORT).show();
                 marker = mMap
                         .addMarker(new MarkerOptions()
                                 .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher))
-                                .anchor(0.0f, 1.0f).position(latLng));
+                                .anchor(0.0f, 1.0f)
+                                .position(latLng));
 
                 latLong = latLng;
             }
         });
+    }
+
+    public void grabarMarcador(View view){
+        HashMap<String, String> params = new HashMap<>();
+        if (latLong != null){
+            params.put("LatLong", latLong.toString());
+            db.collection("marker").add(params).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                @Override
+                public void onSuccess(DocumentReference documentReference) {
+                    Toast.makeText(MapsActivity.this, "Marcador Guardado", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(MapsActivity.this, "Marcador no Guardado", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
     }
 }
