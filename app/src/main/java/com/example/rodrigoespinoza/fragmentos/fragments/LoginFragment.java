@@ -105,38 +105,45 @@ public class LoginFragment extends Fragment {
     }
 
     private void autenticaUsuario(final User user) {
-        this.progressDialog = new ProgressDialog(getContext());
-        this.progressDialog.setMessage("Cargando... ");
-        this.progressDialog.show();
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Map<String, String> params = new HashMap<>();
-        params.put("email", user.getEmail());
-        params.put("pass", user.getPass());
+
         getUserById(user, db);
 
     }
 
     private void getUserById(User user, FirebaseFirestore db) {
+        this.progressDialog = new ProgressDialog(getContext());
+        this.progressDialog.setMessage("Cargando datos del usuario... ");
+        this.progressDialog.show();
         db.collection("user")
                 .whereEqualTo("email", user.getEmail())
-                .whereEqualTo("pass", user.getPass())
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
             if(task.isSuccessful()){
                 if(task.getResult().getDocuments().size()>0){
+                    progressDialog.hide();
                     DocumentSnapshot documentSnapshot = task.getResult().getDocuments().get(0);
                     getPersonByUser(documentSnapshot, db);
+
                 }else{
+                    progressDialog.hide();
                     Toast.makeText(getContext(), R.string.bad_credentials, Toast.LENGTH_SHORT);
                 }
+            }else{
+
+                progressDialog.hide();
             }
             }
         });
     }
 
     private void getPersonByUser(DocumentSnapshot documentSnapshot, FirebaseFirestore db) {
-        db.collection("person").whereEqualTo("user_id", documentSnapshot.getId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        documentSnapshot.getId();
+        db.collection("person").whereEqualTo("user_id", documentSnapshot.getId())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()){
