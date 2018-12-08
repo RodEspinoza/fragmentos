@@ -41,7 +41,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
@@ -107,7 +106,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 marker = mMap
                         .addMarker(new MarkerOptions()
-                                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher))
+                                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher_round))
                                 .anchor(0.0f, 1.0f)
                                 .position(latLng));
 

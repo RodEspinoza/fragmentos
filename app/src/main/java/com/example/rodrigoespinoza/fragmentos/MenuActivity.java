@@ -224,7 +224,7 @@ public class MenuActivity extends AppCompatActivity
         this.progressDialog.setMessage("Cargando... ");
         this.progressDialog.show();
 
-        DocumentReference docRef = db.collection("persona").document(per.getId());
+        DocumentReference docRef = db.collection("person").document(per.getId());
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
